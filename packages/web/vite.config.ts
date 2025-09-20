@@ -1,7 +1,7 @@
-import viteReact from '@vitejs/plugin-react'
-import tailwindcss from '@tailwindcss/vite'
+import viteReact from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
 
-import { tanstackRouter } from '@tanstack/router-plugin/vite'
+import { tanstackRouter } from "@tanstack/router-plugin/vite";
 
 // https://vitejs.dev/config/
 export default {
@@ -12,11 +12,11 @@ export default {
   ],
   test: {
     globals: true,
-    environment: 'jsdom',
+    environment: "jsdom",
   },
   resolve: {
     alias: {
-      '@': new URL('./src', import.meta.url).pathname,
+      "@": new URL("./src", import.meta.url).pathname,
     },
   },
-}
+};
