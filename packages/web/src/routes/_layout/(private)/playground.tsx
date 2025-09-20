@@ -8,7 +8,7 @@ export const Route = createFileRoute("/_layout/(private)/playground")({
 function RouteComponent() {
   return (
     <Background>
-      <div className="flex h-full items-center justify-center">
+      <div className="flex h-screen items-center justify-center">
         This is the playground{" "}
       </div>
     </Background>
