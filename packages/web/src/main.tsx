@@ -1,41 +1,41 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import { RouterProvider, createRouter } from '@tanstack/react-router'
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { RouterProvider, createRouter } from "@tanstack/react-router";
 
-import * as TanStackQueryProvider from './shared/integrations/tanstack-query/root-provider.tsx'
+import * as TanStackQueryProvider from "./shared/integrations/tanstack-query/root-provider.tsx";
 
 // Import the generated route tree
-import { routeTree } from './routeTree.gen'
+import { routeTree } from "./routeTree.gen";
 
-import './shared/styles.css'
+import "./shared/styles.css";
 
 // Create a new router instance
 
-const TanStackQueryProviderContext = TanStackQueryProvider.getContext()
+const TanStackQueryProviderContext = TanStackQueryProvider.getContext();
 const router = createRouter({
   routeTree,
   context: {
     ...TanStackQueryProviderContext,
   },
-  defaultPreload: 'intent',
+  defaultPreload: "intent",
   scrollRestoration: true,
   defaultStructuralSharing: true,
   defaultPreloadStaleTime: 0,
-})
+});
 
 // Register the router instance for type safety
-declare module '@tanstack/react-router' {
+declare module "@tanstack/react-router" {
   interface Register {
-    router: typeof router
+    router: typeof router;
   }
 }
 
 // Render the app
 
-createRoot(document.getElementById('app')!).render(
+createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <TanStackQueryProvider.Provider {...TanStackQueryProviderContext}>
       <RouterProvider router={router} />
     </TanStackQueryProvider.Provider>
   </StrictMode>,
-)
+);
