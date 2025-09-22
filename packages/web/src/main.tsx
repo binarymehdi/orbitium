@@ -4,12 +4,10 @@ import { RouterProvider, createRouter } from "@tanstack/react-router";
 
 import * as TanStackQueryProvider from "./shared/integrations/tanstack-query/root-provider.tsx";
 
-// Import the generated route tree
 import { routeTree } from "./routeTree.gen";
 
 import "./shared/styles.css";
 
-// Create a new router instance
 
 const TanStackQueryProviderContext = TanStackQueryProvider.getContext();
 const router = createRouter({
@@ -23,14 +21,12 @@ const router = createRouter({
   defaultPreloadStaleTime: 0,
 });
 
-// Register the router instance for type safety
 declare module "@tanstack/react-router" {
   interface Register {
     router: typeof router;
   }
 }
 
-// Render the app
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
