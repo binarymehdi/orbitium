@@ -1,16 +1,29 @@
 export const Background = ({ children }: any) => {
   return (
     <div className="relative min-h-screen w-full">
-      <div
-        className="absolute inset-0 z-0"
-        style={{
-          backgroundImage: `
+
+      <div className="min-h-screen w-full relative bg-white">
+        {/* Soft Yellow Glow */}
+        <div
+          className="absolute inset-0 z-0"
+          style={{
+            backgroundImage: `
+        radial-gradient(circle at center, #67e8f9 0%, transparent 70%)
+      `,
+            opacity: 0.6,
+            mixBlendMode: "multiply",
+          }}
+        />
+        <div
+          className="absolute inset-0 z-0"
+          style={{
+            backgroundImage: `
         linear-gradient(to right, #e7e5e4 1px, transparent 1px),
         linear-gradient(to bottom, #e7e5e4 1px, transparent 1px)
       `,
-          backgroundSize: "20px 20px",
-          backgroundPosition: "0 0, 0 0",
-          maskImage: `
+            backgroundSize: "20px 20px",
+            backgroundPosition: "0 0, 0 0",
+            maskImage: `
         repeating-linear-gradient(
           to right,
           black 0px,
@@ -26,7 +39,7 @@ export const Background = ({ children }: any) => {
           transparent 8px
         )
       `,
-          WebkitMaskImage: `
+            WebkitMaskImage: `
         repeating-linear-gradient(
           to right,
           black 0px,
@@ -42,11 +55,13 @@ export const Background = ({ children }: any) => {
           transparent 8px
         )
       `,
-          maskComposite: "intersect",
-          WebkitMaskComposite: "source-in",
-        }}
-      />
-      {children}
+            maskComposite: "intersect",
+            WebkitMaskComposite: "source-in",
+          }}
+        />
+        {children}
+      </div>
     </div>
+
   );
 };
