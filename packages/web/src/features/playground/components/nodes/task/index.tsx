@@ -13,7 +13,7 @@ type NodeData = {
 const TaskNode = ({ data }: { data: NodeData }) => {
     return (
         <div className="relative px-4 py-3 rounded-2xl backdrop-blur-md bg-gradient-to-br from-white/90 via-white/80 to-gray-50/70 border border-gray-200/50 shadow-lg shadow-black/5 w-86 h-40">
-            <div className="absolute top-2 right-2"><NodeSpecsDrawer /></div>
+            <div className="absolute top-2 right-2"><NodeSpecsDrawer nodeId="1" /></div>
             
             <div className="flex flex-col h-full space-y-3">
                 <div className="flex items-start space-x-3 pr-8">

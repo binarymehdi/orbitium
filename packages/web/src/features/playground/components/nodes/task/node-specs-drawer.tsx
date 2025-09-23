@@ -9,10 +9,15 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/shared/components/ui/drawer"
-export default function NodeSpecsDrawer() {
+
+interface NodeSpecsDrawerProps {
+  nodeId: string
+}
+
+export default function NodeSpecsDrawer({nodeId}: NodeSpecsDrawerProps) {
+  console.log(nodeId);
   return (
     <div className="flex flex-wrap gap-4">
-      {/* Right drawer */}
       <Drawer direction="right">
         <DrawerTrigger asChild>
           <button className="nodrag cursor-pointer" >
@@ -24,17 +29,16 @@ export default function NodeSpecsDrawer() {
         <DrawerContent className="w-1/2 h-full">
           <div className="h-full w-full">
             <DrawerHeader>
-              <DrawerTitle>Right Drawer</DrawerTitle>
-              <DrawerDescription>This drawer slides in from the right.</DrawerDescription>
+              <DrawerTitle>Edit Containarized Node</DrawerTitle>
             </DrawerHeader>
-            <div className="p-4">
+            <div className="p-4 h-[80vh]">
               <p className="text-sm text-muted-foreground">
                 Perfect for shopping carts or settings panels.
               </p>
             </div>
             <DrawerFooter>
               <DrawerClose asChild>
-                <Button>Close</Button>
+                <Button className="bg-blue-700 rounded-full w-36">Submit</Button>
               </DrawerClose>
             </DrawerFooter>
           </div>
