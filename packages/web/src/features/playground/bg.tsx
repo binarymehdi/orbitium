@@ -3,7 +3,6 @@ export const Background = ({ children }: any) => {
     <div className="relative min-h-screen w-full">
 
       <div className="min-h-screen w-full relative bg-white">
-        {/* Soft Yellow Glow */}
         <div
           className="absolute inset-0 z-0"
           style={{

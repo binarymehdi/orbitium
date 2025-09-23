@@ -1,23 +1,19 @@
-import { useCallback } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import {
     ReactFlow,
-    addEdge,
-    type Connection,
-    useNodesState,
-    useEdgesState,
     MiniMap,
-    type Viewport,
-    getIncomers,
-    getOutgoers,
-    getConnectedEdges,
+    ConnectionLineType,
+    useReactFlow,
+    ReactFlowProvider,
 } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 
 import { StartNode } from './components/nodes/start'
-import TaskNode from './components/nodes/task';
-
-import { initialEdges, initialNodes } from './flow-config'
-import { EndNode } from './components/nodes/end';
+import TaskNode from './components/nodes/task'
+import { EndNode } from './components/nodes/end'
+import { AddNodeEdge, getInitialViewPort, getFocusViewPort, animateNodeIn } from './utils'
+import { useWorkflowStore } from './workflow-store'
+import { useNodesDelete } from './hooks'
 
 const nodeTypes = {
     start: StartNode,
@@ -25,76 +21,101 @@ const nodeTypes = {
     end: EndNode,
 };
 
-
+const edgeTypes = {
+    addNodeEdge: AddNodeEdge,
+};
 
 const proOptions = { hideAttribution: true };
 
-const startNode = initialNodes.find(node => node.type === 'start');
-const viewportWidth = typeof window !== 'undefined' ? window.innerWidth : 1200;
-const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : 800;
-const zoom = 1.4;
+function FlowContent() {
+    const {
+        nodes,
+        edges,
+        addNodeOnEdge,
+        onNodesChange,
+        onEdgesChange,
+        onConnect,
+        newlyAddedNodeId,
+        clearNewlyAddedNode
+    } = useWorkflowStore()
+    
+    const { onNodesDelete } = useNodesDelete()
+    const { setCenter } = useReactFlow()
 
-const defaultViewport: Viewport = {
-    x: viewportWidth / 2 - (startNode?.position.x || 0) * zoom,
-    y: viewportHeight / 8 - (startNode?.position.y || 0) * zoom,
-    zoom,
-};
+    // Focus on newly added node with animation
+    useEffect(() => {
+        if (newlyAddedNodeId) {
+            const newNode = nodes.find(node => node.id === newlyAddedNodeId);
+            if (newNode) {
+                // Animate viewport to focus on new node
+                setTimeout(() => {
+                    setCenter(newNode.position.x, newNode.position.y, { 
+                        zoom: 1.2, 
+                        duration: 600 
+                    });
+                }, 100);
+                
+                // Animate the new node appearance
+                setTimeout(() => {
+                    const nodeElement = document.querySelector(`[data-id="${newlyAddedNodeId}"]`) as HTMLElement;
+                    if (nodeElement) {
+                        animateNodeIn(nodeElement);
+                    }
+                }, 400);
+                
+                // Clear the newly added node reference after animation
+                setTimeout(() => {
+                    clearNewlyAddedNode();
+                }, 1200);
+            }
+        }
+    }, [newlyAddedNodeId, nodes, setCenter, clearNewlyAddedNode]);
 
-export default function PlaygroundExample() {
-    const [nodes, _setNodes, onNodesChange] = useNodesState(initialNodes)
-    const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges)
+    const edgesWithHandlers = edges.map(edge => ({
+        ...edge,
+        data: { 
+            ...edge.data, 
+            onAddNode: (id: string) => addNodeOnEdge(id)
+        }
+    }));
 
-    const onConnect = useCallback(
-        (params: Connection) => setEdges((edges) => addEdge(params, edges)),
-        []
-    )
-
-    const onNodesDelete = useCallback(
-        (deleted: any) => {
-            let remainingNodes = [...nodes];
-            setEdges(
-                deleted.reduce((acc: any, node: any) => {
-                    const incomers = getIncomers(node, remainingNodes, acc);
-                    const outgoers = getOutgoers(node, remainingNodes, acc);
-                    const connectedEdges = getConnectedEdges([node], acc);
-
-                    const remainingEdges = acc.filter((edge: any) => !connectedEdges.includes(edge));
-
-                    const createdEdges = incomers.flatMap(({ id: source }) =>
-                        outgoers.map(({ id: target }) => ({
-                            id: `${source}->${target}`,
-                            source,
-                            target,
-                        })),
-                    );
-
-                    remainingNodes = remainingNodes.filter((rn) => rn.id !== node.id);
-
-                    return [...remainingEdges, ...createdEdges];
-                }, edges),
-            );
-        },
-        [nodes, edges],
+    const handleNodesDelete = useCallback(
+        (deleted: any) => onNodesDelete(deleted),
+        [onNodesDelete]
     );
 
+    const defaultViewport = getInitialViewPort(nodes);
+
+    return (
+        <ReactFlow
+            nodes={nodes}
+            edges={edgesWithHandlers}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onNodesDelete={handleNodesDelete}
+            onConnect={onConnect}
+            defaultViewport={defaultViewport}
+            nodeTypes={nodeTypes}
+            edgeTypes={edgeTypes}
+            connectionLineType={ConnectionLineType.SmoothStep}
+            defaultEdgeOptions={{ animated: true, type: 'addNodeEdge' }}
+            proOptions={proOptions}
+            panOnScroll
+            nodesDraggable={true}
+            nodesConnectable={true}
+            elementsSelectable={true}
+        >
+            <MiniMap />
+        </ReactFlow>
+    );
+}
+
+export default function Playground() {
     return (
         <div style={{ width: '100vw', height: '100vh' }}>
-            <ReactFlow
-                nodes={nodes}
-                edges={edges}
-                onNodesChange={onNodesChange}
-                onEdgesChange={onEdgesChange}
-                onNodesDelete={onNodesDelete}
-                onConnect={onConnect}
-                nodeTypes={nodeTypes}
-                connectionLineStyle={{ stroke: '#ffff' }}
-                defaultEdgeOptions={{ animated: true, type: 'smoothstep' }}
-                defaultViewport={defaultViewport}
-                proOptions={proOptions}
-                panOnScroll
-            >
-                <MiniMap />
-            </ReactFlow>
+            <ReactFlowProvider>
+                <FlowContent />
+            </ReactFlowProvider>
         </div>
-    )
+    );
 }

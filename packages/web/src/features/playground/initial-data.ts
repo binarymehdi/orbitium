@@ -1,34 +1,22 @@
 import type { Edge, Node } from "@xyflow/react"
 
-const flowCenterX = 320;
-const nodeSpacing = 160;
+const position = { x: 0, y: 0 };
 
-const nodeWidths = {
-    start: 56,
-    task: 320,
-};
 
-const getCenteredX = (nodeType: string) => {
-    const nodeWidth = nodeWidths[nodeType as keyof typeof nodeWidths] || nodeWidths.task;
-    return flowCenterX - (nodeWidth / 2);
-};
 
 export const initialNodes: Node[] = [
     {
         id: 'n1',
         type: 'start',
-        position: { x: getCenteredX('start'), y: 50 },
+        position: position,
         data: {
-            name: 'Start Pipeline',
-            job: 'Entry Point',
-            emoji: '🚀',
-            logo: 'python'
+            label: 'Start Pipeline',
         },
     },
     {
         id: 'n2',
         type: 'task',
-        position: { x: getCenteredX('task'), y: 20 + nodeSpacing },
+        position: position,
         data: {
             title: '1. Load Temperature Data',
             nodeType: 'Input',
@@ -43,7 +31,7 @@ export const initialNodes: Node[] = [
     {
         id: 'n3',
         type: 'task',
-        position: { x: getCenteredX('task'), y: 50 + nodeSpacing * 2 },
+        position: position,
         data: {
             title: '2. Clean & Validate Data',
             nodeType: 'Processing',
@@ -56,7 +44,7 @@ export const initialNodes: Node[] = [
     {
         id: 'n4',
         type: 'task',
-        position: { x: getCenteredX('task'), y: 70 + nodeSpacing * 3 },
+        position: position,
         data: {
             title: '3. Calculate Statistics',
             nodeType: 'Analysis',
@@ -69,7 +57,7 @@ export const initialNodes: Node[] = [
     {
         id: 'n5',
         type: 'task',
-        position: { x: getCenteredX('task'), y: 90 + nodeSpacing * 4 },
+        position: position,
         data: {
             title: '4. Generate Visualization',
             nodeType: 'Output',
@@ -82,7 +70,7 @@ export const initialNodes: Node[] = [
     {
         id: 'n6',
         type: 'end',
-        position: { x: getCenteredX('start'), y: 0 + nodeSpacing * 6 },
+        position: position,
         data: {
             name: 'Start Pipeline',
             job: 'Entry Point',
@@ -97,30 +85,30 @@ export const initialEdges: Edge[] = [
         id: 'n1-n2',
         source: 'n1',
         target: 'n2',
-        type: 'smoothstep',
+        type: 'addNodeEdge',
     },
     {
         id: 'n2-n3',
         source: 'n2',
         target: 'n3',
-        type: 'smoothstep',
+        type: 'addNodeEdge',
     },
     {
         id: 'n3-n4',
         source: 'n3',
         target: 'n4',
-        type: 'smoothstep',
+        type: 'addNodeEdge',
     },
     {
         id: 'n4-n5',
         source: 'n4',
         target: 'n5',
-        type: 'smoothstep',
+        type: 'addNodeEdge',
     },
     {
         id: 'n5-n6',
         source: 'n5',
         target: 'n6',
-        type: 'smoothstep',
+        type: 'addNodeEdge',
     },
 ]
