@@ -13,8 +13,6 @@ interface WorkflowState {
     nodes: Node[]
     edges: Edge[]
     nodeCounter: number
-    newlyAddedNodeId: string | null
-    animatingNodes: Set<string>
     
     setNodes: (nodes: Node[]) => void
     setEdges: (edges: Edge[]) => void
@@ -24,8 +22,6 @@ interface WorkflowState {
     onConnect: (connection: any) => void
     relayoutNodes: (newNodes: Node[], newEdges: Edge[]) => void
     initializeFlow: () => void
-    clearNewlyAddedNode: () => void
-    setAnimatingNode: (nodeId: string, animating: boolean) => void
 }
 
 const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
@@ -37,25 +33,10 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
     nodes: layoutedNodes,
     edges: layoutedEdges,
     nodeCounter: 7,
-    newlyAddedNodeId: null,
-    animatingNodes: new Set(),
 
     setNodes: (nodes) => set({ nodes }),
     
     setEdges: (edges) => set({ edges }),
-
-    clearNewlyAddedNode: () => set({ newlyAddedNodeId: null }),
-
-    setAnimatingNode: (nodeId: string, animating: boolean) => {
-        const { animatingNodes } = get()
-        const newAnimatingNodes = new Set(animatingNodes)
-        if (animating) {
-            newAnimatingNodes.add(nodeId)
-        } else {
-            newAnimatingNodes.delete(nodeId)
-        }
-        set({ animatingNodes: newAnimatingNodes })
-    },
 
     addNodeOnEdge: (edgeId: string) => {
         const { nodes, edges, nodeCounter } = get()
@@ -66,12 +47,6 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
         if (!targetEdge) return
 
         const newNodes = [...nodes, newNode]
-        
-        // Set the newly added node for animation and focus
-        set({ 
-            nodeCounter: nodeCounter + 1,
-            newlyAddedNodeId: newNodeId,
-        })
         
         const newEdges = edges.map(edge => {
             if (edge.id === edgeId) {
@@ -108,6 +83,7 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
             }
         )
 
+        set({ nodeCounter: nodeCounter + 1 })
         get().relayoutNodes(newNodes, newEdges)
     },
 
