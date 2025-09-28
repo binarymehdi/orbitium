@@ -127,3 +127,13 @@ export const getInitialViewPort = (nodes: Node[]) => {
     } : { x: 0, y: 0, zoom: 1.0 };
     return defaultViewport;
 }
+
+export const getInitialNodeCounter = (initialNodes: Node[]): number => {
+    const nodeNumbers = initialNodes
+        .map((node: Node) => node.id)
+        .filter((id: string) => id.match(/^n\d+$/))
+        .map((id: string) => parseInt(id.slice(1)))
+        .filter((num: number) => !isNaN(num))
+    
+    return nodeNumbers.length > 0 ? Math.max(...nodeNumbers) + 1 : 1
+}

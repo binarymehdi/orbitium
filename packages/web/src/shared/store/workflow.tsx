@@ -6,8 +6,8 @@ import {
     type Node,
     type Edge,
 } from '@xyflow/react'
-import { createNewTaskNode, getLayoutedElements } from './utils'
-import { initialNodes, initialEdges } from './initial-data'
+import { createNewTaskNode, getInitialNodeCounter, getLayoutedElements } from '../../features/playground/utils'
+import { initialNodes, initialEdges } from '../mock-data/initial-workflow-state'
 
 interface WorkflowState {
     nodes: Node[]
@@ -29,10 +29,12 @@ const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
     initialEdges,
 )
 
+
+
 export const useWorkflowStore = create<WorkflowState>((set, get) => ({
     nodes: layoutedNodes,
     edges: layoutedEdges,
-    nodeCounter: 7,
+    nodeCounter: getInitialNodeCounter(initialNodes),
 
     setNodes: (nodes) => set({ nodes }),
     
@@ -129,7 +131,7 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
         set({ 
             nodes: layoutedNodes, 
             edges: layoutedEdges, 
-            nodeCounter: 7 
+            nodeCounter: getInitialNodeCounter(initialNodes) 
         })
     }
 }))

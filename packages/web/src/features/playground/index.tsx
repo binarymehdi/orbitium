@@ -10,7 +10,7 @@ import { StartNode } from './components/nodes/start'
 import TaskNode from './components/nodes/task'
 import { EndNode } from './components/nodes/end'
 import { AddNodeEdge, getInitialViewPort } from './utils'
-import { useWorkflowStore } from './workflow-store'
+import { useWorkflowStore } from '../../shared/store/workflow'
 import { useNodesDelete } from './hooks'
 
 const nodeTypes = {

@@ -6,7 +6,7 @@ import {
     type Node,
     type Edge,
 } from '@xyflow/react'
-import { useWorkflowStore } from './workflow-store'
+import { useWorkflowStore } from '../../shared/store/workflow'
 
 
 export function useNodesDelete() {
