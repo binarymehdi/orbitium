@@ -68,6 +68,8 @@ export default function Playground() {
                 defaultEdgeOptions={{ animated: true, type: 'addNodeEdge' }}
                 proOptions={proOptions}
                 panOnScroll
+                snapToGrid
+                snapGrid={[25,25]}
                 nodesDraggable={true}
                 nodesConnectable={true}
                 elementsSelectable={true}
