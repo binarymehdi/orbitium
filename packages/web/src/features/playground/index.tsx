@@ -54,6 +54,9 @@ export default function Playground() {
 
     return (
         <div style={{ width: '100vw', height: '100vh' }}>
+            <div id="flow-description" className="sr-only">
+                Interactive workflow diagram with draggable nodes and connectable edges
+            </div>
             <ReactFlow
                 nodes={nodes}
                 edges={edgesWithHandlers}
@@ -73,6 +76,7 @@ export default function Playground() {
                 nodesDraggable={true}
                 nodesConnectable={true}
                 elementsSelectable={true}
+                aria-describedby="flow-description"
             >
                 <MiniMap />
             </ReactFlow>
