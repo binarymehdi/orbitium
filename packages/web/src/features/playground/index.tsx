@@ -6,9 +6,9 @@ import {
 } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 
-import { StartNode } from './components/nodes/start'
-import TaskNode from './components/nodes/task'
-import { EndNode } from './components/nodes/end'
+import { StartNode } from './components/nodes/start-node'
+import TaskNode from './components/nodes/task-node'
+import { EndNode } from './components/nodes/end-node'
 import { AddNodeEdge, getInitialViewPort } from './utils'
 import { useWorkflowStore } from '../../shared/store/workflow'
 import { useNodesDelete } from './hooks'

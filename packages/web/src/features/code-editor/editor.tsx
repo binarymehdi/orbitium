@@ -1,10 +1,8 @@
 import { useState } from "react";
 import Editor from "@monaco-editor/react";
-import LanguageSelector from "./language-selector";
 import { codeTemplates } from "@/shared/mock-data/code-templates";
 
-const CodeEditor = () => {
-  const [selectedLanguage, setSelectedLanguage] = useState("python");
+const CodeEditor = ({ selectedLanguage }: { selectedLanguage: string }) => {
   const [codeValues, setCodeValues] = useState(() => {
     const initialValues: Record<string, string> = {};
     codeTemplates.forEach((item) => {
@@ -17,10 +15,6 @@ const CodeEditor = () => {
   const currentFilename =
     codeTemplates.find((item) => item.language === selectedLanguage)
       ?.filename || "";
-  // to be added to another component
-  // const handleLanguageChange = (language: string) => {
-  //   setSelectedLanguage(language);
-  // };
   const handleCodeChange = (value: string | undefined) => {
     if (value !== undefined) {
       setCodeValues((prev) => ({

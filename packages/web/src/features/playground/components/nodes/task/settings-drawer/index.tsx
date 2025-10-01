@@ -10,10 +10,9 @@ import {
   DrawerTrigger,
 } from "@/shared/components/ui/drawer";
 import { useWorkflowStore } from "@/shared/store/workflow";
-import { Save, SquarePen, TriangleAlert } from "lucide-react";
+import { Save, TriangleAlert } from "lucide-react";
 import { useState } from "react";
-import EditNodeMetaData from "./edit-node-dialog";
-import LanguageSelector from "@/features/code-editor/language-selector";
+import EditNodeMetaData from "./components/edit-node-dialog";
 
 // Define the node data structure
 type NodeExecutable = {
@@ -55,8 +54,6 @@ export default function NodeSpecsDrawer({ nodeId }: NodeSpecsDrawerProps) {
     return true;
   };
 
-
-
   if (!nodeData) {
     return null;
   }
@@ -95,10 +92,8 @@ export default function NodeSpecsDrawer({ nodeId }: NodeSpecsDrawerProps) {
             <DrawerTitle className="text-2xl">{nodeTitle}</DrawerTitle>
             <DrawerDescription>{nodeDescription}</DrawerDescription>
             <EditNodeMetaData nodeId={nodeId} />
-            
-            <div className="">
-              <CodeEditor />
-            </div>
+
+            <CodeEditor selectedLanguage="javascript" />
           </DrawerHeader>
           <DrawerFooter className="flex flex-row">
             <Button
