@@ -5,148 +5,86 @@ import LanguageSelector from "./language-selector";
 const codeTemplates = [
   {
     language: "javascript",
-    filename: "database-query.js",
-    code: `// Node.js database query using Prisma ORM
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+    filename: "script.js",
+    code: `function scriptToExecute(input) {
+    /**
+     * A generic processing function.
+     * Input -> Output, chainable.
+     */
+    
+    const output = {
+        result: \`processed: \${JSON.stringify(input)}\`
+    };
+    
+    return output;
+}
 
-// Create a new user
-const user = await prisma.user.create({
-  data: {
-    name: 'Jane Smith',
-    email: 'jane@example.com',
-    age: 28,
-    profile: {
-      create: {
-        bio: 'Software developer passionate about clean code'
-      }
-    }
-  }
-});
-
-console.log('Created user:', user);
-
-// Alternative using raw SQL with mysql2
-const mysql = require('mysql2/promise');
-const connection = await mysql.createConnection(config);
-const [rows] = await connection.execute(
-  'SELECT * FROM users WHERE age > ? AND active = ?',
-  [25, true]
-);`,
+// Example usage
+const input = { data: "example" };
+console.log(scriptToExecute(input));`,
   },
   {
     language: "python",
-    filename: "database_query.py",
-    code: `# Python database query using SQLAlchemy ORM
-from sqlalchemy import create_engine, Column, Integer, String, Boolean
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+    filename: "script.py",
+    code: `def script_to_execute(input_data):
+    """
+    A generic processing function.
+    The input should match the expected structure,
+    and the output should be usable by the next step.
+    """
 
-# Create user
-user = User(
-    name='Jane Smith',
-    email='jane@example.com',
-    age=28,
-    active=True
-)
-session.add(user)
-session.commit()
+    # Example placeholder logic
+    output = {
+        "result": f"processed: {input_data}"
+    }
 
-# Query users
-users = session.query(User).filter(
-    User.age > 25,
-    User.active == True
-).all()
+    return output
 
-# Alternative using raw SQL with psycopg2
-import psycopg2
-conn = psycopg2.connect(database="mydb", user="user", password="pass")
-cur = conn.cursor()
-cur.execute("SELECT * FROM users WHERE age > %s AND active = %s", (25, True))
-results = cur.fetchall()`,
+
+if __name__ == "__main__":
+    sample_input = {"data": "example"}
+    print(script_to_execute(sample_input))`,
   },
   {
     language: "go",
-    filename: "database_query.go",
+    filename: "script.go",
     code: `package main
 
 import (
-    "database/sql"
     "fmt"
-    _ "github.com/lib/pq"
 )
 
-type User struct {
-    ID     int    \`db:"id"\`
-    Name   string \`db:"name"\`
-    Email  string \`db:"email"\`
-    Age    int    \`db:"age"\`
-    Active bool   \`db:"active"\`
+// ScriptToExecute processes input and returns output
+func ScriptToExecute(input map[string]interface{}) map[string]interface{} {
+    output := map[string]interface{}{
+        "result": fmt.Sprintf("processed: %v", input),
+    }
+    return output
 }
 
 func main() {
-    db, err := sql.Open("postgres", "postgres://user:pass@localhost/dbname?sslmode=disable")
-    if err != nil {
-        panic(err)
-    }
-    defer db.Close()
-    
-    // Insert user
-    _, err = db.Exec(\`
-        INSERT INTO users (name, email, age, active) 
-        VALUES ($1, $2, $3, $4)\`,
-        "Jane Smith", "jane@example.com", 28, true)
-    
-    // Query users
-    rows, err := db.Query(\`
-        SELECT id, name, email, age, active 
-        FROM users WHERE age > $1 AND active = $2\`,
-        25, true)
-    defer rows.Close()
-    
-    for rows.Next() {
-        var user User
-        rows.Scan(&user.ID, &user.Name, &user.Email, &user.Age, &user.Active)
-        fmt.Printf("User: %+v\\n", user)
-    }
+    input := map[string]interface{}{"data": "example"}
+    output := ScriptToExecute(input)
+    fmt.Println(output)
 }`,
   },
   {
     language: "ruby",
-    filename: "database_query.rb",
-    code: `# Ruby database query using ActiveRecord ORM
-class User < ApplicationRecord
-  has_one :profile
-  validates :email, presence: true, uniqueness: true
-  scope :active_adults, -> { where('age > ? AND active = ?', 25, true) }
+    filename: "script.rb",
+    code: `def script_to_execute(input)
+  # A generic processing function.
+  # Input -> Output, chainable.
+
+  output = {
+    result: "processed: #{input}"
+  }
+
+  return output
 end
 
-# Create user with profile
-user = User.create!(
-  name: 'Jane Smith',
-  email: 'jane@example.com',
-  age: 28,
-  active: true
-)
-
-user.create_profile!(bio: 'Software developer passionate about clean code')
-
-# Query users
-active_adults = User.active_adults.includes(:profile)
-
-# Alternative using raw SQL with ActiveRecord
-users = User.find_by_sql([
-  'SELECT u.*, p.bio FROM users u 
-   LEFT JOIN profiles p ON u.id = p.user_id 
-   WHERE u.age > ? AND u.active = ?',
-  25, true
-])
-
-# Using Arel for complex queries
-User.joins(:profile)
-    .where(User.arel_table[:age].gt(25))
-    .where(active: true)
-    .select('users.*, profiles.bio')`,
+# Example usage
+input = { data: "example" }
+puts script_to_execute(input)`,
   },
 ];
 
