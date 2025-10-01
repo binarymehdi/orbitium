@@ -39,11 +39,11 @@ const NodeContent = ({ data }: { data: NodeData }) => {
   return (
     <div className="flex h-full flex-col space-y-3">
       <div className="flex items-start space-x-3 pr-8">
-        <div className="h-12 w-12 flex-shrink-0 rounded-xl border border-gray-200/70 bg-gradient-to-br from-gray-50 to-gray-100 p-2.5">
+        <div className="h-12 w-12 rounded-xl border border-gray-200/70 bg-gradient-to-br from-gray-50 to-gray-100 p-1">
           <img
             src={`/stack-logos/${data.executable.language}.svg`}
             alt={data.executable.language}
-            className="h-full w-full object-contain"
+            className="h-full w-full rounded-md object-contain"
           />
         </div>
         <div className="min-w-0 flex-1">

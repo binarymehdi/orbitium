@@ -27,9 +27,6 @@ type NodeMetaData = {
 
 const EditNodeMetaData = ({ nodeId }: EditNodeMetaDataProps) => {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-
-
     const { getNodeById } = useWorkflowStore();
     const node = getNodeById(nodeId);
     console.log(node)
