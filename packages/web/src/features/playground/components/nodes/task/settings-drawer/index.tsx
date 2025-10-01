@@ -1,3 +1,4 @@
+import CodeEditor from "@/features/code-editor/editor";
 import { Button } from "@/shared/components/ui/button";
 import {
   Drawer,
@@ -8,15 +9,35 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/shared/components/ui/drawer";
+import { useWorkflowStore } from "@/shared/store/workflow";
 import { Save, TriangleAlert } from "lucide-react";
 import { useState } from "react";
+
+// Define the node data structure
+type NodeExecutable = {
+  language: string;
+  code: string;
+};
+
+type WorkflowNodeData = {
+  title: string;
+  nodeType: string;
+  description: string;
+  executable: NodeExecutable;
+};
 
 interface NodeSpecsDrawerProps {
   nodeId: string;
 }
 
 export default function NodeSpecsDrawer({ nodeId }: NodeSpecsDrawerProps) {
+  const { getNodeById } = useWorkflowStore();
+  const node = getNodeById(nodeId);
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
+
+  const nodeData = node?.data as WorkflowNodeData;
+  const nodeTitle = nodeData?.title || `Node ${nodeId}`;
+  const nodeDescription = nodeData?.description || "Configure node settings";
 
   const handleDelete = () => {
     setIsDrawerOpen(false);
@@ -24,7 +45,6 @@ export default function NodeSpecsDrawer({ nodeId }: NodeSpecsDrawerProps) {
 
   const handleEdit = (): void => {
     setIsDrawerOpen(false);
-    console.log("edit handeled");
   };
 
   const useOpenNodeSpecs = (nodeId: string): boolean => {
@@ -32,6 +52,10 @@ export default function NodeSpecsDrawer({ nodeId }: NodeSpecsDrawerProps) {
     console.log("dialog for node opened node: ", nodeId);
     return true;
   };
+
+  if (!nodeData) {
+    return null;
+  }
 
   return (
     <div className="flex flex-wrap gap-4">
@@ -64,29 +88,27 @@ export default function NodeSpecsDrawer({ nodeId }: NodeSpecsDrawerProps) {
         </DrawerTrigger>
         <DrawerContent className="h-full w-1/2">
           <DrawerHeader className="p-4">
-            <DrawerTitle className="text-2xl">Move Goal</DrawerTitle>
-            <DrawerDescription>Set your daily activity goal.</DrawerDescription>
-            <div className="h-[80vh]">
-              <p className="text-muted-foreground text-sm">
-                Perfect for shopping carts or settings panels.
-              </p>
+            <DrawerTitle className="text-2xl">{nodeTitle}</DrawerTitle>
+            <DrawerDescription>{nodeDescription}</DrawerDescription>
+            <div className="">
+              <CodeEditor />
             </div>
           </DrawerHeader>
           <DrawerFooter className="flex flex-row">
-              <Button
-                onClick={handleEdit}
-                className="w-40 rounded-full bg-blue-700 px-4"
-              >
-                <Save />
-                Apply Changes
-              </Button>
-              <Button
-                onClick={handleDelete}
-                className="w-36 rounded-full bg-red-700"
-              >
-                <TriangleAlert />
-                Delete Node
-              </Button>
+            <Button
+              onClick={handleEdit}
+              className="w-40 rounded-full bg-blue-700 px-4"
+            >
+              <Save />
+              Apply Changes
+            </Button>
+            <Button
+              onClick={handleDelete}
+              className="w-36 rounded-full bg-red-700"
+            >
+              <TriangleAlert />
+              Delete Node
+            </Button>
           </DrawerFooter>
         </DrawerContent>
       </Drawer>

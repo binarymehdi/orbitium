@@ -112,9 +112,10 @@ export const createNewTaskNode = (id: string): Node => ({
         title: `New Task ${id}`,
         nodeType: 'Processing',
         description: 'A new processing step in the pipeline',
-        logo: 'python',
-        container: 'python:3.9',
-        code: 'future-work'
+        executable: {
+            language: 'python',
+            code: ''
+        }
     },
 });
 

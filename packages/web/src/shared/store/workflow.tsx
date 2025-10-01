@@ -16,6 +16,7 @@ interface WorkflowState {
     
     setNodes: (nodes: Node[]) => void
     setEdges: (edges: Edge[]) => void
+    getNodeById: (id: string) => Node | undefined
     addNodeOnEdge: (edgeId: string) => void
     onNodesChange: (changes: any) => void
     onEdgesChange: (changes: any) => void
@@ -39,6 +40,11 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
     setNodes: (nodes) => set({ nodes }),
     
     setEdges: (edges) => set({ edges }),
+    
+    getNodeById: (nodeId: string) => {
+        const { nodes } = get()
+        return nodes.find(node => node.id === nodeId)
+    },
 
     addNodeOnEdge: (edgeId: string) => {
         const { nodes, edges, nodeCounter } = get()
