@@ -45,6 +45,12 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
         const { nodes } = get()
         return nodes.find(node => node.id === nodeId)
     },
+    // editNodeMetaData: (nodeId: string) => {
+    //     const { nodes } = get();
+    //     const node = nodes.find(node => node.id === nodeId);
+
+
+    // }
 
     addNodeOnEdge: (edgeId: string) => {
         const { nodes, edges, nodeCounter } = get()

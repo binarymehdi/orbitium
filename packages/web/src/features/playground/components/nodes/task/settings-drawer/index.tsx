@@ -10,8 +10,10 @@ import {
   DrawerTrigger,
 } from "@/shared/components/ui/drawer";
 import { useWorkflowStore } from "@/shared/store/workflow";
-import { Save, TriangleAlert } from "lucide-react";
+import { Save, SquarePen, TriangleAlert } from "lucide-react";
 import { useState } from "react";
+import EditNodeMetaData from "./edit-node-dialog";
+import LanguageSelector from "@/features/code-editor/language-selector";
 
 // Define the node data structure
 type NodeExecutable = {
@@ -53,6 +55,8 @@ export default function NodeSpecsDrawer({ nodeId }: NodeSpecsDrawerProps) {
     return true;
   };
 
+
+
   if (!nodeData) {
     return null;
   }
@@ -90,6 +94,8 @@ export default function NodeSpecsDrawer({ nodeId }: NodeSpecsDrawerProps) {
           <DrawerHeader className="p-4">
             <DrawerTitle className="text-2xl">{nodeTitle}</DrawerTitle>
             <DrawerDescription>{nodeDescription}</DrawerDescription>
+            <EditNodeMetaData nodeId={nodeId} />
+            
             <div className="">
               <CodeEditor />
             </div>
@@ -97,10 +103,10 @@ export default function NodeSpecsDrawer({ nodeId }: NodeSpecsDrawerProps) {
           <DrawerFooter className="flex flex-row">
             <Button
               onClick={handleEdit}
-              className="w-40 rounded-full bg-blue-700 px-4"
+              className="rounded-full bg-blue-700 px-4"
             >
               <Save />
-              Apply Changes
+              Apply Code Changes
             </Button>
             <Button
               onClick={handleDelete}

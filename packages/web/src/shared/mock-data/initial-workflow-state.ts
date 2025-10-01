@@ -49,7 +49,7 @@ export const initialNodes: Node[] = [
       description:
         "Compute mean, standard deviation, min/max values, and detect anomalies (readings >2 std from mean)",
       executable: {
-        language: "python",
+        language: "javascript",
         code: "future-work",
       },
     },
