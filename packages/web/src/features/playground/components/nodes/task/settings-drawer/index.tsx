@@ -32,9 +32,10 @@ interface NodeSpecsDrawerProps {
 }
 
 export default function NodeSpecsDrawer({ nodeId }: NodeSpecsDrawerProps) {
-  const { getNodeById } = useWorkflowStore();
+  const { getNodeById, updateNodeCode } = useWorkflowStore();
   const node = getNodeById(nodeId);
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
+  const [currentCode, setCurrentCode] = useState<string>("");
 
   const nodeData = node?.data as WorkflowNodeData;
   const nodeTitle = nodeData?.title || `Node ${nodeId}`;
@@ -44,8 +45,8 @@ export default function NodeSpecsDrawer({ nodeId }: NodeSpecsDrawerProps) {
     setIsDrawerOpen(false);
   };
 
-  const handleEdit = (): void => {
-    setIsDrawerOpen(false);
+  const handleCodeChange = (code: string) => {
+    setCurrentCode(code);
   };
 
   const useOpenNodeSpecs = (nodeId: string): boolean => {
@@ -58,9 +59,14 @@ export default function NodeSpecsDrawer({ nodeId }: NodeSpecsDrawerProps) {
     return null;
   }
 
+  const handleSave = () => {
+    updateNodeCode(nodeId, currentCode);
+    setIsDrawerOpen(false);
+  }
+
   return (
     <div className="flex flex-wrap gap-4">
-      <Drawer direction="right" open={isDrawerOpen}>
+      <Drawer direction="right" open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
         <DrawerTrigger asChild>
           <button
             className="nodrag cursor-pointer"
@@ -92,12 +98,11 @@ export default function NodeSpecsDrawer({ nodeId }: NodeSpecsDrawerProps) {
             <DrawerTitle className="text-2xl">{nodeTitle}</DrawerTitle>
             <DrawerDescription>{nodeDescription}</DrawerDescription>
             <EditNodeMetaData nodeId={nodeId} />
-
-            <CodeEditor nodeId={nodeId} />
+            <CodeEditor nodeId={nodeId} onCodeChange={handleCodeChange} />
           </DrawerHeader>
           <DrawerFooter className="flex flex-row">
             <Button
-              onClick={handleEdit}
+              onClick={handleSave}
               className="rounded-full bg-blue-700 px-4"
             >
               <Save />

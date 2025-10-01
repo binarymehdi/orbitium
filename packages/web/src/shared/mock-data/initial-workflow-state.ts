@@ -49,7 +49,7 @@ export const initialNodes: Node[] = [
       description:
         "Compute mean, standard deviation, min/max values, and detect anomalies (readings >2 std from mean)",
       executable: {
-        language: "javaScript",
+        language: "go",
         code: "future-work",
       },
     },
@@ -64,7 +64,7 @@ export const initialNodes: Node[] = [
       description:
         "Create time series plot and histogram showing temperature distribution with statistical overlays",
       executable: {
-        language: "go",
+        language: "javascript",
         code: "future-work",
       },
     },

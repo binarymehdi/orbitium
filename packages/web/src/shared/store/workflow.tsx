@@ -17,6 +17,8 @@ interface WorkflowState {
     setNodes: (nodes: Node[]) => void
     setEdges: (edges: Edge[]) => void
     getNodeById: (id: string) => Node | undefined
+    updateNodeMetaData: (nodeId: string, nodeMetaData: NodeMetaData) => void
+    updateNodeCode: (nodeId: string, newCode: string) => void
     addNodeOnEdge: (edgeId: string) => void
     onNodesChange: (changes: any) => void
     onEdgesChange: (changes: any) => void
@@ -30,7 +32,11 @@ const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
     initialEdges,
 )
 
-
+type NodeMetaData = {
+    title: string, 
+    description: string,
+    language: string,
+}
 
 export const useWorkflowStore = create<WorkflowState>((set, get) => ({
     nodes: layoutedNodes,
@@ -45,12 +51,48 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
         const { nodes } = get()
         return nodes.find(node => node.id === nodeId)
     },
-    // editNodeMetaData: (nodeId: string) => {
-    //     const { nodes } = get();
-    //     const node = nodes.find(node => node.id === nodeId);
 
+    updateNodeMetaData: (nodeId: string, nodeMetaData: NodeMetaData) => {
+        const { nodes } = get()
+        const updatedNodes = nodes.map(node => {
+            if (node.id === nodeId) {
+                return {
+                    ...node,
+                    data: {
+                        ...node.data,
+                        title: nodeMetaData.title,
+                        description: nodeMetaData.description,
+                        executable: {
+                            ...(node.data as any).executable,
+                            language: nodeMetaData.language
+                        }
+                    }
+                }
+            }
+            return node
+        })
+        set({ nodes: updatedNodes })
+    },
 
-    // }
+    updateNodeCode: (nodeId: string, newCode: string) => {
+        const { nodes } = get();
+        const updatedNodes = nodes.map(node => {
+            if (node.id === nodeId) {
+                return {
+                    ...node,
+                    data: {
+                        ...node.data,
+                        executable: {
+                            ...(node.data as any).executable,
+                            code: newCode
+                        }
+                    }
+                }
+            }
+            return node
+        })
+        set({ nodes: updatedNodes })
+    },
 
     addNodeOnEdge: (edgeId: string) => {
         const { nodes, edges, nodeCounter } = get()

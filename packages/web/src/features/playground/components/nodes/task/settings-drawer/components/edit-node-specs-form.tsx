@@ -4,6 +4,7 @@ import { DialogFooter } from "@/shared/components/ui/dialog";
 import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
 import { Textarea } from "@/shared/components/ui/textarea";
+import { useWorkflowStore } from "@/shared/store/workflow";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { createFormHook, createFormHookContexts } from "@tanstack/react-form";
 import { z } from "zod";
@@ -23,7 +24,9 @@ const { useAppForm } = createFormHook({
     formContext,
 });
 
-export const EditNodeSpecsForm = ({ initialValues, setIsDialogOpen }: any) => {
+export const EditNodeSpecsForm = ({ initialValues, setIsDialogOpen, nodeId }: any) => {
+    const { updateNodeMetaData } = useWorkflowStore();
+    
     const form = useAppForm({
         defaultValues: {
             title: initialValues?.title || "",
@@ -38,8 +41,13 @@ export const EditNodeSpecsForm = ({ initialValues, setIsDialogOpen }: any) => {
             }),
         },
         onSubmit: ({ value }) => {
-            alert(JSON.stringify(value, null, 2));
-            setIsDialogOpen(false)
+            // Update the node with new metadata
+            updateNodeMetaData(nodeId, {
+                title: value.title,
+                description: value.description,
+                language: value.nodeLanguage
+            });
+            setIsDialogOpen(false);
         },
     });
     return (

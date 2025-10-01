@@ -29,7 +29,6 @@ const EditNodeMetaData = ({ nodeId }: EditNodeMetaDataProps) => {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const { getNodeById } = useWorkflowStore();
     const node = getNodeById(nodeId);
-    console.log(node)
     const nodeData: NodeMetaData = {
         title: (node?.data?.title as string) || "",
         description: (node?.data?.description as string) || "",
@@ -54,7 +53,11 @@ const EditNodeMetaData = ({ nodeId }: EditNodeMetaDataProps) => {
                         Change node's title, description, and coding language
                     </DialogDescription>
                 </DialogHeader>
-                <EditNodeSpecsForm initialValues={nodeData} setIsDialogOpen={setIsDialogOpen} />
+                <EditNodeSpecsForm 
+                    nodeId={nodeId} 
+                    initialValues={nodeData} 
+                    setIsDialogOpen={setIsDialogOpen} 
+                />
             </DialogContent>
         </Dialog>
     );

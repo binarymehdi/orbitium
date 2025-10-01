@@ -1,6 +1,4 @@
-import { useState } from "react";
 import Editor from "@monaco-editor/react";
-import { codeTemplates } from "@/shared/mock-data/code-templates";
 import { useWorkflowStore } from "@/shared/store/workflow";
 
 type NodeExecutable = {
@@ -15,36 +13,42 @@ type WorkflowNodeData = {
   executable: NodeExecutable;
 };
 
-const CodeEditor = ({ nodeId }: { nodeId: string }) => {
+type CodeEditorProps = {
+   nodeId: string
+   onCodeChange: (code: string) => void
+}
+
+const CodeEditor = ({ nodeId, onCodeChange }: CodeEditorProps) => {
 
   const { getNodeById } = useWorkflowStore();
   const node = getNodeById(nodeId);
+
   const selectedLanguage = (node?.data as WorkflowNodeData)?.executable.language;
+  const initialCode = (node?.data as WorkflowNodeData)?.executable.code;
+  const useDeduceFileName = (nodeId: string, nodeLanguage: string): string => {
+    
+    const extentionMap: Record<string, string> =  {
+      python: 'py',
+      go: 'go',
+      javascript: 'js',
+      ruby: 'rb',
+    }
+    const output = `${nodeId}.${extentionMap[nodeLanguage]}`
+    console.log(output);
+    return output
+  }
+  const currentFilename = useDeduceFileName(nodeId, selectedLanguage);
 
-  const [codeValues, setCodeValues] = useState(() => {
-    const initialValues: Record<string, string> = {};
-    codeTemplates.forEach((item) => {
-      initialValues[item.language] = item.code;
-    });
-    return initialValues;
-  });
-
-  const currentCode = codeValues[selectedLanguage] || "";
-  const currentFilename =
-    codeTemplates.find((item) => item.language === selectedLanguage)
-      ?.filename || "";
   const handleCodeChange = (value: string | undefined) => {
     if (value !== undefined) {
-      setCodeValues((prev) => ({
-        ...prev,
-        [selectedLanguage]: value,
-      }));
+      onCodeChange(value);
+      console.log("value from editor", value)
     }
   };
 
   const getMonacoLanguage = (lang: string) => {
     switch (lang) {
-      case "javascript":
+      case "javacript":
         return "javascript";
       case "python":
         return "python";
@@ -71,11 +75,11 @@ const CodeEditor = ({ nodeId }: { nodeId: string }) => {
             <Editor
               height="100%"
               language={getMonacoLanguage(selectedLanguage)}
-              value={currentCode}
+              value={initialCode}
               onChange={handleCodeChange}
               options={{
-                minimap: { enabled: false },
-                fontSize: 14,
+                minimap: { enabled: true },
+                fontSize: 16,
                 wordWrap: "on",
                 automaticLayout: true,
                 scrollBeyondLastLine: false,
