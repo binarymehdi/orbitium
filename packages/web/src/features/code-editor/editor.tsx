@@ -1,8 +1,26 @@
 import { useState } from "react";
 import Editor from "@monaco-editor/react";
 import { codeTemplates } from "@/shared/mock-data/code-templates";
+import { useWorkflowStore } from "@/shared/store/workflow";
 
-const CodeEditor = ({ selectedLanguage }: { selectedLanguage: string }) => {
+type NodeExecutable = {
+  language: string;
+  code: string;
+};
+
+type WorkflowNodeData = {
+  title: string;
+  nodeType: string;
+  description: string;
+  executable: NodeExecutable;
+};
+
+const CodeEditor = ({ nodeId }: { nodeId: string }) => {
+
+  const { getNodeById } = useWorkflowStore();
+  const node = getNodeById(nodeId);
+  const selectedLanguage = (node?.data as WorkflowNodeData)?.executable.language;
+
   const [codeValues, setCodeValues] = useState(() => {
     const initialValues: Record<string, string> = {};
     codeTemplates.forEach((item) => {

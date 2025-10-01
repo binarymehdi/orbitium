@@ -93,7 +93,7 @@ export default function NodeSpecsDrawer({ nodeId }: NodeSpecsDrawerProps) {
             <DrawerDescription>{nodeDescription}</DrawerDescription>
             <EditNodeMetaData nodeId={nodeId} />
 
-            <CodeEditor selectedLanguage="javascript" />
+            <CodeEditor nodeId={nodeId} />
           </DrawerHeader>
           <DrawerFooter className="flex flex-row">
             <Button

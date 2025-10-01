@@ -26,13 +26,13 @@ type NodeMetaData = {
 
 
 const EditNodeMetaData = ({ nodeId }: EditNodeMetaDataProps) => {
-
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
 
 
     const { getNodeById } = useWorkflowStore();
     const node = getNodeById(nodeId);
+    console.log(node)
     const nodeData: NodeMetaData = {
         title: (node?.data?.title as string) || "",
         description: (node?.data?.description as string) || "",
