@@ -25,7 +25,7 @@ const { useAppForm } = createFormHook({
 });
 
 export const EditNodeSpecsForm = ({ initialValues, setIsDialogOpen, nodeId }: any) => {
-    const { updateNodeMetaData, changeNodeBaseLanguage } = useWorkflowStore();
+    const { updateNodeMetaData, setNodeBaseLanguage } = useWorkflowStore();
     
     const form = useAppForm({
         defaultValues: {
@@ -46,8 +46,7 @@ export const EditNodeSpecsForm = ({ initialValues, setIsDialogOpen, nodeId }: an
                 description: value.description,
             });
             if (initialValues.nodeLanguage !== value.nodeLanguage) {
-                console.log("we are here")
-                changeNodeBaseLanguage(nodeId, value.nodeLanguage)
+                setNodeBaseLanguage(nodeId, value.nodeLanguage)
             }
             setIsDialogOpen(false);
         },

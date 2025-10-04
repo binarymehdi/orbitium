@@ -19,9 +19,9 @@ interface WorkflowState {
     setEdges: (edges: Edge[]) => void
     getNodeById: (id: string) => Node | undefined
     updateNodeMetaData: (nodeId: string, nodeMetaData: NodeMetaData) => void
-    changeNodeBaseLanguage: (nodeId: string, newNodeLanguage: string) => void
+    setNodeBaseLanguage: (nodeId: string, newNodeLanguage: string) => void
     updateNodeCode: (nodeId: string, newCode: string) => void
-    addNodeOnEdge: (edgeId: string) => void
+    addNodeOnEdge: (edgeId: string, data?: any) => void
     onNodesChange: (changes: any) => void
     onEdgesChange: (changes: any) => void
     onConnect: (connection: any) => void
@@ -71,7 +71,7 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
         set({ nodes: updatedNodes })
     },
 
-    changeNodeBaseLanguage: (nodeId: string, newNodeLanguage: string) => {
+    setNodeBaseLanguage: (nodeId: string, newNodeLanguage: string) => {
         const { nodes } = get();
         const newCode = getNewCodeLanguageTemplate(newNodeLanguage)
         const updatedNodes = nodes.map(node => {
@@ -112,10 +112,21 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
         set({ nodes: updatedNodes })
     },
 
-    addNodeOnEdge: (edgeId: string) => {
+    addNodeOnEdge: (edgeId: string, data: any) => {
+        const { id, title, description, language } = data;
         const { nodes, edges, nodeCounter } = get()
         const newNodeId = `n${nodeCounter}`
-        const newNode = createNewTaskNode(newNodeId)
+        const newCode = getNewCodeLanguageTemplate(language) || "python"
+        const newNodeData = {
+            id,
+            title,
+            description,
+            executable: {
+                language,
+                code: newCode
+            }
+        }
+        const newNode = createNewTaskNode(newNodeData)
         
         const targetEdge = edges.find(e => e.id === edgeId)
         if (!targetEdge) return

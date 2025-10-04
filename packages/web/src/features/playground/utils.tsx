@@ -6,57 +6,9 @@ import {
     type Node,
 } from '@xyflow/react'
 import dagre from '@dagrejs/dagre'
+import AddNewNodeDialog from './components/nodes/task/settings-drawer/components/add-node/add-node-dialog';
+import { useState } from 'react';
 
-export function AddNodeEdge({ 
-    id, 
-    sourceX, 
-    sourceY, 
-    targetX, 
-    targetY, 
-    sourcePosition, 
-    targetPosition,
-    data 
-}: EdgeProps) {
-    const [edgePath, labelX, labelY] = getSmoothStepPath({
-        sourceX,
-        sourceY,
-        sourcePosition,
-        targetX,
-        targetY,
-        targetPosition,
-    });
-
-    const onAddNode = () => {
-        if (data?.onAddNode && typeof data.onAddNode === 'function') {
-            data.onAddNode(id);
-        }
-    };
-
-    return (
-        <>
-            <BaseEdge path={edgePath} />
-            <EdgeLabelRenderer>
-                <div
-                    style={{
-                        position: 'absolute',
-                        transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
-                        fontSize: 12,
-                        pointerEvents: 'all',
-                    }}
-                    className="nodrag nopan"
-                >
-                    <button
-                        className="w-6 h-6 bg-green-500 hover:bg-green-600 text-white rounded-full flex items-center justify-center text-xs font-bold shadow-lg transition-colors"
-                        onClick={onAddNode}
-                        title="Add node here"
-                    >
-                        +
-                    </button>
-                </div>
-            </EdgeLabelRenderer>
-        </>
-    );
-}
 
 const getNodeDimensions = (nodeType: string) => {
     switch (nodeType) {
@@ -104,18 +56,83 @@ export const getLayoutedElements = (nodes: any[], edges: any[]) => {
     return { nodes: newNodes, edges };
 };
 
-export const createNewTaskNode = (id: string): Node => ({
+
+export function AddNodeEdge({
+    id,
+    sourceX,
+    sourceY,
+    targetX,
+    targetY,
+    sourcePosition,
+    targetPosition,
+    data
+}: EdgeProps) {
+    const [edgePath, labelX, labelY] = getSmoothStepPath({
+        sourceX,
+        sourceY,
+        sourcePosition,
+        targetX,
+        targetY,
+        targetPosition,
+    });
+
+    const handleAddNode = () => {
+        setIsDialogOpen(true);
+    };
+
+    const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+
+    return (
+        <>
+            <BaseEdge path={edgePath} />
+            <EdgeLabelRenderer>
+                <div
+                    style={{
+                        position: 'absolute',
+                        transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
+                        fontSize: 12,
+                        pointerEvents: 'all',
+                    }}
+                    className="nodrag nopan"
+                >
+                    <button
+                        className="w-6 h-6 bg-green-500 hover:bg-green-600 text-white rounded-full flex items-center justify-center text-xs font-bold shadow-lg transition-colors"
+                        onClick={handleAddNode}
+                        title="Add node here"
+                    >
+                        +
+                    </button>
+                </div>
+                <AddNewNodeDialog
+                    isDialogOpen={isDialogOpen}
+                    setIsDialogOpen={setIsDialogOpen}
+                    edgeId={id}
+                />
+
+            </EdgeLabelRenderer>
+        </>
+    );
+}
+
+type newNodeData = {
+    id: string,
+    title: string,
+    description: string,
+    executable: {
+        language: string,
+        code: string
+    }
+}
+
+export const createNewTaskNode = ({ id, title, description, executable }: newNodeData): Node => ({
     id,
     type: 'task',
     position: { x: 0, y: 0 },
     data: {
-        title: `New Task ${id}`,
+        title,
         nodeType: 'Processing',
-        description: 'A new processing step in the pipeline',
-        executable: {
-            language: 'python',
-            code: ''
-        }
+        description,
+        executable
     },
 });
 
@@ -135,6 +152,6 @@ export const getInitialNodeCounter = (initialNodes: Node[]): number => {
         .filter((id: string) => id.match(/^n\d+$/))
         .map((id: string) => parseInt(id.slice(1)))
         .filter((num: number) => !isNaN(num))
-    
+
     return nodeNumbers.length > 0 ? Math.max(...nodeNumbers) + 1 : 1
 }

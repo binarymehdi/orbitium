@@ -12,7 +12,7 @@ export const deduceFileName = (nodeId: string, nodeLanguage: string): string => 
   return output
 };
 
-export const getNewCodeLanguageTemplate = (newLanguage: string) => {
+export const getNewCodeLanguageTemplate = (newLanguage: string): string | undefined => {
   const template = codeTemplates.find((tpl) => (tpl.language === newLanguage))
   const templateCode = template?.code;
   return templateCode; 
