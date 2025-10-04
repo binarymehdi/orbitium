@@ -1,6 +1,6 @@
 import { Handle, Position } from "@xyflow/react";
 import { memo } from "react";
-import NodeSpecsDrawer from "./task/settings-drawer";
+import NodeSpecsDrawer from "./settings-drawer";
 
 type Executable = {
   language: string;
