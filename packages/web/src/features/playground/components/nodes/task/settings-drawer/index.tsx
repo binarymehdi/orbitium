@@ -103,14 +103,15 @@ export default function NodeSpecsDrawer({ nodeId }: NodeSpecsDrawerProps) {
           <DrawerFooter className="flex flex-row">
             <Button
               onClick={handleSave}
-              className="rounded-full bg-blue-700 px-4"
+              className="rounded-full px-4"
             >
               <Save />
               Apply Code Changes
             </Button>
             <Button
+              variant='secondary'
               onClick={handleDelete}
-              className="w-36 rounded-full bg-red-700"
+              className="w-36 rounded-full"
             >
               <TriangleAlert />
               Delete Node
