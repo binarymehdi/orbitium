@@ -49,9 +49,8 @@ export default function NodeSpecsDrawer({ nodeId }: NodeSpecsDrawerProps) {
     setCurrentCode(code);
   };
 
-  const useOpenNodeSpecs = (nodeId: string): boolean => {
+  const useOpenNodeSpecs = (): boolean => {
     setIsDrawerOpen(true);
-    console.log("dialog for node opened node: ", nodeId);
     return true;
   };
 
@@ -70,7 +69,7 @@ export default function NodeSpecsDrawer({ nodeId }: NodeSpecsDrawerProps) {
         <DrawerTrigger asChild>
           <button
             className="nodrag cursor-pointer"
-            onClick={() => useOpenNodeSpecs(nodeId)}
+            onClick={useOpenNodeSpecs}
             aria-hidden="false"
             aria-label={`Open settings for node ${nodeId}`}
           >
@@ -98,6 +97,8 @@ export default function NodeSpecsDrawer({ nodeId }: NodeSpecsDrawerProps) {
             <DrawerTitle className="text-2xl">{nodeTitle}</DrawerTitle>
             <DrawerDescription>{nodeDescription}</DrawerDescription>
             <EditNodeMetaData nodeId={nodeId} />
+            {/* the handleCodeChange is there as the save button is in the parent of the CodeEditor */}
+            {/* the change code template action shall change the code as well */}
             <CodeEditor nodeId={nodeId} onCodeChange={handleCodeChange} />
           </DrawerHeader>
           <DrawerFooter className="flex flex-row">

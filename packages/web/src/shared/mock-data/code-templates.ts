@@ -1,7 +1,6 @@
 export const codeTemplates = [
   {
     language: "javascript",
-    filename: "script.js",
     code: `function scriptToExecute(input) {
     /**
      * A generic processing function.
@@ -21,7 +20,6 @@ console.log(scriptToExecute(input));`,
   },
   {
     language: "python",
-    filename: "script.py",
     code: `def script_to_execute(input_data):
     """
     A generic processing function.
@@ -43,7 +41,6 @@ if __name__ == "__main__":
   },
   {
     language: "go",
-    filename: "script.go",
     code: `package main
 
 import (
@@ -66,7 +63,6 @@ func main() {
   },
   {
     language: "ruby",
-    filename: "script.rb",
     code: `def script_to_execute(input)
   # A generic processing function.
   # Input -> Output, chainable.

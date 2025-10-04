@@ -1,5 +1,6 @@
 import Editor from "@monaco-editor/react";
 import { useWorkflowStore } from "@/shared/store/workflow";
+import { deduceFileName } from "./utils";
 
 type NodeExecutable = {
   language: string;
@@ -25,24 +26,12 @@ const CodeEditor = ({ nodeId, onCodeChange }: CodeEditorProps) => {
 
   const selectedLanguage = (node?.data as WorkflowNodeData)?.executable.language;
   const initialCode = (node?.data as WorkflowNodeData)?.executable.code;
-  const useDeduceFileName = (nodeId: string, nodeLanguage: string): string => {
-    
-    const extentionMap: Record<string, string> =  {
-      python: 'py',
-      go: 'go',
-      javascript: 'js',
-      ruby: 'rb',
-    }
-    const output = `${nodeId}.${extentionMap[nodeLanguage]}`
-    console.log(output);
-    return output
-  }
-  const currentFilename = useDeduceFileName(nodeId, selectedLanguage);
+  
+  const currentFilename = deduceFileName(nodeId, selectedLanguage);
 
   const handleCodeChange = (value: string | undefined) => {
     if (value !== undefined) {
       onCodeChange(value);
-      console.log("value from editor", value)
     }
   };
 

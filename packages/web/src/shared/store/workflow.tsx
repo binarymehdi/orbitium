@@ -8,6 +8,7 @@ import {
 } from '@xyflow/react'
 import { createNewTaskNode, getInitialNodeCounter, getLayoutedElements } from '../../features/playground/utils'
 import { initialNodes, initialEdges } from '../mock-data/initial-workflow-state'
+import { getNewCodeLanguageTemplate } from '@/features/code-editor/utils'
 
 interface WorkflowState {
     nodes: Node[]
@@ -18,6 +19,7 @@ interface WorkflowState {
     setEdges: (edges: Edge[]) => void
     getNodeById: (id: string) => Node | undefined
     updateNodeMetaData: (nodeId: string, nodeMetaData: NodeMetaData) => void
+    changeNodeBaseLanguage: (nodeId: string, newNodeLanguage: string) => void
     updateNodeCode: (nodeId: string, newCode: string) => void
     addNodeOnEdge: (edgeId: string) => void
     onNodesChange: (changes: any) => void
@@ -35,7 +37,6 @@ const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
 type NodeMetaData = {
     title: string, 
     description: string,
-    language: string,
 }
 
 export const useWorkflowStore = create<WorkflowState>((set, get) => ({
@@ -62,16 +63,33 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
                         ...node.data,
                         title: nodeMetaData.title,
                         description: nodeMetaData.description,
-                        executable: {
-                            ...(node.data as any).executable,
-                            language: nodeMetaData.language
-                        }
                     }
                 }
             }
             return node
         })
         set({ nodes: updatedNodes })
+    },
+
+    changeNodeBaseLanguage: (nodeId: string, newNodeLanguage: string) => {
+        const { nodes } = get();
+        const newCode = getNewCodeLanguageTemplate(newNodeLanguage)
+        const updatedNodes = nodes.map(node => {
+            if (node.id === nodeId) {
+                return {
+                    ...node, 
+                    data: {
+                        ...node.data,
+                        executable: {
+                            language: newNodeLanguage,
+                            code: newCode
+                        }
+                    }
+                }
+            }
+            return node
+        })
+        set({nodes: updatedNodes})
     },
 
     updateNodeCode: (nodeId: string, newCode: string) => {
