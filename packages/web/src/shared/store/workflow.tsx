@@ -112,13 +112,14 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
         set({ nodes: updatedNodes })
     },
 
-    addNodeOnEdge: (edgeId: string, data: any) => {
-        const { id, title, description, language } = data;
+    addNodeOnEdge: (edgeId: string, data: { title: string; description: string; language: string }) => {
+        const { title, description, language } = data;
         const { nodes, edges, nodeCounter } = get()
         const newNodeId = `n${nodeCounter}`
-        const newCode = getNewCodeLanguageTemplate(language) || "python"
+        const newCode = getNewCodeLanguageTemplate(language) || ""
+        
         const newNodeData = {
-            id,
+            id: newNodeId,
             title,
             description,
             executable: {
@@ -133,19 +134,12 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
 
         const newNodes = [...nodes, newNode]
         
-        const newEdges = edges.map(edge => {
-            if (edge.id === edgeId) {
-                return null
-            }
-            return {
+        const newEdges = edges
+            .filter(edge => edge.id !== edgeId)
+            .map(edge => ({
                 ...edge,
                 type: 'addNodeEdge',
-                data: { 
-                    ...edge.data, 
-                    onAddNode: (id: string) => get().addNodeOnEdge(id)
-                }
-            }
-        }).filter(Boolean) as Edge[]
+            }))
 
         newEdges.push(
             {
@@ -153,18 +147,12 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
                 source: targetEdge.source,
                 target: newNodeId,
                 type: 'addNodeEdge',
-                data: { 
-                    onAddNode: (id: string) => get().addNodeOnEdge(id)
-                }
             },
             {
                 id: `${newNodeId}-${targetEdge.target}`,
                 source: newNodeId,
                 target: targetEdge.target,
                 type: 'addNodeEdge',
-                data: { 
-                    onAddNode: (id: string) => get().addNodeOnEdge(id)
-                }
             }
         )
 
@@ -198,9 +186,6 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
             ...connection,
             type: 'addNodeEdge',
             animated: true,
-            data: { 
-                onAddNode: (id: string) => get().addNodeOnEdge(id)
-            }
         }
         const updatedEdges = addEdge(newEdge, edges)
         set({ edges: updatedEdges })
