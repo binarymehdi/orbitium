@@ -13,11 +13,15 @@ import { useState } from 'react';
 const getNodeDimensions = (nodeType: string) => {
     switch (nodeType) {
         case 'start':
+            return { width: 80, height: 20 };
         case 'end':
             return { width: 80, height: 40 };
+        case 'initial':
+            return { width: 208, height: 120 };
         case 'task':
-        default:
             return { width: 344, height: 160 };
+        default:
+            return { width: 0, height: 0 };
     }
 };
 
@@ -65,7 +69,6 @@ export function AddNodeEdge({
     targetY,
     sourcePosition,
     targetPosition,
-    data
 }: EdgeProps) {
     const [edgePath, labelX, labelY] = getSmoothStepPath({
         sourceX,

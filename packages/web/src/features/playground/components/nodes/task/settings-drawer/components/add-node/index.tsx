@@ -12,7 +12,7 @@ import {
 import { useWorkflowStore } from "@/shared/store/workflow";
 import { Save, TriangleAlert } from "lucide-react";
 import { useState } from "react";
-import EditNodeMetaData from "./components/edit-node/edit-node-dialog";
+import EditNodeMetaData from "../edit-node/edit-node-dialog";
 
 // Define the node data structure
 type NodeExecutable = {

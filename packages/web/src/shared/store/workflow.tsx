@@ -14,7 +14,7 @@ interface WorkflowState {
     nodes: Node[]
     edges: Edge[]
     nodeCounter: number
-    
+
     setNodes: (nodes: Node[]) => void
     setEdges: (edges: Edge[]) => void
     getNodeById: (id: string) => Node | undefined
@@ -35,7 +35,7 @@ const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
 )
 
 type NodeMetaData = {
-    title: string, 
+    title: string,
     description: string,
 }
 
@@ -45,9 +45,9 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
     nodeCounter: getInitialNodeCounter(initialNodes),
 
     setNodes: (nodes) => set({ nodes }),
-    
+
     setEdges: (edges) => set({ edges }),
-    
+
     getNodeById: (nodeId: string) => {
         const { nodes } = get()
         return nodes.find(node => node.id === nodeId)
@@ -77,7 +77,7 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
         const updatedNodes = nodes.map(node => {
             if (node.id === nodeId) {
                 return {
-                    ...node, 
+                    ...node,
                     data: {
                         ...node.data,
                         executable: {
@@ -89,7 +89,7 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
             }
             return node
         })
-        set({nodes: updatedNodes})
+        set({ nodes: updatedNodes })
     },
 
     updateNodeCode: (nodeId: string, newCode: string) => {
@@ -117,7 +117,7 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
         const { nodes, edges, nodeCounter } = get()
         const newNodeId = `n${nodeCounter}`
         const newCode = getNewCodeLanguageTemplate(language) || ""
-        
+
         const newNodeData = {
             id: newNodeId,
             title,
@@ -128,12 +128,12 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
             }
         }
         const newNode = createNewTaskNode(newNodeData)
-        
+
         const targetEdge = edges.find(e => e.id === edgeId)
         if (!targetEdge) return
 
         const newNodes = [...nodes, newNode]
-        
+
         const newEdges = edges
             .filter(edge => edge.id !== edgeId)
             .map(edge => ({
@@ -162,9 +162,9 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
 
     relayoutNodes: (newNodes: Node[], newEdges: Edge[]) => {
         const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(newNodes, newEdges)
-        set({ 
-            nodes: layoutedNodes, 
-            edges: layoutedEdges 
+        set({
+            nodes: layoutedNodes,
+            edges: layoutedEdges
         })
     },
 
@@ -196,10 +196,10 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
             initialNodes,
             initialEdges,
         )
-        set({ 
-            nodes: layoutedNodes, 
-            edges: layoutedEdges, 
-            nodeCounter: getInitialNodeCounter(initialNodes) 
+        set({
+            nodes: layoutedNodes,
+            edges: layoutedEdges,
+            nodeCounter: getInitialNodeCounter(initialNodes)
         })
     }
 }))

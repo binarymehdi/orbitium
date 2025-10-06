@@ -98,6 +98,7 @@ export const AddNodeForm = ({ setIsDialogOpen, edgeId }: AddNodeFormProps) => {
                             <field.LanguageSelector
                                 value={field.state.value}
                                 onValueChange={(value) => field.handleChange(value)}
+                                isNewNode={true}
                             />
                         )}
                     />

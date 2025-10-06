@@ -12,9 +12,13 @@ import { EndNode } from './components/nodes/end-node'
 import { AddNodeEdge, getInitialViewPort } from './utils'
 import { useWorkflowStore } from '../../shared/store/workflow'
 import { useNodesDelete } from './hooks'
+import { InitialNode } from './components/nodes/initial-node'
+import { Button } from '@/shared/components/ui/button'
+import { Download } from 'lucide-react'
 
 const nodeTypes = {
     start: StartNode,
+    initial: InitialNode,
     task: TaskNode,
     end: EndNode,
 };
@@ -52,10 +56,22 @@ export default function Playground() {
 
     const defaultViewport = getInitialViewPort(nodes);
 
+    const handleGetWorkflowState = () => {
+        const flowState = {
+            nodes,
+            edges,
+            ready: true
+        }
+        console.log(JSON.stringify(flowState, null, 2))
+    }
+
     return (
         <div style={{ width: '100vw', height: '100vh' }}>
             <div id="flow-description" className="sr-only">
                 Interactive workflow diagram with draggable nodes and connectable edges
+            </div>
+            <div className='absolute top-5 left-5 z-50'>
+                <Button onClick={handleGetWorkflowState}>Get Current Workflow State<Download/></Button>
             </div>
             <ReactFlow
                 nodes={nodes}
@@ -72,7 +88,7 @@ export default function Playground() {
                 proOptions={proOptions}
                 panOnScroll
                 snapToGrid
-                snapGrid={[25,25]}
+                snapGrid={[10,10]}
                 nodesDraggable={true}
                 nodesConnectable={true}
                 elementsSelectable={true}

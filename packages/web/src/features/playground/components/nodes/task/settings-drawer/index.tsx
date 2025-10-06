@@ -104,6 +104,7 @@ export default function NodeSpecsDrawer({ nodeId }: NodeSpecsDrawerProps) {
           <DrawerFooter className="flex flex-row">
             <Button
               onClick={handleSave}
+              disabled={currentCode == ""}
               className="rounded-full px-4"
             >
               <Save />

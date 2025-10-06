@@ -1,18 +1,17 @@
 import type { Edge, Node } from "@xyflow/react";
 
-const position = { x: 0, y: 0 };
-
-export const initialNodes: Node[] = [
+// workflow I: flow with data
+const wf1nodes: Node[] = [
   {
-    id: "n1",
+    id: "ns",
     type: "start",
-    position: position,
+    position: { x: 0, y: 0 },
     data: { label: "Start Pipeline" },
   },
   {
-    id: "n2",
+    id: "n1",
     type: "task",
-    position: position,
+    position: { x: 0, y: 0 },
     data: {
       title: "1. Load Temperature Data",
       nodeType: "Input",
@@ -25,9 +24,9 @@ export const initialNodes: Node[] = [
     },
   },
   {
-    id: "n3",
+    id: "n2",
     type: "task",
-    position: position,
+    position: { x: 0, y: 0 },
     data: {
       title: "2. Clean & Validate Data",
       nodeType: "Processing",
@@ -40,9 +39,9 @@ export const initialNodes: Node[] = [
     },
   },
   {
-    id: "n4",
+    id: "n3",
     type: "task",
-    position: position,
+    position: { x: 0, y: 0 },
     data: {
       title: "3. Calculate Statistics",
       nodeType: "Analysis",
@@ -55,9 +54,9 @@ export const initialNodes: Node[] = [
     },
   },
   {
-    id: "n5",
+    id: "n4",
     type: "task",
-    position: position,
+    position: { x: 0, y: 0 },
     data: {
       title: "4. Generate Visualization",
       nodeType: "Output",
@@ -70,14 +69,19 @@ export const initialNodes: Node[] = [
     },
   },
   {
-    id: "n6",
+    id: "ne",
     type: "end",
-    position: position,
+    position: { x: 0, y: 0 },
     data: { label: "End Pipeline" },
   },
 ];
-
-export const initialEdges: Edge[] = [
+const wf1edges: Edge[] = [
+  {
+    id: "ns-n1",
+    source: "ns",
+    target: "n1",
+    type: "addNodeEdge",
+  },
   {
     id: "n1-n2",
     source: "n1",
@@ -97,15 +101,53 @@ export const initialEdges: Edge[] = [
     type: "addNodeEdge",
   },
   {
-    id: "n4-n5",
+    id: "n4-ne",
     source: "n4",
-    target: "n5",
-    type: "addNodeEdge",
-  },
-  {
-    id: "n5-n6",
-    source: "n5",
-    target: "n6",
+    target: "ne",
     type: "addNodeEdge",
   },
 ];
+const workflowI = { id: 1, initialNodes: wf1nodes, initialEdges: wf1edges }
+
+
+// workflow II: empty workflow
+const wf2nodes: Node[] = [
+  {
+    id: "ns",
+    type: "start",
+    position: { x: 0, y: 0 },
+    data: { label: "Start Pipeline" },
+  },
+  {
+    id: "n1",
+    type: "initial",
+    position: { x: 0, y: 0 },
+    data: {label: "add your first node"},
+  },
+  {
+    id: "ne",
+    type: "end",
+    position: { x: 0, y: 0 },
+    data: { label: "End Pipeline" },
+  },
+];
+const wf2edges: Edge[] = [
+  {
+    id: "ns-n1",
+    source: "ns",
+    target: "n1",
+    type: "",
+  },
+  {
+    id: "n1-ne",
+    source: "n1",
+    target: "ne",
+    type: "",
+  },
+  
+];
+const workflowII = { id: 1, initialNodes: wf2nodes, initialEdges: wf2edges }
+
+
+const workflows = [ workflowI, workflowII ]
+export const { initialNodes, initialEdges } = workflows[0]

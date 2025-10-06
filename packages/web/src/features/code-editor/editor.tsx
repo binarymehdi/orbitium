@@ -37,7 +37,7 @@ const CodeEditor = ({ nodeId, onCodeChange }: CodeEditorProps) => {
 
   const getMonacoLanguage = (lang: string) => {
     switch (lang) {
-      case "javacript":
+      case "javascript":
         return "javascript";
       case "python":
         return "python";
