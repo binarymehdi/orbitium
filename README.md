@@ -1,4 +1,4 @@
-# sci-flow-orchestrator
+# Orbitium
 A scientific workflow software orchestrator for ease of use and collaboration. Made for scientists to focus on what matters.
 
 Initial Milestone
