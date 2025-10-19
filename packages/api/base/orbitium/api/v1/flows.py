@@ -25,12 +25,9 @@ async def initialize_flow(session: SessionDep) -> None:
 @router.put("/{id}")
 async def edit_flow(id: UUID, session: SessionDep) -> None:
     """
-    for now, each time the user saves the
-    flow, changes at the level of the db
-    is established to match the web state
-    with the server state.
-    each time user makes an edit on the web,
-    an update is sent
+    for now, each time the user makes a change,
+    this endpoint is triggered to reconsile the 
+    server state with the ui state.
     """
     pass
 
