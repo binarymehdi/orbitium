@@ -107,7 +107,13 @@ const wf1edges: Edge[] = [
     type: "addNodeEdge",
   },
 ];
-const workflowI = { id: 1, initialNodes: wf1nodes, initialEdges: wf1edges }
+const workflowI = {
+  id: 1,
+  name: "Workflow Example I",
+  description: "Illustrating example usecase for Orbitium, the workflow management system",
+  initialNodes: wf1nodes,
+  initialEdges: wf1edges
+}
 
 
 // workflow II: empty workflow
@@ -122,7 +128,7 @@ const wf2nodes: Node[] = [
     id: "n1",
     type: "initial",
     position: { x: 0, y: 0 },
-    data: {label: "add your first node"},
+    data: { label: "add your first node" },
   },
   {
     id: "ne",
@@ -144,10 +150,16 @@ const wf2edges: Edge[] = [
     target: "ne",
     type: "",
   },
-  
+
 ];
-const workflowII = { id: 1, initialNodes: wf2nodes, initialEdges: wf2edges }
+const workflowII = { 
+  id: 1, 
+  name: "Workflow Example I",
+  description: "Illustrating example usecase for Orbitium, the workflow management system",
+  initialNodes: wf2nodes, 
+  initialEdges: wf2edges
+}
 
 
-const workflows = [ workflowI, workflowII ]
+const workflows = [workflowI, workflowII]
 export const { initialNodes, initialEdges } = workflows[0]
