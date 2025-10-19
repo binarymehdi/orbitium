@@ -1,4 +1,7 @@
 from fastapi import APIRouter
+from uuid import UUID
+
+from orbitium.db.main import SessionDep
 
 router = APIRouter(
     prefix="/flows",
@@ -7,13 +10,13 @@ router = APIRouter(
 
 
 # get flow from database
-@router.get("/:id")
-async def get_flow_by_id(id):
+@router.get("/{id}")
+async def get_flow_by_id(id: UUID, session: SessionDep ) -> dict[str, str]:
     return {"msg": f" getting workflow of id={id}"}
 
 
 @router.post("/initialize-flow")
-async def save_flow():
+async def initialize_flow(session: SessionDep) -> None:
     """
     initializes an empty flow, 
     returns it's id, and redirects 
@@ -21,8 +24,8 @@ async def save_flow():
     """
     return 
 
-@router.put("/:id")
-async def edit_flow(id):
+@router.put("/{id}")
+async def edit_flow(id: UUID) -> None:
     """
     for now, each time the user saves the 
     flow, changes at the level of the db
@@ -34,7 +37,7 @@ async def edit_flow(id):
     pass
 
 
-@router.delete("/:id")
-async def delete_flow(id):
+@router.delete("/{id}")
+async def delete_flow(id: UUID) -> None:
     """delete flow, not important rn"""
     pass

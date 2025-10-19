@@ -6,4 +6,8 @@ router_v1 = APIRouter(
     prefix=settings.API_V1_STR
 )
 
+@router_v1.get("/health-check")
+async def health_check() -> bool:
+    return True
+
 router_v1.include_router(flows.router)

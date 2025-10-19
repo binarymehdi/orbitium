@@ -15,14 +15,18 @@ Defining my flow database model:
 # a more optimized data structure 
 """
 
-from sqlmodel import Field, SQLModel, JSON, Column
+from typing import Any
+from sqlmodel import Field, SQLModel, Column  # type: ignore[attr-defined]
+from sqlalchemy import JSON
 from uuid import UUID, uuid4
+
 
 class FlowBase(SQLModel):
     name: str = Field(index=True)
     desciption: str = Field()
-    data: dict | None = Field(default=None, nullable=True)
-    
+    data: dict[str, Any] | None = Field(default=None, nullable=True)
+
+
 class Flow(FlowBase, table=True):
     id: UUID = Field(default_factory=uuid4, primary_key=True, unique=True)
-    data: dict | None = Field(default=None, sa_column=Column(JSON))
+    data: dict[str, Any] | None = Field(default=None, sa_column=Column(JSON))
