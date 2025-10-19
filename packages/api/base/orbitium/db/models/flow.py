@@ -11,8 +11,8 @@ Defining my flow database model:
 - updated_by
 - updated_at
 # this representation shall be translated to engine_representation
-# by using topological sort, and merging the edges and nodes into 
-# a more optimized data structure 
+# by using topological sort, and merging the edges and nodes into
+# a more optimized data structure
 """
 
 from typing import Any
