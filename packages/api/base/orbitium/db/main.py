@@ -1,6 +1,8 @@
-from sqlmodel import create_engine
+from sqlmodel import create_engine, SQLModel
 from orbitium.config import settings
 
+
+from orbitium.db.models.flow import Flow  # noqa: F401
 
 engine = create_engine(str(settings.SQLALCHEMY_DATABASE_URI))
 
@@ -11,5 +13,4 @@ def init_db() -> None:
     This only creates tables if they don't exist - it won't drop or modify existing tables.
     No superuser required - just needs permissions to create tables in the database.
     """
-    from sqlmodel import SQLModel
     SQLModel.metadata.create_all(engine)

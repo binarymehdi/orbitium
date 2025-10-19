@@ -2,15 +2,13 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from orbitium.config import settings
 from orbitium.api.main import router_v1
-from orbitium.database.main import init_db
+from orbitium.db.main import init_db
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup: Create database tables
     init_db()
     yield
-    # Shutdown: cleanup (if needed)
 
 
 app = FastAPI(
