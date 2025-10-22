@@ -1,4 +1,3 @@
-"use client";
 import {
   Navbar,
   NavBody,
@@ -19,7 +18,7 @@ export default function LandingNavigation() {
       link: "#features",
     },
     {
-      name: "Pricing",
+      name: "Solutions",
       link: "#pricing",
     },
     {
@@ -39,7 +38,9 @@ export default function LandingNavigation() {
           <NavItems items={navItems} />
           <div className="flex items-center gap-4">
             <NavbarButton variant="secondary">Login</NavbarButton>
-            <NavbarButton variant="primary">Get Started</NavbarButton>
+            <NavbarButton variant="primary">
+              Get Started
+            </NavbarButton>
           </div>
         </NavBody>
 

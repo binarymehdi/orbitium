@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as LayoutpublicIndexRouteImport } from './routes/_layout/(public)/index'
 import { Route as LayoutprivatePlaygroundRouteImport } from './routes/_layout/(private)/playground'
+import { Route as LayoutprivateInitializeFlowRouteImport } from./routes/_layout/(private)/initialize-flowflow'
 
 const LayoutRoute = LayoutRouteImport.update({
   id: '/_layout',
@@ -27,29 +28,39 @@ const LayoutprivatePlaygroundRoute = LayoutprivatePlaygroundRouteImport.update({
   path: '/playground',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutprivateInitializeFlowRoute =
+  LayoutprivateInitializeFlowRouteImport.update({
+    id: '/(private)/initialize-flow',
+    path: '/initialize-flow',
+    getParentRoute: () => LayoutRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
+  '/initialize-flow': typeof LayoutprivateInitializeFlowRoute
   '/playground': typeof LayoutprivatePlaygroundRoute
   '/': typeof LayoutpublicIndexRoute
 }
 export interface FileRoutesByTo {
+  '/initialize-flow': typeof LayoutprivateInitializeFlowRoute
   '/playground': typeof LayoutprivatePlaygroundRoute
   '/': typeof LayoutpublicIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_layout': typeof LayoutRouteWithChildren
+  '/_layout/(private)/initialize-flow': typeof LayoutprivateInitializeFlowRoute
   '/_layout/(private)/playground': typeof LayoutprivatePlaygroundRoute
   '/_layout/(public)/': typeof LayoutpublicIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/playground' | '/'
+  fullPaths: '/initialize-flow' | '/playground' | '/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/playground' | '/'
+  to: '/initialize-flow' | '/playground' | '/'
   id:
     | '__root__'
     | '/_layout'
+    | '/_layout/(private)/initialize-flow'
     | '/_layout/(private)/playground'
     | '/_layout/(public)/'
   fileRoutesById: FileRoutesById
@@ -81,15 +92,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutprivatePlaygroundRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/(private)/initialize-flow': {
+      id: '/_layout/(private)/initialize-flow'
+      path: '/initialize-flow'
+      fullPath: '/initialize-flow'
+      preLoaderRoute: typeof LayoutprivateInitializeFlowRouteImport
+      parentRoute: typeof LayoutRoute
+    }
   }
 }
 
 interface LayoutRouteChildren {
+  LayoutprivateInitializeFlowRoute: typeof LayoutprivateInitializeFlowRoute
   LayoutprivatePlaygroundRoute: typeof LayoutprivatePlaygroundRoute
   LayoutpublicIndexRoute: typeof LayoutpublicIndexRoute
 }
 
 const LayoutRouteChildren: LayoutRouteChildren = {
+  LayoutprivateInitializeFlowRoute: LayoutprivateInitializeFlowRoute,
   LayoutprivatePlaygroundRoute: LayoutprivatePlaygroundRoute,
   LayoutpublicIndexRoute: LayoutpublicIndexRoute,
 }
