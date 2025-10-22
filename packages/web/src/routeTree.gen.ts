@@ -10,59 +10,58 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as LayoutRouteImport } from './routes/_layout'
+import { Route as LayoutFlowsIndexRouteImport } from './routes/_layout/flows/index'
 import { Route as LayoutpublicIndexRouteImport } from './routes/_layout/(public)/index'
-import { Route as LayoutprivatePlaygroundRouteImport } from './routes/_layout/(private)/playground'
-import { Route as LayoutprivateInitializeFlowRouteImport } from./routes/_layout/(private)/initialize-flowflow'
+import { Route as LayoutFlowsPlaygroundRouteImport } from './routes/_layout/flows/playground'
 
 const LayoutRoute = LayoutRouteImport.update({
   id: '/_layout',
   getParentRoute: () => rootRouteImport,
+} as any)
+const LayoutFlowsIndexRoute = LayoutFlowsIndexRouteImport.update({
+  id: '/flows/',
+  path: '/flows/',
+  getParentRoute: () => LayoutRoute,
 } as any)
 const LayoutpublicIndexRoute = LayoutpublicIndexRouteImport.update({
   id: '/(public)/',
   path: '/',
   getParentRoute: () => LayoutRoute,
 } as any)
-const LayoutprivatePlaygroundRoute = LayoutprivatePlaygroundRouteImport.update({
-  id: '/(private)/playground',
-  path: '/playground',
+const LayoutFlowsPlaygroundRoute = LayoutFlowsPlaygroundRouteImport.update({
+  id: '/flows/playground',
+  path: '/flows/playground',
   getParentRoute: () => LayoutRoute,
 } as any)
-const LayoutprivateInitializeFlowRoute =
-  LayoutprivateInitializeFlowRouteImport.update({
-    id: '/(private)/initialize-flow',
-    path: '/initialize-flow',
-    getParentRoute: () => LayoutRoute,
-  } as any)
 
 export interface FileRoutesByFullPath {
-  '/initialize-flow': typeof LayoutprivateInitializeFlowRoute
-  '/playground': typeof LayoutprivatePlaygroundRoute
+  '/flows/playground': typeof LayoutFlowsPlaygroundRoute
   '/': typeof LayoutpublicIndexRoute
+  '/flows': typeof LayoutFlowsIndexRoute
 }
 export interface FileRoutesByTo {
-  '/initialize-flow': typeof LayoutprivateInitializeFlowRoute
-  '/playground': typeof LayoutprivatePlaygroundRoute
+  '/flows/playground': typeof LayoutFlowsPlaygroundRoute
   '/': typeof LayoutpublicIndexRoute
+  '/flows': typeof LayoutFlowsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_layout': typeof LayoutRouteWithChildren
-  '/_layout/(private)/initialize-flow': typeof LayoutprivateInitializeFlowRoute
-  '/_layout/(private)/playground': typeof LayoutprivatePlaygroundRoute
+  '/_layout/flows/playground': typeof LayoutFlowsPlaygroundRoute
   '/_layout/(public)/': typeof LayoutpublicIndexRoute
+  '/_layout/flows/': typeof LayoutFlowsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/initialize-flow' | '/playground' | '/'
+  fullPaths: '/flows/playground' | '/' | '/flows'
   fileRoutesByTo: FileRoutesByTo
-  to: '/initialize-flow' | '/playground' | '/'
+  to: '/flows/playground' | '/' | '/flows'
   id:
     | '__root__'
     | '/_layout'
-    | '/_layout/(private)/initialize-flow'
-    | '/_layout/(private)/playground'
+    | '/_layout/flows/playground'
     | '/_layout/(public)/'
+    | '/_layout/flows/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -78,6 +77,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_layout/flows/': {
+      id: '/_layout/flows/'
+      path: '/flows'
+      fullPath: '/flows'
+      preLoaderRoute: typeof LayoutFlowsIndexRouteImport
+      parentRoute: typeof LayoutRoute
+    }
     '/_layout/(public)/': {
       id: '/_layout/(public)/'
       path: '/'
@@ -85,33 +91,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutpublicIndexRouteImport
       parentRoute: typeof LayoutRoute
     }
-    '/_layout/(private)/playground': {
-      id: '/_layout/(private)/playground'
-      path: '/playground'
-      fullPath: '/playground'
-      preLoaderRoute: typeof LayoutprivatePlaygroundRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/(private)/initialize-flow': {
-      id: '/_layout/(private)/initialize-flow'
-      path: '/initialize-flow'
-      fullPath: '/initialize-flow'
-      preLoaderRoute: typeof LayoutprivateInitializeFlowRouteImport
+    '/_layout/flows/playground': {
+      id: '/_layout/flows/playground'
+      path: '/flows/playground'
+      fullPath: '/flows/playground'
+      preLoaderRoute: typeof LayoutFlowsPlaygroundRouteImport
       parentRoute: typeof LayoutRoute
     }
   }
 }
 
 interface LayoutRouteChildren {
-  LayoutprivateInitializeFlowRoute: typeof LayoutprivateInitializeFlowRoute
-  LayoutprivatePlaygroundRoute: typeof LayoutprivatePlaygroundRoute
+  LayoutFlowsPlaygroundRoute: typeof LayoutFlowsPlaygroundRoute
   LayoutpublicIndexRoute: typeof LayoutpublicIndexRoute
+  LayoutFlowsIndexRoute: typeof LayoutFlowsIndexRoute
 }
 
 const LayoutRouteChildren: LayoutRouteChildren = {
-  LayoutprivateInitializeFlowRoute: LayoutprivateInitializeFlowRoute,
-  LayoutprivatePlaygroundRoute: LayoutprivatePlaygroundRoute,
+  LayoutFlowsPlaygroundRoute: LayoutFlowsPlaygroundRoute,
   LayoutpublicIndexRoute: LayoutpublicIndexRoute,
+  LayoutFlowsIndexRoute: LayoutFlowsIndexRoute,
 }
 
 const LayoutRouteWithChildren =
