@@ -1,7 +1,18 @@
+import CreateNewFlow from "./new-flow"
 
 const FlowsPage = () => {
   return (
-    <div>Flows Page</div>
+    <div className="flex flex-col">
+      <div id="top-nav" className="border-b-1 border-gray-300 h-14"></div>
+      <div className="flex flex-row">
+        <div id="side-nav" className="border-r-1 h-screen w-1/6">
+        Projects
+        </div>
+        <div id="flows-view" className="relative w-full">
+          <CreateNewFlow />
+        </div>
+      </div>
+    </div>
   )
 }
 
