@@ -2,6 +2,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "@/shared/com
 import { DialogTitle } from "@radix-ui/react-dialog"
 import { Button } from "@/shared/components/ui/button"
 import { Plus, FileText, Sparkles } from "lucide-react"
+import { useNavigate } from "@tanstack/react-router"
 
 const handleCreateFlow = () => {
     // handle flow creation
@@ -31,10 +32,11 @@ const CreateFlowDialog = () => {
 }
 
 const CreateFlowDialogContent = () => {
+    const navigate = useNavigate(); 
     return (
         <div className="grid grid-cols-2 gap-4 mt-4">
             <button
-                onClick={() => console.log('Create blank flow')}
+                onClick={() => navigate({ to: `/flows/$id/playground`, params: {id: '700'} })}
                 className="group relative overflow-hidden rounded-lg border-2 border-gray-200 p-6 transition-all hover:border-blue-500 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
                 <div className="flex flex-col items-center space-y-4">

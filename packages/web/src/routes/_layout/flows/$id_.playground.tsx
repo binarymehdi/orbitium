@@ -3,7 +3,7 @@ import { Background } from "@/features/playground/components/bg";
 import { createFileRoute } from "@tanstack/react-router";
 import { ReactFlowProvider } from '@xyflow/react';
 
-export const Route = createFileRoute("/_layout/flows/playground")({
+export const Route = createFileRoute("/_layout/flows/$id_/playground")({
   component: RouteComponent,
 });
 

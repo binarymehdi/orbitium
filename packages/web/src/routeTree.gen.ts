@@ -12,7 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as LayoutFlowsIndexRouteImport } from './routes/_layout/flows/index'
 import { Route as LayoutpublicIndexRouteImport } from './routes/_layout/(public)/index'
-import { Route as LayoutFlowsPlaygroundRouteImport } from './routes/_layout/flows/playground'
+import { Route as LayoutFlowsIdPlaygroundRouteImport } from './routes/_layout/flows/$id_.playground'
 
 const LayoutRoute = LayoutRouteImport.update({
   id: '/_layout',
@@ -28,40 +28,40 @@ const LayoutpublicIndexRoute = LayoutpublicIndexRouteImport.update({
   path: '/',
   getParentRoute: () => LayoutRoute,
 } as any)
-const LayoutFlowsPlaygroundRoute = LayoutFlowsPlaygroundRouteImport.update({
-  id: '/flows/playground',
-  path: '/flows/playground',
+const LayoutFlowsIdPlaygroundRoute = LayoutFlowsIdPlaygroundRouteImport.update({
+  id: '/flows/$id_/playground',
+  path: '/flows/$id/playground',
   getParentRoute: () => LayoutRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/flows/playground': typeof LayoutFlowsPlaygroundRoute
   '/': typeof LayoutpublicIndexRoute
   '/flows': typeof LayoutFlowsIndexRoute
+  '/flows/$id/playground': typeof LayoutFlowsIdPlaygroundRoute
 }
 export interface FileRoutesByTo {
-  '/flows/playground': typeof LayoutFlowsPlaygroundRoute
   '/': typeof LayoutpublicIndexRoute
   '/flows': typeof LayoutFlowsIndexRoute
+  '/flows/$id/playground': typeof LayoutFlowsIdPlaygroundRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_layout': typeof LayoutRouteWithChildren
-  '/_layout/flows/playground': typeof LayoutFlowsPlaygroundRoute
   '/_layout/(public)/': typeof LayoutpublicIndexRoute
   '/_layout/flows/': typeof LayoutFlowsIndexRoute
+  '/_layout/flows/$id_/playground': typeof LayoutFlowsIdPlaygroundRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/flows/playground' | '/' | '/flows'
+  fullPaths: '/' | '/flows' | '/flows/$id/playground'
   fileRoutesByTo: FileRoutesByTo
-  to: '/flows/playground' | '/' | '/flows'
+  to: '/' | '/flows' | '/flows/$id/playground'
   id:
     | '__root__'
     | '/_layout'
-    | '/_layout/flows/playground'
     | '/_layout/(public)/'
     | '/_layout/flows/'
+    | '/_layout/flows/$id_/playground'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -91,26 +91,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutpublicIndexRouteImport
       parentRoute: typeof LayoutRoute
     }
-    '/_layout/flows/playground': {
-      id: '/_layout/flows/playground'
-      path: '/flows/playground'
-      fullPath: '/flows/playground'
-      preLoaderRoute: typeof LayoutFlowsPlaygroundRouteImport
+    '/_layout/flows/$id_/playground': {
+      id: '/_layout/flows/$id_/playground'
+      path: '/flows/$id/playground'
+      fullPath: '/flows/$id/playground'
+      preLoaderRoute: typeof LayoutFlowsIdPlaygroundRouteImport
       parentRoute: typeof LayoutRoute
     }
   }
 }
 
 interface LayoutRouteChildren {
-  LayoutFlowsPlaygroundRoute: typeof LayoutFlowsPlaygroundRoute
   LayoutpublicIndexRoute: typeof LayoutpublicIndexRoute
   LayoutFlowsIndexRoute: typeof LayoutFlowsIndexRoute
+  LayoutFlowsIdPlaygroundRoute: typeof LayoutFlowsIdPlaygroundRoute
 }
 
 const LayoutRouteChildren: LayoutRouteChildren = {
-  LayoutFlowsPlaygroundRoute: LayoutFlowsPlaygroundRoute,
   LayoutpublicIndexRoute: LayoutpublicIndexRoute,
   LayoutFlowsIndexRoute: LayoutFlowsIndexRoute,
+  LayoutFlowsIdPlaygroundRoute: LayoutFlowsIdPlaygroundRoute,
 }
 
 const LayoutRouteWithChildren =
