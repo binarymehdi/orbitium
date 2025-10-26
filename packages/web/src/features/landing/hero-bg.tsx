@@ -57,12 +57,13 @@ const HeroBg = ({ children }: HeroBgProps) => {
                 }}
             />
 
-            <div className="absolute inset-x-0 bottom-30 h-[60vh] z-10 opacity-25">
+            {/* Dark Blue Threads - responsive for mobile */}
+            <div className="absolute inset-x-0 bottom-40 sm:bottom-0 h-[30vh] sm:h-[50vh] md:h-[60vh] z-10 opacity-25 sm:opacity-30">
                 <Threads
                     color={[0.6, 0.75, 0.9]}
                     amplitude={1.2}
                     distance={0.15}
-                    enableMouseInteraction={true}
+                    enableMouseInteraction={false}
                 />
             </div>
 
