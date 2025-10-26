@@ -3,7 +3,7 @@ import {
   NavBody,
   NavItems,
   MobileNav,
-  NavbarLogo,
+  OrbitiumLogo,
   NavbarButton,
   MobileNavHeader,
   MobileNavToggle,
@@ -34,7 +34,7 @@ export default function LandingNavigation() {
       <Navbar>
         {/* Desktop Navigation */}
         <NavBody>
-          <NavbarLogo />
+          <OrbitiumLogo />
           <NavItems items={navItems} />
           <div className="flex items-center gap-4">
             <NavbarButton variant="secondary">Login</NavbarButton>
@@ -47,7 +47,7 @@ export default function LandingNavigation() {
         {/* Mobile Navigation */}
         <MobileNav>
           <MobileNavHeader>
-            <NavbarLogo />
+            <OrbitiumLogo />
             <MobileNavToggle
               isOpen={isMobileMenuOpen}
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}

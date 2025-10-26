@@ -225,7 +225,7 @@ export const MobileNavToggle = ({
   );
 };
 
-export const NavbarLogo = () => {
+export const OrbitiumLogo = () => {
   return (
     <a
       href="#"

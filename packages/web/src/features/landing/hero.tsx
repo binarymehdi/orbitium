@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, Sparkles } from "lucide-react";
-import HeroBg from "./hero-bg";
+import HeroBg from "./components/hero/hero-bg";
 
 const HeroSection = () => {
     return (
