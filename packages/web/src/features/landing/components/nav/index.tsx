@@ -4,7 +4,6 @@ import {
   NavItems,
   MobileNav,
   OrbitiumLogo,
-  NavbarButton,
   MobileNavHeader,
   MobileNavToggle,
   MobileNavMenu,
@@ -36,12 +35,6 @@ export default function LandingNavigation() {
         <NavBody>
           <OrbitiumLogo />
           <NavItems items={navItems} />
-          <div className="flex items-center gap-4">
-            <NavbarButton variant="secondary">Login</NavbarButton>
-            <NavbarButton variant="primary">
-              Get Started
-            </NavbarButton>
-          </div>
         </NavBody>
 
         {/* Mobile Navigation */}
@@ -68,28 +61,9 @@ export default function LandingNavigation() {
                 <span className="block">{item.name}</span>
               </a>
             ))}
-            <div className="flex w-full flex-col gap-4">
-              <NavbarButton
-                onClick={() => setIsMobileMenuOpen(false)}
-                variant="primary"
-                className="w-full"
-              >
-                Login
-              </NavbarButton>
-              <NavbarButton
-                onClick={() => setIsMobileMenuOpen(false)}
-                variant="primary"
-                className="w-full"
-              >
-                Book a call
-              </NavbarButton>
-            </div>
           </MobileNavMenu>
         </MobileNav>
       </Navbar>
-      {/* <DummyContent /> */}
-
-      {/* Navbar */}
     </div>
   );
 }
