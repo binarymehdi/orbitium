@@ -29,8 +29,8 @@ async def get_flow_by_id(id: UUID, session: SessionDep) -> Flow | None:
     return flow
 
 
-@router.post("/initialize-flow", response_model=FlowRead)
-async def initialize_flow(flow_data: FlowBase, session: SessionDep) -> Flow:
+@router.post("/create-flow", response_model=FlowRead)
+async def create_flow(flow_data: FlowBase, session: SessionDep) -> Flow:
     
     flow = Flow.model_validate(flow_data)
     session.add(flow)
