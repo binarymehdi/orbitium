@@ -1,3 +1,3 @@
-from .flow import Flow, FlowRead
+from .flow import Flow, FlowRead, FlowBase, FlowUpdate
 
-__all__ = ["Flow", "FlowRead"]
+__all__ = ["Flow", "FlowRead", "FlowBase", "FlowUpdate"]

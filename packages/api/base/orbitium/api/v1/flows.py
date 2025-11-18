@@ -3,7 +3,7 @@ from uuid import UUID
 from typing import List
 
 from orbitium.db.main import SessionDep
-from orbitium.db.models import Flow, FlowRead
+from orbitium.db.models import FlowBase, Flow, FlowRead, FlowUpdate
 
 from sqlmodel import select
 
@@ -29,27 +29,38 @@ async def get_flow_by_id(id: UUID, session: SessionDep) -> Flow | None:
     return flow
 
 
-@router.post("/create-flow")
-async def create_flow(session: SessionDep) -> None:
-    """
-    initializes an empty flow,
-    returns it's id to redirects
-    the user to start editing.
-    """
+@router.post("/initialize-flow", response_model=FlowRead)
+async def initialize_flow(flow_data: FlowBase, session: SessionDep) -> Flow:
     
-    return
+    flow = Flow.model_validate(flow_data)
+    session.add(flow)
+    session.commit()
+    session.refresh(flow)
+    
+    return flow
 
 
 
 
-@router.put("/{id}")
-async def edit_flow(id: UUID, session: SessionDep) -> None:
+@router.put("/{id}/edit", response_model=FlowRead)
+async def edit_flow(id: UUID, flowData: FlowUpdate, session: SessionDep) -> None:
     """
     for now, each time the user makes a change,
     this endpoint is triggered to reconsile the 
-    server state with the ui state.
+    server state with the ui state, should also take into consideration the node position
     """
+    
     pass
+
+
+
+# CORE PART OF CAPSTONE
+@router.get("/{id}/execute")
+async def execute_flow(id: UUID, session: SessionDep) -> None:
+     
+    pass
+
+
 
 
 @router.delete("/{id}")
