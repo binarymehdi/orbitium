@@ -43,14 +43,28 @@ async def create_flow(flow_data: FlowBase, session: SessionDep) -> Flow:
 
 
 @router.put("/{id}/edit", response_model=FlowRead)
-async def edit_flow(id: UUID, flowData: FlowUpdate, session: SessionDep) -> None:
+async def edit_flow(id: UUID, flowData: FlowUpdate, session: SessionDep) -> Flow:
     """
     for now, each time the user makes a change,
     this endpoint is triggered to reconsile the 
     server state with the ui state, should also take into consideration the node position
     """
+    statement = select(Flow).where(Flow.id == id)
+    flow = session.exec(statement).first()
     
-    pass
+    if not flow:
+        raise HTTPException(status_code=404, detail="Flow not found")
+    
+    # Update flow fields
+    flow_data = flowData.model_dump(exclude_unset=True)
+    for key, value in flow_data.items():
+        setattr(flow, key, value)
+    
+    session.add(flow)
+    session.commit()
+    session.refresh(flow)
+    
+    return flow
 
 
 

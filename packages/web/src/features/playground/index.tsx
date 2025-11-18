@@ -13,10 +13,9 @@ import { AddNodeEdge, getInitialViewPort } from './utils'
 import { useWorkflowStore } from '../../shared/store/workflow'
 import { useNodesDelete } from './hooks'
 import { InitialNode } from './components/nodes/initial-node'
-import { Button } from '@/shared/components/ui/button'
-import { Download } from 'lucide-react'
 import { useFlow } from '@/shared/integrations/tanstack-query/flows'
 import { useParams } from '@tanstack/react-router'
+import { PlaygroundNavigation } from './components/navigation'
 
 const nodeTypes = {
     start: StartNode,
@@ -68,14 +67,7 @@ export default function Playground() {
 
     const defaultViewport = getInitialViewPort(nodes);
 
-    const handleGetWorkflowState = () => {
-        const flowState = {
-            nodes,
-            edges,
-            ready: true
-        }
-        console.log(JSON.stringify(flowState, null, 2))
-    }
+    
 
     if (isLoading || nodes.length === 0) {
         return (
@@ -90,9 +82,7 @@ export default function Playground() {
             <div id="flow-description" className="sr-only">
                 Interactive workflow diagram with draggable nodes and connectable edges
             </div>
-            <div className='absolute top-5 left-5 z-50'>
-                <Button onClick={handleGetWorkflowState}>Get Current Workflow State<Download/></Button>
-            </div>
+            <PlaygroundNavigation flowId={id} />
             <ReactFlow
                 nodes={nodes}
                 edges={edgesWithHandlers}
