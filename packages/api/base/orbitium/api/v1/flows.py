@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from uuid import UUID
-from typing import List
+from typing import List, Dict
 
 from orbitium.db.main import SessionDep
 from orbitium.db.models import FlowBase, Flow, FlowRead, FlowUpdate
@@ -64,6 +64,15 @@ async def execute_flow(id: UUID, session: SessionDep) -> None:
 
 
 @router.delete("/{id}")
-async def delete_flow(id: UUID, session: SessionDep) -> None:
-    """delete flow, not important rn"""
-    pass
+async def delete_flow(id: UUID, session: SessionDep) -> Dict[str, str]:
+    """Delete a flow by ID"""
+    statement = select(Flow).where(Flow.id == id)
+    flow = session.exec(statement).first()
+    
+    if not flow:
+        raise HTTPException(status_code=404, detail="Flow not found")
+    
+    session.delete(flow)
+    session.commit()
+    
+    return {"message": "Flow deleted successfully"}

@@ -1,4 +1,4 @@
-import PlaygroundExample from "@/features/playground";
+import Playground from "@/features/playground";
 import { Background } from "@/features/playground/components/bg";
 import { createFileRoute } from "@tanstack/react-router";
 import { ReactFlowProvider } from '@xyflow/react';
@@ -12,7 +12,7 @@ function RouteComponent() {
     <Background>
       <div className="flex h-screen items-center justify-center">
         <ReactFlowProvider>
-          <PlaygroundExample/>
+          <Playground/>
         </ReactFlowProvider>
       </div>
     </Background>

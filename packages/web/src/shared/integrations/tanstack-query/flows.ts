@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { flowsAPI } from "@/shared/api/flows";
-import type { FlowBase, FlowUpdate } from "@/shared/types/flow";
+import type { FlowBase, FlowUpdate, FlowRead } from "@/shared/types/flow";
 
 export const flowKeys = {
   all: ["flows"] as const,
@@ -11,7 +11,7 @@ export const flowKeys = {
 };
 
 export function useFlows() {
-  return useQuery({
+  return useQuery<FlowRead[]>({
     queryKey: flowKeys.lists(),
     queryFn: () => flowsAPI.getFlows(),
   });

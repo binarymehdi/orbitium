@@ -1,4 +1,5 @@
 import { OrbitiumLogo } from "../landing/components/nav/components"
+import FlowsList from "./components/flows-list"
 import CreateNewFlow from "./new-flow"
 
 const FlowsPage = () => {
@@ -12,6 +13,7 @@ const FlowsPage = () => {
         <div id="flows-view" className="relative w-full">
           <CreateNewFlow />
           <h1>flows</h1>
+          <FlowsList />
         </div>
       </div>
     </div>
