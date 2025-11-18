@@ -8,6 +8,7 @@ import {
 } from "motion/react";
 
 import React, { useRef, useState } from "react";
+import { Link } from "@tanstack/react-router";
 
 
 interface NavbarProps {
@@ -227,8 +228,8 @@ export const MobileNavToggle = ({
 
 export const OrbitiumLogo = () => {
   return (
-    <a
-      href="#"
+    <Link
+      to="/"
       className="relative z-20 mr-2 sm:mr-4 flex items-center space-x-2 px-2 py-1 text-xl font-normal text-black"
     >
       <img
@@ -239,7 +240,7 @@ export const OrbitiumLogo = () => {
         className="w-6 h-6 sm:w-[30px] sm:h-[30px]"
       />
       <span className="font-medium text-black dark:text-white text-lg sm:text-2xl">Orbitium</span>
-    </a>
+    </Link>
   );
 };
 

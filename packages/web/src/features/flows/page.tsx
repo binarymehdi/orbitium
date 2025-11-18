@@ -4,18 +4,30 @@ import CreateNewFlow from "./new-flow"
 
 const FlowsPage = () => {
   return (
-    <div className="flex flex-col">
-      <div id="top-nav" className="border-b-1 border-gray-300 h-14"><OrbitiumLogo/></div>
-      <div className="flex flex-row">
-        <div id="side-nav" className="border-r-1 h-screen w-1/6">
-        Projects
+    <div className="flex flex-col min-h-screen bg-gray-50">
+      {/* Top Navigation */}
+      <header className="sticky top-0 z-10 bg-white border-b border-gray-200">
+        <div className="flex items-center justify-between h-16 px-6">
+          <OrbitiumLogo />
         </div>
-        <div id="flows-view" className="relative w-full">
-          <CreateNewFlow />
-          <h1>flows</h1>
+      </header>
+
+      {/* Main Content */}
+      <main className="flex-1">
+        <div className="max-w-7xl mx-auto px-6 py-8">
+          {/* Page Header */}
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Your Flows</h1>
+              <p className="mt-2 text-gray-600">Create and manage your workflow automations</p>
+            </div>
+            <CreateNewFlow />
+          </div>
+
+          {/* Flows List */}
           <FlowsList />
         </div>
-      </div>
+      </main>
     </div>
   )
 }

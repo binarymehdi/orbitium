@@ -15,8 +15,8 @@ const CreateFlowDialog = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="absolute top-0 right-0 m-2">
-          <Plus />
+        <Button size="lg" className="gap-2">
+          <Plus className="h-5 w-5" />
           New Flow
         </Button>
       </DialogTrigger>

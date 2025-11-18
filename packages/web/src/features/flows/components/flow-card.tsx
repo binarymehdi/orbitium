@@ -11,7 +11,7 @@ export const FlowCard = ({ flow, onClick, onDelete }: FlowCardProps) => {
   return (
     <button
       onClick={onClick}
-      className="group relative overflow-hidden rounded-lg border-2 border-gray-200 p-6 transition-all hover:border-sky-900 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-left"
+      className="group bg-white relative overflow-hidden rounded-2xl border-2 border-gray-200 p-6 transition-all hover:border-sky-900 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-left"
     >
       <div className="flex flex-col space-y-3">
         <div className="flex items-center justify-between">
