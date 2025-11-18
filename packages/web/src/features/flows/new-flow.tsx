@@ -15,7 +15,7 @@ const CreateFlowDialog = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button size="lg" className="gap-2">
+        <Button size="lg" className="gap-2 bg-sky-950 hover:bg-sky-900">
           <Plus className="h-5 w-5" />
           New Flow
         </Button>
