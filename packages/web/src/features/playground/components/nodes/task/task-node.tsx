@@ -16,7 +16,7 @@ type NodeData = {
 
 const TaskNode = ({ data, id }: { data: NodeData; id: string }) => {
   return (
-    <div className="relative h-40 w-86 rounded-2xl border border-gray-200/50 bg-gradient-to-br from-white/90 via-white/80 to-gray-50/70 px-4 py-3 shadow-lg shadow-black/5 backdrop-blur-md">
+    <div className="relative h-40 w-86 rounded-2xl border border-gray-300/50 bg-gradient-to-br from-white/90 via-white/80 to-gray-50/70 px-4 py-3 backdrop-blur-md">
       <div className="absolute top-2 right-2">
         <NodeSpecsDrawer nodeId={id} />
       </div>
