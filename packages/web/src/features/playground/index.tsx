@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 import {
     ReactFlow,
     MiniMap,
@@ -15,6 +15,8 @@ import { useNodesDelete } from './hooks'
 import { InitialNode } from './components/nodes/initial-node'
 import { Button } from '@/shared/components/ui/button'
 import { Download } from 'lucide-react'
+import { useFlow } from '@/shared/integrations/tanstack-query/flows'
+import { useParams } from '@tanstack/react-router'
 
 const nodeTypes = {
     start: StartNode,
@@ -30,16 +32,26 @@ const edgeTypes = {
 const proOptions = { hideAttribution: true };
 
 export default function Playground() {
+    const { id } = useParams({ from: '/_layout/flows/$id_/playground' })
+    const { data: flow, isLoading } = useFlow(id)
+    
     const {
         nodes,
         edges,
         addNodeOnEdge,
         onNodesChange,
         onEdgesChange,
-        onConnect
+        onConnect,
+        loadFlow
     } = useWorkflowStore()
     
     const { onNodesDelete } = useNodesDelete()
+
+    useEffect(() => {
+        if (flow?.data?.nodes && flow?.data?.edges) {
+            loadFlow(flow.data.nodes, flow.data.edges)
+        }
+    }, [flow?.data?.nodes, flow?.data?.edges, loadFlow])
 
     const edgesWithHandlers = edges.map(edge => ({
         ...edge,
@@ -63,6 +75,14 @@ export default function Playground() {
             ready: true
         }
         console.log(JSON.stringify(flowState, null, 2))
+    }
+
+    if (isLoading || nodes.length === 0) {
+        return (
+            <div style={{ width: '100vw', height: '100vh' }} className="flex items-center justify-center">
+                <p>Loading flow...</p>
+            </div>
+        )
     }
 
     return (
