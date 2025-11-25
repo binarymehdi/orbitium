@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 
 import * as TanStackQueryProvider from "./shared/integrations/tanstack-query/root-provider.tsx";
+import { Toaster } from "./shared/components/ui/sonner.tsx";
 
 import { routeTree } from "./routeTree.gen";
 
@@ -32,6 +33,7 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <TanStackQueryProvider.Provider {...TanStackQueryProviderContext}>
       <RouterProvider router={router} />
+      <Toaster />
     </TanStackQueryProvider.Provider>
   </StrictMode>,
 );

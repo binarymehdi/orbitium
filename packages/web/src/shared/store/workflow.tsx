@@ -7,7 +7,6 @@ import {
     type Edge,
 } from '@xyflow/react'
 import { createNewTaskNode, getInitialNodeCounter, getLayoutedElements } from '../../features/playground/utils'
-import { initialNodes, initialEdges } from '../mock-data/initial-workflow-state'
 import { getNewCodeLanguageTemplate } from '@/features/code-editor/utils'
 
 interface WorkflowState {
@@ -15,6 +14,7 @@ interface WorkflowState {
     edges: Edge[]
     nodeCounter: number
 
+    loadFlow: (nodes: Node[], edges: Edge[]) => void
     setNodes: (nodes: Node[]) => void
     setEdges: (edges: Edge[]) => void
     getNodeById: (id: string) => Node | undefined
@@ -26,13 +26,8 @@ interface WorkflowState {
     onEdgesChange: (changes: any) => void
     onConnect: (connection: any) => void
     relayoutNodes: (newNodes: Node[], newEdges: Edge[]) => void
-    initializeFlow: () => void
+    reset: () => void
 }
-
-const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
-    initialNodes,
-    initialEdges,
-)
 
 type NodeMetaData = {
     title: string,
@@ -40,9 +35,18 @@ type NodeMetaData = {
 }
 
 export const useWorkflowStore = create<WorkflowState>((set, get) => ({
-    nodes: layoutedNodes,
-    edges: layoutedEdges,
-    nodeCounter: getInitialNodeCounter(initialNodes),
+    nodes: [],
+    edges: [],
+    nodeCounter: 0,
+
+    loadFlow: (nodes: Node[], edges: Edge[]) => {
+        const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(nodes, edges)
+        set({
+            nodes: layoutedNodes,
+            edges: layoutedEdges,
+            nodeCounter: getInitialNodeCounter(nodes)
+        })
+    },
 
     setNodes: (nodes) => set({ nodes }),
 
@@ -191,15 +195,11 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
         set({ edges: updatedEdges })
     },
 
-    initializeFlow: () => {
-        const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
-            initialNodes,
-            initialEdges,
-        )
+    reset: () => {
         set({
-            nodes: layoutedNodes,
-            edges: layoutedEdges,
-            nodeCounter: getInitialNodeCounter(initialNodes)
+            nodes: [],
+            edges: [],
+            nodeCounter: 0
         })
     }
 }))
