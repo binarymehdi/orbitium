@@ -153,13 +153,13 @@ const wf2edges: Edge[] = [
 
 ];
 const workflowII = { 
-  id: 1, 
-  name: "Workflow Example I",
-  description: "Illustrating example usecase for Orbitium, the workflow management system",
+  id: 2, 
+  name: "Empty Workflow",
+  description: "Start from scratch with a blank workflow",
   initialNodes: wf2nodes, 
   initialEdges: wf2edges
 }
 
 
-const workflows = [workflowI, workflowII]
+export const workflows = [workflowI, workflowII]
 export const { initialNodes, initialEdges } = workflows[0]

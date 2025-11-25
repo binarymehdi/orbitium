@@ -10,48 +10,58 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as LayoutRouteImport } from './routes/_layout'
+import { Route as LayoutFlowsIndexRouteImport } from './routes/_layout/flows/index'
 import { Route as LayoutpublicIndexRouteImport } from './routes/_layout/(public)/index'
-import { Route as LayoutprivatePlaygroundRouteImport } from './routes/_layout/(private)/playground'
+import { Route as LayoutFlowsIdPlaygroundRouteImport } from './routes/_layout/flows/$id_.playground'
 
 const LayoutRoute = LayoutRouteImport.update({
   id: '/_layout',
   getParentRoute: () => rootRouteImport,
+} as any)
+const LayoutFlowsIndexRoute = LayoutFlowsIndexRouteImport.update({
+  id: '/flows/',
+  path: '/flows/',
+  getParentRoute: () => LayoutRoute,
 } as any)
 const LayoutpublicIndexRoute = LayoutpublicIndexRouteImport.update({
   id: '/(public)/',
   path: '/',
   getParentRoute: () => LayoutRoute,
 } as any)
-const LayoutprivatePlaygroundRoute = LayoutprivatePlaygroundRouteImport.update({
-  id: '/(private)/playground',
-  path: '/playground',
+const LayoutFlowsIdPlaygroundRoute = LayoutFlowsIdPlaygroundRouteImport.update({
+  id: '/flows/$id_/playground',
+  path: '/flows/$id/playground',
   getParentRoute: () => LayoutRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/playground': typeof LayoutprivatePlaygroundRoute
   '/': typeof LayoutpublicIndexRoute
+  '/flows': typeof LayoutFlowsIndexRoute
+  '/flows/$id/playground': typeof LayoutFlowsIdPlaygroundRoute
 }
 export interface FileRoutesByTo {
-  '/playground': typeof LayoutprivatePlaygroundRoute
   '/': typeof LayoutpublicIndexRoute
+  '/flows': typeof LayoutFlowsIndexRoute
+  '/flows/$id/playground': typeof LayoutFlowsIdPlaygroundRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_layout': typeof LayoutRouteWithChildren
-  '/_layout/(private)/playground': typeof LayoutprivatePlaygroundRoute
   '/_layout/(public)/': typeof LayoutpublicIndexRoute
+  '/_layout/flows/': typeof LayoutFlowsIndexRoute
+  '/_layout/flows/$id_/playground': typeof LayoutFlowsIdPlaygroundRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/playground' | '/'
+  fullPaths: '/' | '/flows' | '/flows/$id/playground'
   fileRoutesByTo: FileRoutesByTo
-  to: '/playground' | '/'
+  to: '/' | '/flows' | '/flows/$id/playground'
   id:
     | '__root__'
     | '/_layout'
-    | '/_layout/(private)/playground'
     | '/_layout/(public)/'
+    | '/_layout/flows/'
+    | '/_layout/flows/$id_/playground'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -67,6 +77,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_layout/flows/': {
+      id: '/_layout/flows/'
+      path: '/flows'
+      fullPath: '/flows'
+      preLoaderRoute: typeof LayoutFlowsIndexRouteImport
+      parentRoute: typeof LayoutRoute
+    }
     '/_layout/(public)/': {
       id: '/_layout/(public)/'
       path: '/'
@@ -74,24 +91,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutpublicIndexRouteImport
       parentRoute: typeof LayoutRoute
     }
-    '/_layout/(private)/playground': {
-      id: '/_layout/(private)/playground'
-      path: '/playground'
-      fullPath: '/playground'
-      preLoaderRoute: typeof LayoutprivatePlaygroundRouteImport
+    '/_layout/flows/$id_/playground': {
+      id: '/_layout/flows/$id_/playground'
+      path: '/flows/$id/playground'
+      fullPath: '/flows/$id/playground'
+      preLoaderRoute: typeof LayoutFlowsIdPlaygroundRouteImport
       parentRoute: typeof LayoutRoute
     }
   }
 }
 
 interface LayoutRouteChildren {
-  LayoutprivatePlaygroundRoute: typeof LayoutprivatePlaygroundRoute
   LayoutpublicIndexRoute: typeof LayoutpublicIndexRoute
+  LayoutFlowsIndexRoute: typeof LayoutFlowsIndexRoute
+  LayoutFlowsIdPlaygroundRoute: typeof LayoutFlowsIdPlaygroundRoute
 }
 
 const LayoutRouteChildren: LayoutRouteChildren = {
-  LayoutprivatePlaygroundRoute: LayoutprivatePlaygroundRoute,
   LayoutpublicIndexRoute: LayoutpublicIndexRoute,
+  LayoutFlowsIndexRoute: LayoutFlowsIndexRoute,
+  LayoutFlowsIdPlaygroundRoute: LayoutFlowsIdPlaygroundRoute,
 }
 
 const LayoutRouteWithChildren =
