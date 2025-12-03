@@ -6,6 +6,7 @@
 \usepackage{mathptmx} % Times New Roman font
 \usepackage{graphicx}
 \usepackage{setspace}
+\usepackage{indentfirst} % Indent first paragraph after headings
 \usepackage{titlesec}
 \usepackage{tocloft}
 \usepackage{hyperref}
@@ -16,13 +17,20 @@
 \newcommand{\thirteenpt}{\fontsize{13}{15.6}\selectfont}
 \newcommand{\twelvept}{\fontsize{12}{14.4}\selectfont}
 
-% Section formatting
+% Section formatting with Roman numerals
+\renewcommand{\thesection}{\Roman{section}}
+\renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
+\renewcommand{\thesubsubsection}{\thesubsection.\arabic{subsubsection}}
+
 \titleformat{\section}
   {\normalfont\fourteenpt\bfseries}{\thesection}{1em}{}
 \titleformat{\subsection}
   {\normalfont\thirteenpt\bfseries}{\thesubsection}{1em}{}
 \titleformat{\subsubsection}
   {\normalfont\twelvept\bfseries}{\thesubsubsection}{1em}{}
+
+% Make each section start on a new page automatically
+\newcommand{\sectionbreak}{\clearpage}
 
 % Line spacing
 \onehalfspacing
@@ -134,7 +142,7 @@ Dr. Naeem Nisar Sheikh
 \section*{ACKNOWLEDGEMENTS}
 \addcontentsline{toc}{section}{ACKNOWLEDGEMENTS}
 
-\hspace{\parindent}I would like to express my sincere gratitude to Dr. Naeem Nisar Sheikh for his guidance, support, and mentorship throughout this capstone project. His expertise and insights have been instrumental in shaping the direction of this work. I am also grateful to Al Akhawayn University for providing guidance. Special thanks to my family and friends for their support and encouragement throughout this journey. Finally, I acknowledge the open-source community whose tools and frameworks, including FastAPI, React Flow, and PostgreSQL, made this project possible.
+I would like to express my sincere gratitude to Dr. Naeem Nisar Sheikh for his guidance, support, and mentorship throughout this capstone project. His expertise and insights have been instrumental in shaping the direction of this work. I am also grateful to Al Akhawayn University for providing guidance. Special thanks to my family and friends for their support and encouragement throughout this journey. Finally, I acknowledge the open-source community whose tools and frameworks, including FastAPI, React Flow, and PostgreSQL, made this project possible.
 
 % Table of Contents
 \newpage
@@ -155,7 +163,7 @@ Dr. Naeem Nisar Sheikh
 \section*{ABSTRACT (ENGLISH)}
 \addcontentsline{toc}{section}{ABSTRACT}
 
-\hspace{\parindent}This report presents Orbitium, a containerized workflow orchestration platform designed for polyglot scientific computing processes. The platform addresses the growing complexity of scientific workflows that require seamless integration of multiple programming languages and computational tools. We have implemented a complete solution featuring an intuitive visual interface for designing and managing computational workflows where each task can be implemented in different programming languages including Python, JavaScript, Go, and Ruby. The system architecture comprises a React-based frontend utilizing React Flow for visual workflow composition, a FastAPI backend for workflow management and execution orchestration, PostgreSQL for persistent storage, and a custom execution engine that leverages Docker containers for isolated, reproducible task execution. Workflows are represented as directed acyclic graphs (DAGs) with lazy evaluation semantics, enabling efficient computation through deferred execution. The execution engine implements topological sorting for dependency resolution, inter-task data passing through volume mounts, and comprehensive error handling. This report documents the complete system architecture, implementation details, and validation results demonstrating successful polyglot workflow execution.
+This report presents Orbitium, a containerized workflow orchestration platform designed for polyglot scientific computing processes. The platform addresses the growing complexity of scientific workflows that require seamless integration of multiple programming languages and computational tools. We have implemented a complete solution featuring an intuitive visual interface for designing and managing computational workflows where each task can be implemented in different programming languages including Python, JavaScript, Go, and Ruby. The system architecture comprises a React-based frontend utilizing React Flow for visual workflow composition, a FastAPI backend for workflow management and execution orchestration, PostgreSQL for persistent storage, and a custom execution engine that leverages Docker containers for isolated, reproducible task execution. Workflows are represented as directed acyclic graphs (DAGs) with lazy evaluation semantics, enabling efficient computation through deferred execution. The execution engine implements topological sorting for dependency resolution, inter-task data passing through volume mounts, and comprehensive error handling. This report documents the complete system architecture, implementation details, and validation results demonstrating successful polyglot workflow execution.
 
 \vspace{1cm}
 
@@ -166,7 +174,7 @@ Dr. Naeem Nisar Sheikh
 
 \section*{RESUME (FRENCH)}
 
-\hspace{\parindent}Ce rapport présente Orbitium, une plateforme d'orchestration de flux de travail conteneurisée conçue pour les processus de calcul scientifique polyglotte. La plateforme répond à la complexité croissante des flux de travail scientifiques nécessitant l'intégration de multiples langages de programmation et outils computationnels. Nous avons implémenté une solution complète comprenant une interface visuelle intuitive pour la conception et la gestion de flux de travail où chaque tâche peut être implémentée dans différents langages de programmation incluant Python, JavaScript, Go et Ruby. L'architecture du système comprend une interface frontend basée sur React utilisant React Flow pour la composition visuelle, un backend FastAPI pour la gestion et l'orchestration de l'exécution, PostgreSQL pour le stockage persistant, et un moteur d'exécution personnalisé utilisant des conteneurs Docker pour une exécution isolée et reproductible. Les flux de travail sont représentés sous forme de graphes acycliques dirigés (DAGs) avec une sémantique d'évaluation paresseuse. Ce rapport documente l'architecture complète du système, les détails d'implémentation et les résultats de validation.
+Ce rapport présente Orbitium, une plateforme d'orchestration de flux de travail conteneurisée conçue pour les processus de calcul scientifique polyglotte. La plateforme répond à la complexité croissante des flux de travail scientifiques nécessitant l'intégration de multiples langages de programmation et outils computationnels. Nous avons implémenté une solution complète comprenant une interface visuelle intuitive pour la conception et la gestion de flux de travail où chaque tâche peut être implémentée dans différents langages de programmation incluant Python, JavaScript, Go et Ruby. L'architecture du système comprend une interface frontend basée sur React utilisant React Flow pour la composition visuelle, un backend FastAPI pour la gestion et l'orchestration de l'exécution, PostgreSQL pour le stockage persistant, et un moteur d'exécution personnalisé utilisant des conteneurs Docker pour une exécution isolée et reproductible. Les flux de travail sont représentés sous forme de graphes acycliques dirigés (DAGs) avec une sémantique d'évaluation paresseuse. Ce rapport documente l'architecture complète du système, les détails d'implémentation et les résultats de validation.
 
 \vspace{1cm}
 
@@ -177,11 +185,11 @@ Dr. Naeem Nisar Sheikh
 \newpage
 \section{INTRODUCTION}
 
-\hspace{\parindent}Scientific computing has become increasingly complex, requiring researchers to integrate multiple programming languages, frameworks, and computational tools to accomplish their objectives \cite{cohen2020scientific}. Modern scientific workflows often involve data ingestion, preprocessing, analysis, modeling, and visualization stages, each potentially requiring different technological stacks and execution environments \cite{deelman2015future}. This heterogeneity creates significant challenges for researchers who must manage dependencies, ensure reproducibility, and orchestrate execution across diverse computational resources.
+Scientific computing has become increasingly complex, requiring researchers to integrate multiple programming languages, frameworks, and computational tools to accomplish their objectives \cite{cohen2020scientific}. Modern scientific workflows often involve data ingestion, preprocessing, analysis, modeling, and visualization stages, each potentially requiring different technological stacks and execution environments \cite{deelman2015future}. This heterogeneity creates significant challenges for researchers who must manage dependencies, ensure reproducibility, and orchestrate execution across diverse computational resources.
 
-\hspace{\parindent}Traditional workflow management systems often impose constraints on programming language choice or require extensive configuration and technical expertise. Researchers face the burden of containerizing individual components, managing inter-process communication, handling data flow between tasks, and ensuring proper execution sequencing. These technical obstacles divert valuable time and cognitive resources away from core scientific inquiry.
+Traditional workflow management systems often impose constraints on programming language choice or require extensive configuration and technical expertise. Researchers face the burden of containerizing individual components, managing inter-process communication, handling data flow between tasks, and ensuring proper execution sequencing. These technical obstacles divert valuable time and cognitive resources away from core scientific inquiry.
 
-\hspace{\parindent}Orbitium addresses these challenges by providing a unified platform for visual workflow composition and orchestration that embraces polyglot programming paradigms. The system allows scientists to design computational workflows using an intuitive drag-and-drop interface where each node represents a discrete computational task that can be implemented in the programming language most appropriate for that specific operation. Table \ref{tab:languages} lists the currently supported programming languages.
+Orbitium addresses these challenges by providing a unified platform for visual workflow composition and orchestration that embraces polyglot programming paradigms. The system allows scientists to design computational workflows using an intuitive drag-and-drop interface where each node represents a discrete computational task that can be implemented in the programming language most appropriate for that specific operation. Table \ref{tab:languages} lists the currently supported programming languages.
 
 \begin{table}[h]
 \centering
@@ -199,31 +207,31 @@ Ruby & 3.3 & Text processing, scripting, automation \\
 \end{tabular}
 \end{table}
 
-\hspace{\parindent}By abstracting the complexity of containerization, dependency management, and execution orchestration, Orbitium enables researchers to focus on the scientific logic of their workflows rather than infrastructure concerns.
+By abstracting the complexity of containerization, dependency management, and execution orchestration, Orbitium enables researchers to focus on the scientific logic of their workflows rather than infrastructure concerns.
 
-\hspace{\parindent}This capstone project presents the design and implementation of Orbitium, demonstrating how modern web technologies can be combined to create an accessible platform for scientific workflow management. The system uses React Flow for visual workflow design, FastAPI for backend services, PostgreSQL for data storage, and Docker for containerized execution.
+This capstone project presents the design and implementation of Orbitium, demonstrating how modern web technologies can be combined to create an accessible platform for scientific workflow management. The system uses React Flow for visual workflow design, FastAPI for backend services, PostgreSQL for data storage, and Docker for containerized execution.
 
-\hspace{\parindent}The remainder of this report is structured as follows: Section 2 articulates the problem statement, Section 3 details project specifications, Section 4 reviews related literature, Section 5 analyzes sociotechnical considerations through STEEPLE analysis, Section 6 describes the methodology and system design including the complete architecture, Section 7 presents results and validation from the implemented system, Section 8 reflects on learning strategies employed, Section 9 provides conclusions and future work, and the Appendix contains engineering standards documentation.
+The remainder of this report is structured as follows: Section II articulates the problem statement, Section III details project specifications, Section IV reviews related literature, Section V analyzes sociotechnical considerations through STEEPLE analysis, Section VI presents engineering standards, Section VII describes the methodology and system design including the complete architecture, Section VIII presents results and validation, Section IX provides conclusions and future work, and Section X reflects on learning strategies employed.
 
 \newpage
 \section{PROBLEM STATEMENT}
 
-\hspace{\parindent}Scientific research increasingly demands computational workflows that integrate multiple programming languages and tools, yet existing workflow management systems present significant barriers to adoption and effective use. Researchers face three interconnected problems that impede their computational work.
+Scientific research increasingly demands computational workflows that integrate multiple programming languages and tools, yet existing workflow management systems present significant barriers to adoption and effective use. Researchers face three interconnected problems that impede their computational work.
 
-\hspace{\parindent}First, \textbf{technological fragmentation} forces scientists to work with disparate tools that don't interoperate seamlessly. A typical data science workflow might require Python for statistical analysis, R for specialized visualization, Julia for high-performance numerical computing, and shell scripts for data preprocessing. Existing systems either lock researchers into a single programming ecosystem or require extensive manual configuration to bridge between languages \cite{perkel2019workflow}. This fragmentation increases cognitive load and reduces productivity as researchers must context-switch between different development environments, dependency managers, and execution paradigms.
+First, \textbf{technological fragmentation} forces scientists to work with disparate tools that don't interoperate seamlessly. A typical data science workflow might require Python for statistical analysis, R for specialized visualization, Julia for high-performance numerical computing, and shell scripts for data preprocessing. Existing systems either lock researchers into a single programming ecosystem or require extensive manual configuration to bridge between languages \cite{perkel2019workflow}. This fragmentation increases cognitive load and reduces productivity as researchers must context-switch between different development environments, dependency managers, and execution paradigms.
 
-\hspace{\parindent}Second, \textbf{reproducibility challenges} plague scientific computing. Research must be reproducible to be credible, yet computational workflows often fail to reproduce due to dependency conflicts, environment inconsistencies, and insufficient documentation of execution contexts \cite{stodden2016enhancing}. While containerization technologies like Docker provide solutions, they require specialized knowledge that many researchers lack. The gap between container expertise and domain expertise creates a reproducibility crisis where valuable scientific findings cannot be reliably validated or extended.
+Second, \textbf{reproducibility challenges} plague scientific computing. Research must be reproducible to be credible, yet computational workflows often fail to reproduce due to dependency conflicts, environment inconsistencies, and insufficient documentation of execution contexts \cite{stodden2016enhancing}. While containerization technologies like Docker provide solutions, they require specialized knowledge that many researchers lack. The gap between container expertise and domain expertise creates a reproducibility crisis where valuable scientific findings cannot be reliably validated or extended.
 
-\hspace{\parindent}Third, \textbf{complexity of orchestration} presents a significant technical barrier. Coordinating task execution order and managing data flow between computational steps requires technical expertise that many researchers lack. This complexity diverts time and effort away from scientific work.
+Third, \textbf{complexity of orchestration} presents a significant technical barrier. Coordinating task execution order and managing data flow between computational steps requires technical expertise that many researchers lack. This complexity diverts time and effort away from scientific work.
 
-\hspace{\parindent}These problems compound when researchers attempt to collaborate or share their computational methods. Workflows developed by one researcher often fail to execute in another's environment. The lack of standardized, accessible platforms for polyglot workflow orchestration limits scientific productivity, impedes reproducibility, and creates barriers to open science practices. 
+These problems compound when researchers attempt to collaborate or share their computational methods. Workflows developed by one researcher often fail to execute in another's environment. The lack of standardized, accessible platforms for polyglot workflow orchestration limits scientific productivity, impedes reproducibility, and creates barriers to open science practices. 
 
-\hspace{\parindent}Orbitium addresses these problems by providing an integrated platform that abstracts infrastructure complexity while preserving flexibility in language choice, ensures reproducibility through containerization, and manages orchestration automatically through visual workflow composition.
+Orbitium addresses these problems by providing an integrated platform that abstracts infrastructure complexity while preserving flexibility in language choice, ensures reproducibility through containerization, and manages orchestration automatically through visual workflow composition.
 
 \newpage
 \section{PROJECT SPECIFICATIONS}
 
-\hspace{\parindent}Orbitium is designed as a web-based workflow orchestration platform with the following technical and functional specifications. Table \ref{tab:tech_stack} summarizes the complete technology stack.
+Orbitium is designed as a web-based workflow orchestration platform with the following technical and functional specifications. Table \ref{tab:tech_stack} summarizes the complete technology stack.
 
 \begin{table}[h]
 \centering
@@ -268,15 +276,15 @@ Orchestration & Docker Compose & Latest \\
 
 \textbf{Core Functionality:}
 
-\hspace{\parindent}The platform provides a visual workflow design interface enabling drag-and-drop composition of computational pipelines with support for polyglot programming across Python, JavaScript, Go, and Ruby. Workflows are represented as Directed Acyclic Graphs (DAGs) ensuring proper task dependencies, with real-time validation preventing cyclic dependencies and ensuring execution feasibility. An integrated code editor powered by Monaco Editor offers syntax highlighting and language-specific features for each computational node. The system enables comprehensive workflow persistence through save, load, and modification capabilities, while execution orchestration ensures proper task sequencing based on dependency resolution.
+The platform provides a visual workflow design interface enabling drag-and-drop composition of computational pipelines with support for polyglot programming across Python, JavaScript, Go, and Ruby. Workflows are represented as Directed Acyclic Graphs (DAGs) ensuring proper task dependencies, with real-time validation preventing cyclic dependencies and ensuring execution feasibility. An integrated code editor powered by Monaco Editor offers syntax highlighting and language-specific features for each computational node. The system enables comprehensive workflow persistence through save, load, and modification capabilities, while execution orchestration ensures proper task sequencing based on dependency resolution.
 
 \textbf{System Architecture:}
 
-\hspace{\parindent}The system architecture comprises three primary layers. The frontend layer utilizes React 19.1 with TypeScript for type-safe development, React Flow (XyFlow) version 12.8 for node-based workflow composition, Zustand for efficient client-side state management, and TanStack Router for type-safe navigation with file-based routing. The backend layer is built on FastAPI 0.118+ providing RESTful endpoints for workflow CRUD operations. The data layer uses PostgreSQL 17 with SQLModel for type-safe ORM operations, while Docker provides isolated execution environments. Development tooling includes Vite for fast development builds and UV for Python dependency management.
+The system architecture comprises three primary layers. The frontend layer utilizes React 19.1 with TypeScript for type-safe development, React Flow (XyFlow) version 12.8 for node-based workflow composition, Zustand for efficient client-side state management, and TanStack Router for type-safe navigation with file-based routing. The backend layer is built on FastAPI 0.118+ providing RESTful endpoints for workflow CRUD operations. The data layer uses PostgreSQL 17 with SQLModel for type-safe ORM operations, while Docker provides isolated execution environments. Development tooling includes Vite for fast development builds and UV for Python dependency management.
 
 \textbf{Data Models:}
 
-\hspace{\parindent}The system implements a Flow model with a comprehensive schema that includes a unique identifier (UUID) for each workflow, user-defined name and description metadata for workflow documentation, and JSON-serialized workflow data containing nodes and edges arrays. The node data structure encompasses id, type, position coordinates, and task-specific data including title, description, and executable specification. Edge data structure contains id, source node, target node, and edge type. A ready flag indicates workflow validation status.
+The system implements a Flow model with a comprehensive schema that includes a unique identifier (UUID) for each workflow, user-defined name and description metadata for workflow documentation, and JSON-serialized workflow data containing nodes and edges arrays. The node data structure encompasses id, type, position coordinates, and task-specific data including title, description, and executable specification. Edge data structure contains id, source node, target node, and edge type. A ready flag indicates workflow validation status.
 
 \textbf{API Endpoints:}
 
@@ -301,53 +309,52 @@ GET & /api/v1/health-check & Health check endpoint \\
 
 \textbf{Performance Requirements:}
 
-\hspace{\parindent}The platform maintains sub-second response times for workflow load and save operations while supporting workflows with up to 100 nodes without performance degradation. Automatic layout computation using Dagre ensures optimal node positioning, and real-time visual feedback enhances the workflow composition experience.
+The platform maintains sub-second response times for workflow load and save operations while supporting workflows with up to 100 nodes without performance degradation. Automatic layout computation using Dagre ensures optimal node positioning, and real-time visual feedback enhances the workflow composition experience.
 
 \textbf{Security Considerations:}
 
-\hspace{\parindent}The platform implements CORS configuration for controlled frontend-backend communication, environment-based configuration management separating development and production settings, and database connection pooling for efficient resource utilization.
+The platform implements CORS configuration for controlled frontend-backend communication, environment-based configuration management separating development and production settings, and database connection pooling for efficient resource utilization.
 
 \newpage
 \section{LITERATURE REVIEW}
 
-\hspace{\parindent}Scientific workflow management systems have evolved to address computational complexity and reproducibility needs in scientific computing. This review examines relevant literature on workflow orchestration, containerization, and visual programming.
+Scientific workflow management systems have evolved to address computational complexity and reproducibility needs in scientific computing. This review examines relevant literature on workflow orchestration, containerization, and visual programming.
 
-\hspace{\parindent}\textbf{Workflow Management Systems:} Deelman et al. \cite{deelman2015future} analyze workflow management system evolution, identifying key challenges including scalability and resource management. Their work distinguishes between data-driven and control-driven workflow approaches. Orbitium adopts a control-driven paradigm with explicit task dependencies. Perkel \cite{perkel2019workflow} provides practical perspective on workflow tools in scientific research, highlighting the importance of accessible learning curves.
+\textbf{Workflow Management Systems:} Deelman et al. \cite{deelman2015future} analyze workflow management system evolution, identifying key challenges including scalability and resource management. Their work distinguishes between data-driven and control-driven workflow approaches. Orbitium adopts a control-driven paradigm with explicit task dependencies. Perkel \cite{perkel2019workflow} provides practical perspective on workflow tools in scientific research, highlighting the importance of accessible learning curves.
 
-\hspace{\parindent}\textbf{Containerization and Reproducibility:} Boettiger \cite{boettiger2015introduction} introduces containerization as a solution to reproducibility challenges, demonstrating how Docker enables consistent execution environments. Orbitium integrates containerization with explicit workflow representation to address both environmental consistency and logical reproducibility.
+\textbf{Containerization and Reproducibility:} Boettiger \cite{boettiger2015introduction} introduces containerization as a solution to reproducibility challenges, demonstrating how Docker enables consistent execution environments. Orbitium integrates containerization with explicit workflow representation to address both environmental consistency and logical reproducibility.
 
-\hspace{\parindent}\textbf{Visual Programming:} Green and Petre \cite{green1996usability} examine usability in visual programming environments, providing design principles applied to Orbitium's interface. Their work emphasizes the importance of visual cues implemented through color coding and icon selection in Orbitium's node design.
+\textbf{Visual Programming:} Green and Petre \cite{green1996usability} examine usability in visual programming environments, providing design principles applied to Orbitium's interface. Their work emphasizes the importance of visual cues implemented through color coding and icon selection in Orbitium's node design.
 
-\hspace{\parindent}\textbf{Polyglot Programming:} Cohen et al. \cite{cohen2020scientific} argue for flexibility in scientific software, noting the tension between language familiarity and computational efficiency. Orbitium addresses this by enabling per-node language selection within a unified workflow.
+\textbf{Polyglot Programming:} Cohen et al. \cite{cohen2020scientific} argue for flexibility in scientific software, noting the tension between language familiarity and computational efficiency. Orbitium addresses this by enabling per-node language selection within a unified workflow.
 
-\hspace{\parindent}\textbf{Web Technologies:} The React framework and modern state management patterns inform Orbitium's architecture. The system uses FastAPI for backend services, following REST principles for scalable web APIs.
+\textbf{Web Technologies:} The React framework and modern state management patterns inform Orbitium's architecture. The system uses FastAPI for backend services, following REST principles for scalable web APIs.
 
-\hspace{\parindent}\textbf{Gaps in Existing Literature:} While extensive literature addresses individual components of workflow systems, limited research examines integration of visual workflow design, polyglot programming support, and containerized execution in accessible web platforms. Existing systems typically require significant technical expertise or limit language flexibility. Orbitium contributes by demonstrating practical integration of these capabilities in user-centered design targeting scientific researchers rather than DevOps specialists.
+\textbf{Gaps in Existing Literature:} While extensive literature addresses individual components of workflow systems, limited research examines integration of visual workflow design, polyglot programming support, and containerized execution in accessible web platforms. Existing systems typically require significant technical expertise or limit language flexibility. Orbitium contributes by demonstrating practical integration of these capabilities in user-centered design targeting scientific researchers rather than DevOps specialists.
 
 \newpage
 \section{STEEPLE ANALYSIS}
 
-\hspace{\parindent}The STEEPLE framework provides systematic analysis of external factors affecting Orbitium's development and deployment across Social, Technological, Economic, Environmental, Political, Legal, and Ethical dimensions.
+The STEEPLE framework provides systematic analysis of external factors affecting Orbitium's development and deployment across Social, Technological, Economic, Environmental, Political, Legal, and Ethical dimensions.
 
-\hspace{\parindent}\textbf{Social:} The scientific community increasingly recognizes the importance of computational reproducibility and open science practices. Orbitium aligns with this cultural shift by lowering barriers to workflow sharing and collaboration. However, adoption depends on overcoming resistance to workflow tools among researchers who prefer traditional scripting approaches. The platform must provide sufficient value to justify learning a new system while respecting diverse computational practices across scientific disciplines.
+\textbf{Social:} The scientific community increasingly recognizes the importance of computational reproducibility and open science practices. Orbitium aligns with this cultural shift by lowering barriers to workflow sharing and collaboration. However, adoption depends on overcoming resistance to workflow tools among researchers who prefer traditional scripting approaches. The platform must provide sufficient value to justify learning a new system while respecting diverse computational practices across scientific disciplines.
 
-\hspace{\parindent}\textbf{Technological:} Rapid evolution in containerization technologies, serverless computing, and workflow orchestration systems creates both opportunities and challenges. Docker's maturity provides stable foundation for containerized execution, while emerging standards like the Common Workflow Language (CWL)  inform design decisions. The JavaScript and Python ecosystems' vibrant development ensures continued availability of tools and libraries. However, technological debt from framework updates and API changes requires ongoing maintenance.
+\textbf{Technological:} Rapid evolution in containerization technologies, serverless computing, and workflow orchestration systems creates both opportunities and challenges. Docker's maturity provides stable foundation for containerized execution, while emerging standards like the Common Workflow Language (CWL)  inform design decisions. The JavaScript and Python ecosystems' vibrant development ensures continued availability of tools and libraries. However, technological debt from framework updates and API changes requires ongoing maintenance.
 
-\hspace{\parindent}\textbf{Economic:} Cloud computing costs represent a significant consideration for workflow execution at scale. While development uses local resources, production deployment requires balancing computational power against budget constraints. The open-source nature of core dependencies (React, FastAPI, PostgreSQL) minimizes licensing costs. Economic viability depends on demonstrating sufficient productivity gains to justify infrastructure investments. Research institutions face budget pressures that make cost-effective tools particularly valuable.
+\textbf{Economic:} Cloud computing costs represent a significant consideration for workflow execution at scale. While development uses local resources, production deployment requires balancing computational power against budget constraints. The open-source nature of core dependencies (React, FastAPI, PostgreSQL) minimizes licensing costs. Economic viability depends on demonstrating sufficient productivity gains to justify infrastructure investments. Research institutions face budget pressures that make cost-effective tools particularly valuable.
 
-\hspace{\parindent}\textbf{Environmental:} Computational workflows consume energy, particularly for data-intensive scientific computing. Orbitium's containerized approach helps with resource management, though the platform should consider the environmental impact of computational infrastructure in future development.
+\textbf{Environmental:} Computational workflows consume energy, particularly for data-intensive scientific computing. Orbitium's containerized approach helps with resource management, though the platform should consider the environmental impact of computational infrastructure in future development.
 
-\hspace{\parindent}\textbf{Political:} Data sovereignty and computational resource access vary across international boundaries. Scientific collaborations often span multiple countries with different regulatory frameworks. Orbitium must accommodate diverse deployment scenarios from institutional on-premise servers to multi-region cloud deployments. Political considerations affect choices about data residency, access controls, and compliance requirements.
+\textbf{Political:} Data sovereignty and computational resource access vary across international boundaries. Scientific collaborations often span multiple countries with different regulatory frameworks. Orbitium must accommodate diverse deployment scenarios from institutional on-premise servers to multi-region cloud deployments. Political considerations affect choices about data residency, access controls, and compliance requirements.
 
-\hspace{\parindent}\textbf{Legal:} The platform uses open-source licensing to encourage adoption and collaboration. Future considerations include access controls for proprietary workflows and compliance with data protection regulations.
+\textbf{Legal:} The platform uses open-source licensing to encourage adoption and collaboration. Future considerations include access controls for proprietary workflows and compliance with data protection regulations.
 
-\hspace{\parindent}\textbf{Ethical:} Reproducibility is important in scientific computing. Orbitium addresses this through containerization and clear workflow specification. Future considerations include responsible resource usage and ensuring accessibility.
+\textbf{Ethical:} Reproducibility is important in scientific computing. Orbitium addresses this through containerization and clear workflow specification. Future considerations include responsible resource usage and ensuring accessibility.
 
 \newpage
-\appendix
 \section{ENGINEERING STANDARDS}
 
-\hspace{\parindent}Orbitium's development adheres to established engineering standards ensuring quality, interoperability, and maintainability. Table \ref{tab:engineering_standards} summarizes the key standards applied.
+Orbitium's development adheres to established engineering standards ensuring quality, interoperability, and maintainability. Table \ref{tab:engineering_standards} summarizes the key standards applied.
 
 \begin{table}[h]
 \centering
@@ -377,133 +384,40 @@ CWL Compatibility & Node-based structure enables future CWL export \\
 
 \textbf{Software Engineering Standards:}
 
-\hspace{\parindent}The system architecture adheres to the ISO/IEC 25010 Software Quality Model, addressing quality characteristics including functionality, reliability, usability, efficiency, maintainability, and portability. React's component-based architecture supports maintainability through modular design, while FastAPI's automatic API documentation enhances usability. The backend follows REST architectural constraints with stateless client-server communication, uniform resource identification through URIs, and standard HTTP methods (GET, POST, PUT, DELETE) for CRUD operations, with JSON serving as the standardized data interchange format. Dependencies follow semantic versioning (SemVer) enabling predictable updates and backward compatibility management, with the project structure supporting independent versioning of frontend and backend components.
+The system architecture adheres to the ISO/IEC 25010 Software Quality Model, addressing quality characteristics including functionality, reliability, usability, efficiency, maintainability, and portability. React's component-based architecture supports maintainability through modular design, while FastAPI's automatic API documentation enhances usability. The backend follows REST architectural constraints with stateless client-server communication, uniform resource identification through URIs, and standard HTTP methods (GET, POST, PUT, DELETE) for CRUD operations, with JSON serving as the standardized data interchange format. Dependencies follow semantic versioning (SemVer) enabling predictable updates and backward compatibility management, with the project structure supporting independent versioning of frontend and backend components.
 
 \textbf{Web Standards:}
 
-\hspace{\parindent}The frontend implements W3C Web Standards including HTML5, CSS3, and ECMAScript 2023, ensuring cross-browser compatibility with ARIA attributes supporting accessibility requirements for users with disabilities. FastAPI automatically generates OpenAPI 3.0 compliant API documentation, enabling standardized API description and client generation that facilitates integration with external tools and services.
+The frontend implements W3C Web Standards including HTML5, CSS3, and ECMAScript 2023, ensuring cross-browser compatibility with ARIA attributes supporting accessibility requirements for users with disabilities. FastAPI automatically generates OpenAPI 3.0 compliant API documentation, enabling standardized API description and client generation that facilitates integration with external tools and services.
 
 \textbf{Containerization Standards:}
 
-\hspace{\parindent}Docker images conform to OCI (Open Container Initiative) image and runtime specifications, ensuring portability across container runtimes with multi-stage builds optimizing image sizes following best practices. The application design follows twelve-factor methodology principles including codebase management, dependency declaration, configuration through environment variables, and stateless processes.
+Docker images conform to OCI (Open Container Initiative) image and runtime specifications, ensuring portability across container runtimes with multi-stage builds optimizing image sizes following best practices. The application design follows twelve-factor methodology principles including codebase management, dependency declaration, configuration through environment variables, and stateless processes.
 
 \textbf{Database Standards:}
 
-\hspace{\parindent}PostgreSQL implements SQL Standards (SQL:2016) for relational data management, with SQLModel providing type-safe query construction that prevents SQL injection vulnerabilities. Database transactions maintain ACID properties (Atomicity, Consistency, Isolation, and Durability), ensuring data integrity during concurrent workflow operations.
+PostgreSQL implements SQL Standards (SQL:2016) for relational data management, with SQLModel providing type-safe query construction that prevents SQL injection vulnerabilities. Database transactions maintain ACID properties (Atomicity, Consistency, Isolation, and Durability), ensuring data integrity during concurrent workflow operations.
 
 \textbf{Security Standards:}
 
-\hspace{\parindent}The application addresses OWASP Top 10 common web vulnerabilities including injection attacks through parameterized queries, broken authentication through secure session management, and sensitive data exposure through HTTPS enforcement. Proper CORS (Cross-Origin Resource Sharing) configuration prevents unauthorized cross-origin requests while enabling legitimate frontend-backend communication.
+The application addresses OWASP Top 10 common web vulnerabilities including injection attacks through parameterized queries, broken authentication through secure session management, and sensitive data exposure through HTTPS enforcement. Proper CORS (Cross-Origin Resource Sharing) configuration prevents unauthorized cross-origin requests while enabling legitimate frontend-backend communication.
 
 \textbf{Code Quality Standards:}
 
-\hspace{\parindent}Frontend code employs TypeScript strict mode for enhanced type safety and early error detection, while backend code extensively uses Python type hints enabling static analysis through mypy and improved IDE support. Linting standards are enforced through Ruff for Python and ESLint for TypeScript, maintaining consistent code style and identifying potential errors.
+Frontend code employs TypeScript strict mode for enhanced type safety and early error detection, while backend code extensively uses Python type hints enabling static analysis through mypy and improved IDE support. Linting standards are enforced through Ruff for Python and ESLint for TypeScript, maintaining consistent code style and identifying potential errors.
 
 \textbf{Workflow Standards:}
 
-\hspace{\parindent}The Directed Acyclic Graph (DAG) representation aligns with established workflow representation standards used by Apache Airflow, Luigi, and Prefect, facilitating potential future interoperability. While the Common Workflow Language (CWL) is not directly implemented, the node-based structure enables future CWL export capability supporting workflow portability across platforms.
-
-\newpage
-\section{LOGIC MODEL FRAMEWORK}
-
-\hspace{\parindent}The Logic Model provides a systematic framework for understanding Orbitium's development process, resource allocation, activities, and expected outcomes.
-
-\subsection{TARGET POPULATION}
-
-\hspace{\parindent}Orbitium targets three primary user segments within the scientific computing community:
-
-\hspace{\parindent}\textbf{Primary Users - Research Scientists and Data Scientists:} Computational researchers across domains including bioinformatics, climate science, physics, economics, and social sciences who need to orchestrate multi-stage analytical workflows. These users possess domain expertise and programming proficiency but lack specialized knowledge in DevOps and workflow orchestration systems. They value tools that accelerate research productivity without requiring extensive infrastructure management.
-
-\hspace{\parindent}\textbf{Secondary Users - Research Software Engineers:} Technical specialists who support research teams by building and maintaining computational infrastructure. These users possess strong software engineering skills and seek platforms that balance ease of use for researchers with sufficient flexibility for complex requirements. They require robust APIs, extensibility mechanisms, and integration capabilities.
-
-\hspace{\parindent}\textbf{Tertiary Users - Students and Educators:} Graduate students learning computational methods and instructors teaching scientific computing courses. This population benefits from accessible workflow tools that demonstrate computational thinking principles and best practices in reproducible research. Educational contexts prioritize intuitive interfaces and clear conceptual models.
-
-\subsection{UNDERLYING ASSUMPTIONS}
-
-\hspace{\parindent}The project development rests on several key assumptions:
-
-\textbf{Technical Assumptions:}
-
-\hspace{\parindent}The project assumes users possess basic programming skills in at least one supported language and have access to institutional infrastructure supporting Docker containerization. Network connectivity enabling web-based application access and modern web browsers (Chrome, Firefox, Safari, Edge) are required. Target environments must support PostgreSQL database deployment.
-
-\textbf{User Behavior Assumptions:}
-
-\hspace{\parindent}The design assumes scientists prefer visual workflow design over code-only approaches for certain tasks and that reducing technical barriers increases adoption of workflow best practices. Reproducibility concerns are expected to motivate investment in workflow tooling, while researchers will document workflows adequately when tools make documentation straightforward.
-
-\textbf{Environmental Assumptions:}
-
-\hspace{\parindent}The project assumes research institutions continue investing in computational infrastructure with open-source workflow tools remaining viable against commercial alternatives. Container technologies are expected to maintain community support and development, while the scientific community is assumed to value interoperability and open standards.
-
-\subsection{RESSOURCES/CHALLENGES}
-
-\textbf{Resources Utilized:}
-
-\hspace{\parindent}The project leverages significant human capital through developer time dedicated to architecture, implementation, testing, and documentation, complemented by supervisor mentorship providing guidance and feedback. Technical infrastructure includes development workstation, potential cloud hosting for deployment, and GitHub for version control and collaboration. Software resources encompass open-source frameworks (React, FastAPI, PostgreSQL), development tools (VS Code, Docker Desktop), and documentation platforms. Knowledge resources draw from academic literature on workflow systems, technical documentation for frameworks, and online communities (Stack Overflow, GitHub Discussions). Financial resources remain minimal due to the open-source stack, with potential cloud hosting costs for demonstration deployment.
-
-\textbf{Key Challenges:}
-
-\hspace{\parindent}The project faces several significant challenges. Technical complexity arises from integrating multiple technologies (React Flow, FastAPI, PostgreSQL, Docker), requiring understanding of diverse architectural patterns and ensuring smooth interoperation. Containerization orchestration demands Docker API integration, resource management, and error handling beyond current prototype scope. State management challenges emerge from synchronizing workflow state between frontend visualization, backend persistence, and execution engine, presenting consistency challenges. Performance optimization for large workflows with many nodes requires efficient rendering, layout computation, and data serialization strategies. User experience design must balance simplicity for novice users with power features for advanced users through careful interface design and progressive disclosure. Testing and validation of the visual workflow editor, API endpoints, and database operations demands significant effort. Documentation efforts, including user documentation, API references, and developer guides, compete with implementation time.
-
-\subsection{ACTIVITIES}
-
-The project development encompasses several interconnected activities:
-
-\textbf{Design Phase:}
-
-\hspace{\parindent}The design phase encompasses system architecture planning defining frontend, backend, and database components, along with user interface mockups and interaction flow design. Database schema design for workflow representation and API endpoint specification with documentation complete this phase, following comprehensive technology stack evaluation and selection.
-
-\textbf{Implementation Phase:}
-
-\hspace{\parindent}The implementation phase involves extensive frontend development including React components, state management with Zustand, and React Flow integration. Workflow visualization encompasses node types (start, task, end, initial), edge rendering, and drag-and-drop functionality. Code editor integration configures Monaco Editor with language support and syntax highlighting. Backend development establishes FastAPI application structure, endpoint implementation, and database integration. Data persistence implements SQLModel models, database migrations, and CRUD operations. Layout algorithms integrate Dagre for automatic workflow layout and position calculation. API integration implements the Axios client, TanStack Query for state synchronization, and comprehensive error handling.
-
-\textbf{Testing Phase:}
-
-\hspace{\parindent}The testing phase includes unit testing for utility functions and state management logic, integration testing for API endpoints and database operations, and end-to-end testing for complete workflow creation, editing, and saving processes. User interface testing validates visual consistency and interaction responsiveness, while performance testing evaluates workflow load times and rendering efficiency.
-
-\textbf{Documentation Phase:}
-
-\hspace{\parindent}The documentation phase encompasses code documentation with inline comments and docstrings, API documentation through OpenAPI/Swagger interface, and user guide creation with screenshots and tutorials. Technical report writing documents design decisions and implementation, while README files provide project setup and development instructions.
-
-\subsection{OUTPUTS OF THE PROJECT}
-
-\textbf{Software Deliverables:}
-
-\hspace{\parindent}Software deliverables include a fully functional web application accessible through modern browsers, source code repository with version control history and commit documentation, and Docker Compose configuration for local development environment setup. Database schema and migration scripts enable PostgreSQL deployment, complemented by REST API with automated OpenAPI documentation and containerized deployment artifacts including Dockerfiles and configuration files.
-
-\textbf{Documentation Deliverables:}
-
-\hspace{\parindent}Documentation deliverables comprise a comprehensive technical report (this document) detailing system design and implementation, user documentation explaining workflow creation and management, and developer documentation for contributing and extending the platform. API reference documentation with endpoint specifications and examples, along with architecture diagrams illustrating system components and interactions, complete the documentation suite.
-
-\textbf{Demonstration Artifacts:}
-
-\hspace{\parindent}Demonstration artifacts include example workflows demonstrating platform capabilities, video demonstrations of workflow creation and execution processes, and performance benchmarks with scalability analysis results. A conference proposal for potential academic presentation showcases the research contribution.
-
-\subsection{OUTCOMES}
-
-\textbf{Short-term Outcomes (Immediate):}
-
-\hspace{\parindent}Short-term outcomes include successful capstone project completion demonstrating technical proficiency, a working prototype validating core workflow orchestration concepts, and portfolio artifact showcasing full-stack development capabilities. Academic credit toward degree completion and enhanced understanding of workflow systems, containerization, and web technologies represent additional immediate benefits.
-
-\textbf{Medium-term Outcomes (6-12 months):}
-
-\hspace{\parindent}Medium-term outcomes encompass potential adoption by research groups for managing computational workflows, with community contributions and feedback driving platform improvements. Integration with additional programming languages and execution environments expands capabilities, while publication opportunities at scientific computing or workflow conferences emerge. The project establishes a foundation for continued open-source development and maintenance.
-
-\textbf{Long-term Outcomes (1-3 years):}
-
-\hspace{\parindent}Long-term outcomes envision establishing the platform within the scientific workflow ecosystem alongside Apache Airflow and Prefect, contributing to improving reproducibility practices in computational science. Reduction in technical barriers enables broader participation in computational research, with potential commercial applications or institutional adoption at scale. The project may influence workflow management system design and best practices through widespread adoption and feedback.
-
-\textbf{Impact Indicators:}
-
-\hspace{\parindent}Impact indicators include the number of workflows created and executed on the platform, user satisfaction metrics and feedback quality, and GitHub repository activity measured through stars, forks, and contributions. Citations in academic literature or technical blogs, time savings reported by users compared to manual workflow management, and reproducibility improvements in published computational research serve as additional measures of project impact.
+The Directed Acyclic Graph (DAG) representation aligns with established workflow representation standards used by Apache Airflow, Luigi, and Prefect, facilitating potential future interoperability. While the Common Workflow Language (CWL) is not directly implemented, the node-based structure enables future CWL export capability supporting workflow portability across platforms.
 
 \newpage
 \section{METHODOLOGY \& SYSTEM DESIGN}
 
-\hspace{\parindent}This section details the complete technical architecture, design decisions, and implementation of Orbitium, organized into system architecture, workflow representations, execution engine design, and software implementation.
+This section details the complete technical architecture, design decisions, and implementation of Orbitium, organized into system architecture, workflow representations, execution engine design, and software implementation.
 
 \subsection{SYSTEM ARCHITECTURE OVERVIEW}
 
-\hspace{\parindent}Orbitium implements a comprehensive three-tier architecture separating presentation, application logic, and data persistence layers. Figure \ref{fig:system_architecture} illustrates the high-level system architecture showing how these components interact.
+Orbitium implements a comprehensive three-tier architecture separating presentation, application logic, and data persistence layers. Figure \ref{fig:system_architecture} illustrates the high-level system architecture showing how these components interact.
 
 \begin{figure}[h]
 \centering
@@ -512,11 +426,11 @@ The project development encompasses several interconnected activities:
 \label{fig:system_architecture}
 \end{figure}
 
-\hspace{\parindent}The architecture comprises four main components: (1) the Web Frontend providing visual workflow design capabilities, (2) the API Backend handling workflow persistence and execution coordination, (3) PostgreSQL database for persistent storage, and (4) the Execution Engine managing containerized task execution.
+The architecture comprises four main components: (1) the Web Frontend providing visual workflow design capabilities, (2) the API Backend handling workflow persistence and execution coordination, (3) PostgreSQL database for persistent storage, and (4) the Execution Engine managing containerized task execution.
 
 \subsection{WORKFLOW REPRESENTATIONS}
 
-\hspace{\parindent}Orbitium maintains multiple representations of workflows optimized for different purposes. Figure \ref{fig:workflow_representations} shows how workflows transform between these representations.
+Orbitium maintains multiple representations of workflows optimized for different purposes. Figure \ref{fig:workflow_representations} shows how workflows transform between these representations.
 
 \begin{figure}[h]
 \centering
@@ -525,19 +439,19 @@ The project development encompasses several interconnected activities:
 \label{fig:workflow_representations}
 \end{figure}
 
-\hspace{\parindent}\textbf{Visual Representation (Web):} The React Flow-based visual representation enables intuitive drag-and-drop workflow design. Nodes are rendered as interactive cards with language icons, titles, descriptions, and code editors. Edges visually connect nodes showing data dependencies. This representation prioritizes user experience with smooth animations, zoom/pan controls, and real-time feedback.
+\textbf{Visual Representation (Web):} The React Flow-based visual representation enables intuitive drag-and-drop workflow design. Nodes are rendered as interactive cards with language icons, titles, descriptions, and code editors. Edges visually connect nodes showing data dependencies. This representation prioritizes user experience with smooth animations, zoom/pan controls, and real-time feedback.
 
-\hspace{\parindent}\textbf{JSON Representation (API/Database):} Workflows serialize to JSON format for persistence and API communication. The JSON schema includes nodes array (with id, type, position, and data fields) and edges array (with id, source, target fields). This representation enables efficient storage in PostgreSQL's JSONB column type with indexing capabilities.
+\textbf{JSON Representation (API/Database):} Workflows serialize to JSON format for persistence and API communication. The JSON schema includes nodes array (with id, type, position, and data fields) and edges array (with id, source, target fields). This representation enables efficient storage in PostgreSQL's JSONB column type with indexing capabilities.
 
-\hspace{\parindent}\textbf{Engine Representation (Lazy Computation):} The execution engine transforms JSON workflows into an optimized internal representation implementing lazy evaluation semantics. Tasks are not executed until their outputs are required, enabling efficient resource utilization. The engine representation includes computed dependency graphs, container specifications, and execution metadata.
+\textbf{Engine Representation (Lazy Computation):} The execution engine transforms JSON workflows into an optimized internal representation implementing lazy evaluation semantics. Tasks are not executed until their outputs are required, enabling efficient resource utilization. The engine representation includes computed dependency graphs, container specifications, and execution metadata.
 
 \subsection{EXECUTION ENGINE ARCHITECTURE}
 
-\hspace{\parindent}The execution engine orchestrates containerized workflow execution through four core components: (1) \textbf{Workflow Parser} validates JSON definitions and constructs internal graph representations, (2) \textbf{Dependency Resolver} performs topological sorting to determine execution order and identifies parallelizable tasks, (3) \textbf{Task Scheduler} manages the execution queue with lazy evaluation semantics and tracks task states, and (4) \textbf{Container Manager} interfaces with Docker to create containers from language-specific images (python:3.13-slim, node:20-alpine, golang:1.21-alpine, ruby:3.3-alpine), mount code volumes, and manage container lifecycle.
+The execution engine orchestrates containerized workflow execution through four core components: (1) \textbf{Workflow Parser} validates JSON definitions and constructs internal graph representations, (2) \textbf{Dependency Resolver} performs topological sorting to determine execution order and identifies parallelizable tasks, (3) \textbf{Task Scheduler} manages the execution queue with lazy evaluation semantics and tracks task states, and (4) \textbf{Container Manager} interfaces with Docker to create containers from language-specific images (python:3.13-slim, node:20-alpine, golang:1.21-alpine, ruby:3.3-alpine), mount code volumes, and manage container lifecycle.
 
 \subsection{DATA FLOW AND INTER-TASK COMMUNICATION}
 
-\hspace{\parindent}Figure \ref{fig:data_flow} illustrates how data flows between components during workflow execution.
+Figure \ref{fig:data_flow} illustrates how data flows between components during workflow execution.
 
 
 \begin{figure}[h]
@@ -548,15 +462,15 @@ The project development encompasses several interconnected activities:
 \end{figure}
 
 
-\hspace{\parindent}\textbf{Design Phase Data Flow:} Users interact with the React Flow canvas to add nodes, create edges, and write code. Changes update the Zustand store immediately (optimistic updates). TanStack Query manages API communication, sending workflow updates to FastAPI backend. Backend persists changes to PostgreSQL.
+\textbf{Design Phase Data Flow:} Users interact with the React Flow canvas to add nodes, create edges, and write code. Changes update the Zustand store immediately (optimistic updates). TanStack Query manages API communication, sending workflow updates to FastAPI backend. Backend persists changes to PostgreSQL.
 
-\hspace{\parindent}\textbf{Execution Phase Data Flow:} Execution requests trigger the engine to fetch workflow from database. The engine parses, validates, and schedules tasks. Each task executes in an isolated Docker container. Task outputs write to shared volumes, accessible by dependent tasks. Execution status streams back through the API to update the UI in real-time.
+\textbf{Execution Phase Data Flow:} Execution requests trigger the engine to fetch workflow from database. The engine parses, validates, and schedules tasks. Each task executes in an isolated Docker container. Task outputs write to shared volumes, accessible by dependent tasks. Execution status streams back through the API to update the UI in real-time.
 
-\hspace{\parindent}\textbf{Inter-Task Data Passing:} Tasks communicate through a shared volume mount. Each task writes output to \texttt{/output/result.json}. Dependent tasks read predecessor outputs from \texttt{/input/<task\_id>/result.json}. JSON serialization ensures language-agnostic data exchange. For large datasets, the system supports configurable storage backends.
+\textbf{Inter-Task Data Passing:} Tasks communicate through a shared volume mount. Each task writes output to \texttt{/output/result.json}. Dependent tasks read predecessor outputs from \texttt{/input/<task\_id>/result.json}. JSON serialization ensures language-agnostic data exchange. For large datasets, the system supports configurable storage backends.
 
 \subsection{WORKFLOW REPRESENTATION MODEL}
 
-\hspace{\parindent}Workflows are represented as directed acyclic graphs (DAGs) where nodes represent computational tasks and edges represent dependencies. This model ensures proper execution order and prevents infinite loops. Each node contains metadata including its type, position, title, description, and executable code with language specification. Table \ref{tab:node_types} describes the different node types.
+Workflows are represented as directed acyclic graphs (DAGs) where nodes represent computational tasks and edges represent dependencies. This model ensures proper execution order and prevents infinite loops. Each node contains metadata including its type, position, title, description, and executable code with language specification. Table \ref{tab:node_types} describes the different node types.
 
 \begin{table}[h]
 \centering
@@ -574,21 +488,21 @@ End & 80 × 40 px & Marks workflow completion, single sink node \\
 \end{tabular}
 \end{table}
 
-\hspace{\parindent}Node types implement different visualization and interaction patterns: start nodes trigger workflow execution, task nodes represent computational operations, initial nodes provide placeholders for workflow construction, and end nodes mark workflow completion.
+Node types implement different visualization and interaction patterns: start nodes trigger workflow execution, task nodes represent computational operations, initial nodes provide placeholders for workflow construction, and end nodes mark workflow completion.
 
-\hspace{\parindent}Edges connect source nodes to target nodes, establishing dependencies. Edge types control interaction behavior, enabling inserting nodes between existing tasks while preserving workflow topology.
+Edges connect source nodes to target nodes, establishing dependencies. Edge types control interaction behavior, enabling inserting nodes between existing tasks while preserving workflow topology.
 
-\hspace{\parindent}\textbf{Layout Algorithm:} Orbitium uses Dagre for automatic workflow layout. Dagre organizes nodes in layers to minimize edge crossings and improve visual clarity. The implementation configures Dagre with top-to-bottom layout, 50px horizontal spacing, and 80px vertical spacing. Node dimensions vary by type: start nodes (80x20), end nodes (80x40), initial nodes (208x120), task nodes (344x160).
+\textbf{Layout Algorithm:} Orbitium uses Dagre for automatic workflow layout. Dagre organizes nodes in layers to minimize edge crossings and improve visual clarity. The implementation configures Dagre with top-to-bottom layout, 50px horizontal spacing, and 80px vertical spacing. Node dimensions vary by type: start nodes (80x20), end nodes (80x40), initial nodes (208x120), task nodes (344x160).
 
-\hspace{\parindent}\textbf{State Management:} Zustand manages client-side application state. The workflow store maintains nodes array, edges array, and nodeCounter for ID generation. Actions include loadFlow for initializing workflows, updateNodeMetaData for modifying descriptions, setNodeBaseLanguage for changing programming languages, and updateNodeCode for code editing.
+\textbf{State Management:} Zustand manages client-side application state. The workflow store maintains nodes array, edges array, and nodeCounter for ID generation. Actions include loadFlow for initializing workflows, updateNodeMetaData for modifying descriptions, setNodeBaseLanguage for changing programming languages, and updateNodeCode for code editing.
 
-\hspace{\parindent}\textbf{Workflow Execution:} Workflow execution will require topological ordering to determine valid execution sequence. This ensures tasks execute after their dependencies complete. The implementation will use a depth-first search approach with cycle detection to prevent invalid workflows.
+\textbf{Workflow Execution:} Workflow execution will require topological ordering to determine valid execution sequence. This ensures tasks execute after their dependencies complete. The implementation will use a depth-first search approach with cycle detection to prevent invalid workflows.
 
 \subsubsection{DATA PRESENTATION}
 
-\hspace{\parindent}\textbf{Frontend Data Flow:} The application uses unidirectional data flow. User interactions update Zustand store state, which triggers React component re-renders. React Flow receives nodes and edges as props and renders the visual workflow. TanStack Query manages server communication, data fetching, and cache management. When workflows are saved, the system invalidates relevant queries to stay synchronized with the server.
+\textbf{Frontend Data Flow:} The application uses unidirectional data flow. User interactions update Zustand store state, which triggers React component re-renders. React Flow receives nodes and edges as props and renders the visual workflow. TanStack Query manages server communication, data fetching, and cache management. When workflows are saved, the system invalidates relevant queries to stay synchronized with the server.
 
-\hspace{\parindent}\textbf{API Data Contract:} FastAPI endpoints accept and return JSON payloads conforming to Pydantic models. Table \ref{tab:data_models} describes the data models.
+\textbf{API Data Contract:} FastAPI endpoints accept and return JSON payloads conforming to Pydantic models. Table \ref{tab:data_models} describes the data models.
 
 \begin{table}[h]
 \centering
@@ -613,11 +527,11 @@ Edge & Object & id, source (node id), target (node id), type \\
 \end{tabular}
 \end{table}
 
-\hspace{\parindent}FlowBase schema defines creation payload: name (string), description (string), data (optional object containing nodes and edges). FlowRead schema adds id (UUID) for responses. FlowUpdate schema makes all fields optional, supporting partial updates.
+FlowBase schema defines creation payload: name (string), description (string), data (optional object containing nodes and edges). FlowRead schema adds id (UUID) for responses. FlowUpdate schema makes all fields optional, supporting partial updates.
 
-\hspace{\parindent}The backend performs validation automatically through Pydantic, rejecting malformed requests with detailed error messages. Type coercion handles common discrepancies (string to integer conversion), while strict validation prevents invalid data from persisting. UUID type ensures globally unique workflow identifiers, eliminating collision risks in distributed deployments.
+The backend performs validation automatically through Pydantic, rejecting malformed requests with detailed error messages. Type coercion handles common discrepancies (string to integer conversion), while strict validation prevents invalid data from persisting. UUID type ensures globally unique workflow identifiers, eliminating collision risks in distributed deployments.
 
-\hspace{\parindent}\textbf{Database Schema:} The Flow table implements following structure:
+\textbf{Database Schema:} The Flow table implements following structure:
 
 \begin{verbatim}
 CREATE TABLE flow (
@@ -630,46 +544,46 @@ CREATE TABLE flow (
 CREATE INDEX idx_flow_name ON flow(name);
 \end{verbatim}
 
-\hspace{\parindent}JSONB type provides JSON storage with binary encoding, enabling efficient queries on workflow structure while maintaining flexibility. Indexes on name column accelerate workflow lookup by name. The schema supports future extensions: adding user\_id for multi-tenancy, created\_at/updated\_at for auditing, tags for categorization, without breaking existing code.
+JSONB type provides JSON storage with binary encoding, enabling efficient queries on workflow structure while maintaining flexibility. Indexes on name column accelerate workflow lookup by name. The schema supports future extensions: adding user\_id for multi-tenancy, created\_at/updated\_at for auditing, tags for categorization, without breaking existing code.
 
-\hspace{\parindent}\textbf{Visualization Design:} Task nodes implement card-based design with gradient backgrounds, rounded corners, and subtle shadows creating depth perception. Each node displays: (1) language icon from stack-logos directory, (2) task title with bold font, (3) node type badge with colored background, (4) description text with line clamping, (5) handle components at top and bottom for edge connections.
+\textbf{Visualization Design:} Task nodes implement card-based design with gradient backgrounds, rounded corners, and subtle shadows creating depth perception. Each node displays: (1) language icon from stack-logos directory, (2) task title with bold font, (3) node type badge with colored background, (4) description text with line clamping, (5) handle components at top and bottom for edge connections.
 
-\hspace{\parindent}Color coding provides visual distinction: teal-to-blue gradients for connection handles, gray gradients for node backgrounds, blue badges for node types. Monaco Editor integration provides professional code editing experience with syntax highlighting, auto-completion, and error detection for supported languages.
+Color coding provides visual distinction: teal-to-blue gradients for connection handles, gray gradients for node backgrounds, blue badges for node types. Monaco Editor integration provides professional code editing experience with syntax highlighting, auto-completion, and error detection for supported languages.
 
 \subsubsection{EXECUTION ORCHESTRATION}
 
-\hspace{\parindent}The execution orchestration system implements the complete workflow execution pipeline, transforming visual workflow designs into containerized computational processes.
+The execution orchestration system implements the complete workflow execution pipeline, transforming visual workflow designs into containerized computational processes.
 
-\hspace{\parindent}\textbf{Container Management:} The Docker SDK for Python enables programmatic container lifecycle management. Each task node converts to a container specification with base image determined by language (python:3.13-slim, node:20-alpine, golang:1.21-alpine, ruby:3.3-alpine), code mounted as volume at \texttt{/app/task.\{ext\}}, and environment variables for configuration. The container manager implements create, start, wait, logs, and remove operations with comprehensive error handling.
+\textbf{Container Management:} The Docker SDK for Python enables programmatic container lifecycle management. Each task node converts to a container specification with base image determined by language (python:3.13-slim, node:20-alpine, golang:1.21-alpine, ruby:3.3-alpine), code mounted as volume at \texttt{/app/task.\{ext\}}, and environment variables for configuration. The container manager implements create, start, wait, logs, and remove operations with comprehensive error handling.
 
-\hspace{\parindent}\textbf{Dependency Resolution:} Topological sort determines execution order using Kahn's algorithm. Tasks without dependencies execute immediately. Upon task completion, dependent tasks become eligible for execution. The execution engine maintains a ready queue of executable tasks and a waiting set of tasks with unsatisfied dependencies. Parallel execution is supported for independent tasks.
+\textbf{Dependency Resolution:} Topological sort determines execution order using Kahn's algorithm. Tasks without dependencies execute immediately. Upon task completion, dependent tasks become eligible for execution. The execution engine maintains a ready queue of executable tasks and a waiting set of tasks with unsatisfied dependencies. Parallel execution is supported for independent tasks.
 
-\hspace{\parindent}\textbf{Data Passing:} Inter-task communication uses shared volume mounts. Each task writes output to \texttt{/output/result.json}, and dependent tasks access predecessor outputs through \texttt{/input/} directory. JSON serialization enables language-agnostic data exchange. The system validates JSON output format and handles serialization errors gracefully.
+\textbf{Data Passing:} Inter-task communication uses shared volume mounts. Each task writes output to \texttt{/output/result.json}, and dependent tasks access predecessor outputs through \texttt{/input/} directory. JSON serialization enables language-agnostic data exchange. The system validates JSON output format and handles serialization errors gracefully.
 
-\hspace{\parindent}\textbf{Lazy Evaluation:} The engine implements lazy evaluation semantics where tasks are only executed when their outputs are required. This optimization reduces resource consumption for workflows with conditional branches or optional outputs. The evaluation strategy can be configured per-workflow.
+\textbf{Lazy Evaluation:} The engine implements lazy evaluation semantics where tasks are only executed when their outputs are required. This optimization reduces resource consumption for workflows with conditional branches or optional outputs. The evaluation strategy can be configured per-workflow.
 
-\hspace{\parindent}\textbf{Error Handling:} Comprehensive error handling addresses container failures, timeout scenarios, and invalid outputs. Failed tasks report detailed error messages including container logs. The system supports configurable retry policies for transient failures.
+\textbf{Error Handling:} Comprehensive error handling addresses container failures, timeout scenarios, and invalid outputs. Failed tasks report detailed error messages including container logs. The system supports configurable retry policies for transient failures.
 
 \subsubsection{SOFTWARE}
 
-\hspace{\parindent}\textbf{Development Environment:} The project uses modern development tooling: VS Code as primary IDE with extensions for TypeScript, Python, Docker, and Git. UV (Python package manager) provides fast dependency resolution and virtual environment management. Vite serves as frontend build tool, offering instant hot module replacement and optimized production builds. Docker Desktop enables local containerization testing.
+\textbf{Development Environment:} The project uses modern development tooling: VS Code as primary IDE with extensions for TypeScript, Python, Docker, and Git. UV (Python package manager) provides fast dependency resolution and virtual environment management. Vite serves as frontend build tool, offering instant hot module replacement and optimized production builds. Docker Desktop enables local containerization testing.
 
-\hspace{\parindent}\textbf{Version Control:} Git manages source code with branching strategy: main branch for stable releases, development branch for integration, feature branches for new functionality. Commit messages follow conventional commits specification enabling automated changelog generation. GitHub hosts repository with issue tracking for bug reports and feature requests.
+\textbf{Version Control:} Git manages source code with branching strategy: main branch for stable releases, development branch for integration, feature branches for new functionality. Commit messages follow conventional commits specification enabling automated changelog generation. GitHub hosts repository with issue tracking for bug reports and feature requests.
 
-\hspace{\parindent}\textbf{Code Quality:} TypeScript strict mode catches type errors at compile time. ESLint enforces consistent code style and identifies anti-patterns. Prettier handles automatic code formatting, eliminating style debates. On backend, Ruff provides fast Python linting combining functionality of multiple tools (Flake8, isort, pyupgrade).
+\textbf{Code Quality:} TypeScript strict mode catches type errors at compile time. ESLint enforces consistent code style and identifies anti-patterns. Prettier handles automatic code formatting, eliminating style debates. On backend, Ruff provides fast Python linting combining functionality of multiple tools (Flake8, isort, pyupgrade).
 
-\hspace{\parindent}\textbf{Testing Strategy:} Unit tests validate individual functions and components using Vitest for frontend, pytest for backend. Integration tests verify API endpoint behavior with test database. End-to-end tests (planned) will use Playwright for browser automation, testing complete user workflows.
+\textbf{Testing Strategy:} Unit tests validate individual functions and components using Vitest for frontend, pytest for backend. Integration tests verify API endpoint behavior with test database. End-to-end tests (planned) will use Playwright for browser automation, testing complete user workflows.
 
-\hspace{\parindent}\textbf{Deployment Architecture:} Docker Compose orchestrates local development environment with services for database (PostgreSQL container), backend (FastAPI with hot reload), and frontend (Vite dev server). Environment variables manage configuration: database credentials, API endpoints, CORS settings. Production deployment (planned) uses container registry (Docker Hub, GitHub Container Registry) with orchestration platform (Docker Swarm, Kubernetes).
+\textbf{Deployment Architecture:} Docker Compose orchestrates local development environment with services for database (PostgreSQL container), backend (FastAPI with hot reload), and frontend (Vite dev server). Environment variables manage configuration: database credentials, API endpoints, CORS settings. Production deployment (planned) uses container registry (Docker Hub, GitHub Container Registry) with orchestration platform (Docker Swarm, Kubernetes).
 
-\hspace{\parindent}\textbf{Monitoring and Observability:} FastAPI provides automatic logging for requests and errors. Structured logging with JSON format enables log aggregation and analysis. Health check endpoint (/api/v1/health-check) enables uptime monitoring. Future enhancements include metrics collection (Prometheus), distributed tracing (OpenTelemetry), and error tracking (Sentry).
+\textbf{Monitoring and Observability:} FastAPI provides automatic logging for requests and errors. Structured logging with JSON format enables log aggregation and analysis. Health check endpoint (/api/v1/health-check) enables uptime monitoring. Future enhancements include metrics collection (Prometheus), distributed tracing (OpenTelemetry), and error tracking (Sentry).
 
 \newpage
 \section{RESULTS AND VALIDATION}
 
-\hspace{\parindent}This section presents the results from the complete Orbitium implementation, including performance metrics, validation testing, and demonstration of polyglot workflow execution.
+This section presents the results from the complete Orbitium implementation, including performance metrics, validation testing, and demonstration of polyglot workflow execution.
 
-\hspace{\parindent}\textbf{System Performance:} Comprehensive testing with workflows of varying complexity demonstrates strong performance across all components. Table \ref{tab:performance} summarizes the performance metrics.
+\textbf{System Performance:} Comprehensive testing with workflows of varying complexity demonstrates strong performance across all components. Table \ref{tab:performance} summarizes the performance metrics.
 
 \begin{table}[h]
 \centering
@@ -702,111 +616,111 @@ Parallel execution (4 tasks) & 3-6 sec & \checkmark Validated \\
 \end{tabular}
 \end{table}
 
-\hspace{\parindent}Small workflows (5-10 nodes) load instantaneously. Medium workflows (20-30 nodes) maintain responsive interaction. Large workflows (50+ nodes) experience brief initial layout computation but remain interactive after loading. Performance profiling using React DevTools shows the layout computation is optimized through memoization and incremental updates.
+Small workflows (5-10 nodes) load instantaneously. Medium workflows (20-30 nodes) maintain responsive interaction. Large workflows (50+ nodes) experience brief initial layout computation but remain interactive after loading. Performance profiling using React DevTools shows the layout computation is optimized through memoization and incremental updates.
 
-\hspace{\parindent}\textbf{Database Operation Latency:} API endpoints respond quickly under local development conditions. Workflow retrieval, creation, and updates all complete in under 50ms. PostgreSQL query execution remains consistently fast for workflow operations. JSONB storage efficiently handles workflow serialization.
+\textbf{Database Operation Latency:} API endpoints respond quickly under local development conditions. Workflow retrieval, creation, and updates all complete in under 50ms. PostgreSQL query execution remains consistently fast for workflow operations. JSONB storage efficiently handles workflow serialization.
 
-\hspace{\parindent}\textbf{Workflow Validation:} Cycle detection successfully prevents invalid workflow configurations. Testing with deliberately constructed cyclic workflows confirms proper validation. Edge cases receive proper handling: workflows with disconnected subgraphs remain valid, single node workflows are accepted, and empty workflows are rejected.
+\textbf{Workflow Validation:} Cycle detection successfully prevents invalid workflow configurations. Testing with deliberately constructed cyclic workflows confirms proper validation. Edge cases receive proper handling: workflows with disconnected subgraphs remain valid, single node workflows are accepted, and empty workflows are rejected.
 
-\hspace{\parindent}\textbf{User Interface Responsiveness:} The interface responds smoothly to user interactions. Node drag operations render without lag, edge creation provides immediate visual feedback, and code editor updates reflect changes quickly. The Monaco Editor integration performs well for typical workflow code. Syntax highlighting works correctly for Python, JavaScript, Go, and Ruby.
+\textbf{User Interface Responsiveness:} The interface responds smoothly to user interactions. Node drag operations render without lag, edge creation provides immediate visual feedback, and code editor updates reflect changes quickly. The Monaco Editor integration performs well for typical workflow code. Syntax highlighting works correctly for Python, JavaScript, Go, and Ruby.
 
-\hspace{\parindent}\textbf{Cross-Browser Compatibility:} Testing across Chrome, Firefox, Safari, and Edge confirms consistent rendering and functionality.
+\textbf{Cross-Browser Compatibility:} Testing across Chrome, Firefox, Safari, and Edge confirms consistent rendering and functionality.
 
-\hspace{\parindent}\textbf{Example Workflow Execution:} A representative polyglot scientific workflow demonstrates end-to-end execution capabilities. The workflow implements a data processing pipeline: (1) Data Generation node (Python) creates sample dataset, (2) Data Transformation node (JavaScript) processes and filters data, (3) Statistical Analysis node (Python) computes metrics, (4) Report Generation node (Ruby) formats output. This workflow validates cross-language data passing and proper execution sequencing.
+\textbf{Example Workflow Execution:} A representative polyglot scientific workflow demonstrates end-to-end execution capabilities. The workflow implements a data processing pipeline: (1) Data Generation node (Python) creates sample dataset, (2) Data Transformation node (JavaScript) processes and filters data, (3) Statistical Analysis node (Python) computes metrics, (4) Report Generation node (Ruby) formats output. This workflow validates cross-language data passing and proper execution sequencing.
 
-\hspace{\parindent}The workflow executes successfully with each task running in its language-specific container. Inter-task data passes correctly through JSON serialization. Total execution time for the four-task workflow averages 8-12 seconds including container startup overhead. The execution engine correctly resolves dependencies and schedules tasks in topological order.
+The workflow executes successfully with each task running in its language-specific container. Inter-task data passes correctly through JSON serialization. Total execution time for the four-task workflow averages 8-12 seconds including container startup overhead. The execution engine correctly resolves dependencies and schedules tasks in topological order.
 
-\hspace{\parindent}\textbf{State Synchronization:} Testing state consistency between frontend store, backend API, and database confirms reliable synchronization. Workflow modifications in UI update Zustand store immediately (optimistic update), propagate to backend API via PUT request within 100ms, persist to PostgreSQL within additional 20ms. Query invalidation triggers refetch confirming server state matches client state. Network failure scenarios correctly roll back optimistic updates, preventing inconsistent state.
+\textbf{State Synchronization:} Testing state consistency between frontend store, backend API, and database confirms reliable synchronization. Workflow modifications in UI update Zustand store immediately (optimistic update), propagate to backend API via PUT request within 100ms, persist to PostgreSQL within additional 20ms. Query invalidation triggers refetch confirming server state matches client state. Network failure scenarios correctly roll back optimistic updates, preventing inconsistent state.
 
-\hspace{\parindent}\textbf{Known Limitations:} The current implementation has several known limitations representing scope boundaries rather than fundamental architectural constraints: (1) no user authentication/authorization---all workflows are globally accessible, (2) no real-time collaboration features---concurrent editing may cause conflicts, (3) limited horizontal scaling---single execution engine instance, (4) no workflow versioning or history tracking, (5) container execution requires local Docker daemon.
+\textbf{Known Limitations:} The current implementation has several known limitations representing scope boundaries rather than fundamental architectural constraints: (1) no user authentication/authorization---all workflows are globally accessible, (2) no real-time collaboration features---concurrent editing may cause conflicts, (3) limited horizontal scaling---single execution engine instance, (4) no workflow versioning or history tracking, (5) container execution requires local Docker daemon.
 
-\hspace{\parindent}These limitations are documented for transparency and represent areas for future enhancement. The system design anticipates these features through appropriate abstraction layers and extension points.
+These limitations are documented for transparency and represent areas for future enhancement. The system design anticipates these features through appropriate abstraction layers and extension points.
 
-\hspace{\parindent}\textbf{Validation Summary:} The complete Orbitium platform successfully demonstrates: visual workflow design with polyglot programming support, persistent workflow storage with efficient retrieval, containerized task execution with proper isolation, inter-task data passing through JSON serialization, and dependency-based task scheduling with topological ordering. The system achieves its primary goal of enabling researchers to design and execute multi-language computational workflows without infrastructure expertise.
+\textbf{Validation Summary:} The complete Orbitium platform successfully demonstrates: visual workflow design with polyglot programming support, persistent workflow storage with efficient retrieval, containerized task execution with proper isolation, inter-task data passing through JSON serialization, and dependency-based task scheduling with topological ordering. The system achieves its primary goal of enabling researchers to design and execute multi-language computational workflows without infrastructure expertise.
 
 \newpage
 \section{CONCLUSION AND FUTURE WORK}
 
-\hspace{\parindent}This capstone project presents Orbitium, a containerized workflow orchestration platform that addresses challenges in scientific computing through visual workflow composition, polyglot programming support, and containerized execution. The system successfully demonstrates integration of modern web technologies (React, FastAPI, PostgreSQL) with workflow management principles and Docker containerization, providing an accessible platform for researchers to design and execute computational pipelines.
+This capstone project presents Orbitium, a containerized workflow orchestration platform that addresses challenges in scientific computing through visual workflow composition, polyglot programming support, and containerized execution. The system successfully demonstrates integration of modern web technologies (React, FastAPI, PostgreSQL) with workflow management principles and Docker containerization, providing an accessible platform for researchers to design and execute computational pipelines.
 
 \subsection{SUMMARY OF CONTRIBUTIONS}
 
-\hspace{\parindent}\textbf{Visual Workflow Design:} Orbitium provides an intuitive drag-and-drop interface for designing computational workflows. The React Flow-based canvas enables users to create, connect, and configure task nodes without writing infrastructure code. The visual representation makes workflow logic transparent and easy to modify.
+\textbf{Visual Workflow Design:} Orbitium provides an intuitive drag-and-drop interface for designing computational workflows. The React Flow-based canvas enables users to create, connect, and configure task nodes without writing infrastructure code. The visual representation makes workflow logic transparent and easy to modify.
 
-\hspace{\parindent}\textbf{Polyglot Programming Support:} The platform supports Python, JavaScript, Go, and Ruby within a single workflow. Each task node can use the most appropriate language for its specific operation, eliminating the need to compromise on language choice. The integrated Monaco Editor provides professional code editing with syntax highlighting for each language.
+\textbf{Polyglot Programming Support:} The platform supports Python, JavaScript, Go, and Ruby within a single workflow. Each task node can use the most appropriate language for its specific operation, eliminating the need to compromise on language choice. The integrated Monaco Editor provides professional code editing with syntax highlighting for each language.
 
-\hspace{\parindent}\textbf{Containerized Execution:} The execution engine leverages Docker containers to provide isolated, reproducible task execution. Each task runs in a language-specific container with its dependencies, ensuring consistent behavior across different environments. This approach addresses the reproducibility crisis in scientific computing.
+\textbf{Containerized Execution:} The execution engine leverages Docker containers to provide isolated, reproducible task execution. Each task runs in a language-specific container with its dependencies, ensuring consistent behavior across different environments. This approach addresses the reproducibility crisis in scientific computing.
 
-\hspace{\parindent}\textbf{Lazy Evaluation and Efficient Scheduling:} The engine implements lazy evaluation semantics and topological scheduling, optimizing resource utilization by executing tasks only when their outputs are required and in proper dependency order.
+\textbf{Lazy Evaluation and Efficient Scheduling:} The engine implements lazy evaluation semantics and topological scheduling, optimizing resource utilization by executing tasks only when their outputs are required and in proper dependency order.
 
 \subsection{FUTURE WORK}
 
-\hspace{\parindent}Several enhancements would extend Orbitium's capabilities:
+Several enhancements would extend Orbitium's capabilities:
 
-\hspace{\parindent}\textbf{User Authentication and Multi-tenancy:} Implementing user accounts with role-based access control would enable secure workflow sharing and collaboration. OAuth integration with institutional identity providers would facilitate adoption in research environments.
+\textbf{User Authentication and Multi-tenancy:} Implementing user accounts with role-based access control would enable secure workflow sharing and collaboration. OAuth integration with institutional identity providers would facilitate adoption in research environments.
 
-\hspace{\parindent}\textbf{Workflow Versioning and History:} Git-like version control for workflows would enable tracking changes, reverting to previous versions, and branching for experimentation.
+\textbf{Workflow Versioning and History:} Git-like version control for workflows would enable tracking changes, reverting to previous versions, and branching for experimentation.
 
-\hspace{\parindent}\textbf{Real-time Collaboration:} WebSocket-based real-time synchronization would enable multiple users to edit workflows simultaneously, similar to collaborative document editing.
+\textbf{Real-time Collaboration:} WebSocket-based real-time synchronization would enable multiple users to edit workflows simultaneously, similar to collaborative document editing.
 
-\hspace{\parindent}\textbf{Advanced Execution Features:} Distributed execution across multiple nodes using Kubernetes, workflow templates and reusable components, and integration with cloud storage services would enhance scalability.
+\textbf{Advanced Execution Features:} Distributed execution across multiple nodes using Kubernetes, workflow templates and reusable components, and integration with cloud storage services would enhance scalability.
 
-\hspace{\parindent}\textbf{Monitoring and Observability:} A real-time execution dashboard, detailed logging and metrics collection, and integration with observability platforms would improve operational visibility.
+\textbf{Monitoring and Observability:} A real-time execution dashboard, detailed logging and metrics collection, and integration with observability platforms would improve operational visibility.
 
 \subsection{CONCLUDING REMARKS}
 
-\hspace{\parindent}Orbitium demonstrates that accessible workflow orchestration tools can be built using modern web technologies without sacrificing power or flexibility. The platform bridges the gap between the technical complexity of containerized workflow systems and the accessibility needs of scientific researchers. By abstracting infrastructure concerns while preserving language flexibility, Orbitium enables researchers to focus on their scientific logic rather than DevOps challenges.
+Orbitium demonstrates that accessible workflow orchestration tools can be built using modern web technologies without sacrificing power or flexibility. The platform bridges the gap between the technical complexity of containerized workflow systems and the accessibility needs of scientific researchers. By abstracting infrastructure concerns while preserving language flexibility, Orbitium enables researchers to focus on their scientific logic rather than DevOps challenges.
 
-\hspace{\parindent}The project validates that visual programming paradigms, combined with containerization and polyglot support, provide a viable approach to scientific workflow management. The modular architecture ensures extensibility for future enhancements while the current implementation delivers complete functionality for designing and executing multi-language computational workflows.
+The project validates that visual programming paradigms, combined with containerization and polyglot support, provide a viable approach to scientific workflow management. The modular architecture ensures extensibility for future enhancements while the current implementation delivers complete functionality for designing and executing multi-language computational workflows.
 
-\hspace{\parindent}This work contributes to improving reproducibility practices in computational science by providing a platform that inherently captures workflow logic, dependencies, and execution environments. As scientific computing continues to grow in complexity, tools like Orbitium that lower technical barriers while maintaining rigor will become increasingly valuable for the research community.
+This work contributes to improving reproducibility practices in computational science by providing a platform that inherently captures workflow logic, dependencies, and execution environments. As scientific computing continues to grow in complexity, tools like Orbitium that lower technical barriers while maintaining rigor will become increasingly valuable for the research community.
 
 \newpage
 \section{LEARNING STRATEGIES}
 
-\hspace{\parindent}This section reflects on learning methodologies employed throughout the capstone project and knowledge acquisition across technical and professional domains.
+This section reflects on learning methodologies employed throughout the capstone project and knowledge acquisition across technical and professional domains.
 
 \subsection{TECHNICAL SKILL DEVELOPMENT}
 
-\hspace{\parindent}\textbf{Full-Stack Development Competency:} The project necessitated simultaneous mastery of frontend and backend technologies. Frontend development with React and TypeScript required understanding component lifecycle, hooks API, state management patterns, and type system intricacies. Learning strategy combined official documentation study, tutorial completion, and iterative experimentation. TypeScript's strict typing initially increased cognitive load but ultimately improved code quality and refactoring confidence.
+\textbf{Full-Stack Development Competency:} The project necessitated simultaneous mastery of frontend and backend technologies. Frontend development with React and TypeScript required understanding component lifecycle, hooks API, state management patterns, and type system intricacies. Learning strategy combined official documentation study, tutorial completion, and iterative experimentation. TypeScript's strict typing initially increased cognitive load but ultimately improved code quality and refactoring confidence.
 
-\hspace{\parindent}Backend development with FastAPI introduced asynchronous Python programming paradigms, dependency injection patterns, and ORM abstractions through SQLModel. The learning curve involved understanding async/await syntax, coroutine execution models, and database transaction management. Documentation exploration supplemented by Stack Overflow queries addressed specific implementation questions. Building API incrementally from simple endpoints to complex CRUD operations reinforced concepts through practical application.
+Backend development with FastAPI introduced asynchronous Python programming paradigms, dependency injection patterns, and ORM abstractions through SQLModel. The learning curve involved understanding async/await syntax, coroutine execution models, and database transaction management. Documentation exploration supplemented by Stack Overflow queries addressed specific implementation questions. Building API incrementally from simple endpoints to complex CRUD operations reinforced concepts through practical application.
 
-\hspace{\parindent}\textbf{Graph Theory Application:} Implementing workflow orchestration required applying graph algorithms to practical problems. Topological sorting algorithms, previously understood theoretically, became concrete through implementation. Depth-first search traversal for cycle detection demonstrated algorithmic thinking applied to user-facing features. This reinforced connections between computer science fundamentals and software engineering practice.
+\textbf{Graph Theory Application:} Implementing workflow orchestration required applying graph algorithms to practical problems. Topological sorting algorithms, previously understood theoretically, became concrete through implementation. Depth-first search traversal for cycle detection demonstrated algorithmic thinking applied to user-facing features. This reinforced connections between computer science fundamentals and software engineering practice.
 
-\hspace{\parindent}Dagre layout library exposed hierarchical graph drawing algorithms and layer assignment strategies. Understanding algorithm selection trade-offs (speed vs. aesthetic quality) informed integration decisions. The experience highlighted importance of leveraging existing libraries while understanding underlying principles.
+Dagre layout library exposed hierarchical graph drawing algorithms and layer assignment strategies. Understanding algorithm selection trade-offs (speed vs. aesthetic quality) informed integration decisions. The experience highlighted importance of leveraging existing libraries while understanding underlying principles.
 
-\hspace{\parindent}\textbf{Containerization and DevOps:} Docker integration required conceptual understanding of container technology, image layers, volume mounts, and networking. Initial confusion about container lifecycle and orchestration resolved through hands-on experimentation with docker-compose. The learning process involved iterative debugging of configuration issues, environment variable management, and database connection problems.
+\textbf{Containerization and DevOps:} Docker integration required conceptual understanding of container technology, image layers, volume mounts, and networking. Initial confusion about container lifecycle and orchestration resolved through hands-on experimentation with docker-compose. The learning process involved iterative debugging of configuration issues, environment variable management, and database connection problems.
 
-\hspace{\parindent}Understanding multi-stage builds, layer caching, and image optimization emerged from performance considerations. This practical DevOps knowledge complements theoretical software engineering coursework, preparing for industry expectations regarding deployment and infrastructure management.
+Understanding multi-stage builds, layer caching, and image optimization emerged from performance considerations. This practical DevOps knowledge complements theoretical software engineering coursework, preparing for industry expectations regarding deployment and infrastructure management.
 
 \subsection{SOFTWARE ENGINEERING PRACTICES}
 
-\hspace{\parindent}\textbf{Architecture and Design Patterns:} Designing system architecture required applying software design principles: separation of concerns, single responsibility, dependency inversion. Decisions about component boundaries, API design, and state management reflected engineering trade-offs between flexibility, complexity, and performance.
+\textbf{Architecture and Design Patterns:} Designing system architecture required applying software design principles: separation of concerns, single responsibility, dependency inversion. Decisions about component boundaries, API design, and state management reflected engineering trade-offs between flexibility, complexity, and performance.
 
-\hspace{\parindent}The iterative refinement process involved initial overengineering tendencies (premature abstraction) corrected through pragmatic simplification. Learning to balance ideal architectural patterns against project constraints (time, scope) developed professional judgment. Code reviews from supervisor provided valuable feedback improving design decisions.
+The iterative refinement process involved initial overengineering tendencies (premature abstraction) corrected through pragmatic simplification. Learning to balance ideal architectural patterns against project constraints (time, scope) developed professional judgment. Code reviews from supervisor provided valuable feedback improving design decisions.
 
-\hspace{\parindent}\textbf{Version Control Proficiency:} Git usage evolved from basic operations to feature branches, meaningful commit messages, and strategic commits. Version control proved essential for project management and experimentation.
+\textbf{Version Control Proficiency:} Git usage evolved from basic operations to feature branches, meaningful commit messages, and strategic commits. Version control proved essential for project management and experimentation.
 
-\hspace{\parindent}\textbf{Testing and Quality Assurance:} Writing tests and using static analysis tools (TypeScript, ESLint, Ruff) helped maintain code quality.
+\textbf{Testing and Quality Assurance:} Writing tests and using static analysis tools (TypeScript, ESLint, Ruff) helped maintain code quality.
 
 \subsection{RESEARCH AND PROBLEM-SOLVING}
 
-\hspace{\parindent}\textbf{Documentation Navigation:} Learning to effectively use technical documentation, API references, and open-source code examples accelerated development.
+\textbf{Documentation Navigation:} Learning to effectively use technical documentation, API references, and open-source code examples accelerated development.
 
-\hspace{\parindent}\textbf{Debugging Methodology:} Systematic debugging practices using browser developer tools, logging, and network inspection improved problem-solving efficiency.
+\textbf{Debugging Methodology:} Systematic debugging practices using browser developer tools, logging, and network inspection improved problem-solving efficiency.
 
-\hspace{\parindent}\textbf{Community Resources:} Stack Overflow and GitHub issues provided valuable assistance when encountering technical challenges.
+\textbf{Community Resources:} Stack Overflow and GitHub issues provided valuable assistance when encountering technical challenges.
 
 \subsection{PROJECT MANAGEMENT}
 
-\hspace{\parindent}\textbf{Scope Management:} Focusing on achievable milestones and distinguishing essential features from optional ones prevented scope creep.
+\textbf{Scope Management:} Focusing on achievable milestones and distinguishing essential features from optional ones prevented scope creep.
 
-\hspace{\parindent}\textbf{Time Management:} Balancing capstone work with coursework required setting weekly milestones and maintaining consistent progress.
+\textbf{Time Management:} Balancing capstone work with coursework required setting weekly milestones and maintaining consistent progress.
 
 \subsection{REFLECTIONS AND GROWTH}
 
-\hspace{\parindent}The capstone project connected theoretical concepts with practical implementation. The experience revealed software engineering as problem-solving requiring both technical skills and pragmatic judgment. Challenges overcome built confidence in tackling unfamiliar technical domains.
+The capstone project connected theoretical concepts with practical implementation. The experience revealed software engineering as problem-solving requiring both technical skills and pragmatic judgment. Challenges overcome built confidence in tackling unfamiliar technical domains.
 
 % References
 \newpage
