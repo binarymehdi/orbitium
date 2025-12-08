@@ -3,161 +3,92 @@
     {
       "id": "ns",
       "type": "start",
-      "position": {
-        "x": 132,
-        "y": 0
-      },
-      "data": {
-        "label": "Start Pipeline"
-      },
-      "targetPosition": "top",
-      "sourcePosition": "bottom",
-      "measured": {
-        "width": 80,
-        "height": 30
-      }
+      "position": { "x": 150, "y": 0 },
+      "data": { "label": "Start Pipeline" }
     },
     {
       "id": "n1",
       "type": "task",
-      "position": {
-        "x": 0,
-        "y": 100
-      },
+      "position": { "x": 0, "y": 100 },
       "data": {
-        "title": "1. Load Temperature Data",
+        "title": "1. Initialize Game Scores",
         "nodeType": "Input",
-        "description": "Load CSV file containing temperature sensor readings with timestamps from monitoring stations",
+        "description": "Python: Create initial player scores dataset",
         "executable": {
           "language": "python",
-          "code": "import json\nimport random\n\nprint(\"=\"*60)\nprint(\"🌡️  STEP 1: LOADING TEMPERATURE DATA\")\nprint(\"=\"*60)\nprint(\"\")\nprint(\"💝 Pickup Line: Are you a temperature sensor? Because you're giving me some HOT readings! 🔥\")\nprint(\"\")\n\n# Generate sample temperature data\nprint(\"📊 Generating sample temperature readings...\")\ndata = {\n    \"readings\": [round(random.uniform(15.0, 35.0), 2) for _ in range(10)],\n    \"timestamps\": [f\"2024-01-01T{h:02d}:00:00Z\" for h in range(10)],\n    \"source\": \"temperature_sensor_001\"\n}\n\nprint(f\"✅ Successfully generated {len(data['readings'])} temperature readings\")\nprint(f\"📍 Source: {data['source']}\")\nprint(f\"🔢 Sample values: {data['readings'][:3]}...\")\nprint(f\"📏 Min: {min(data['readings'])}°C, Max: {max(data['readings'])}°C\")\n\n# Write to shared volume\nwith open(\"/shared/node_n1_output.json\", \"w\") as f:\n    json.dump(data, f, indent=2)\n\nprint(\"💾 Data saved to /shared/node_n1_output.json\")\nprint(\"✨ Step 1 complete!\\n\")"
+          "code": "import json\n\nprint(\"=\"*50)\nprint(\"[PYTHON] Step 1: Initialize Game Scores\")\nprint(\"=\"*50)\n\ndata = {\n    \"scores\": {\n        \"mehdi\": 10,\n        \"fadli\": 5,\n        \"sara\": 8,\n        \"ahmed\": 12\n    },\n    \"metadata\": {\n        \"game\": \"Orbitium Challenge\",\n        \"round\": 1,\n        \"created_by\": \"python\"\n    }\n}\n\nprint(f\"Players: {list(data['scores'].keys())}\")\nprint(f\"Scores: {data['scores']}\")\nprint(f\"Total players: {len(data['scores'])}\")\n\nwith open(\"/shared/node_n1_output.json\", \"w\") as f:\n    json.dump(data, f, indent=2)\n\nprint(\"Data saved -> node_n1_output.json\")"
         }
-      },
-      "targetPosition": "top",
-      "sourcePosition": "bottom",
-      "measured": {
-        "width": 344,
-        "height": 160
       }
     },
     {
       "id": "n2",
       "type": "task",
-      "position": {
-        "x": 0,
-        "y": 340
-      },
+      "position": { "x": 0, "y": 280 },
       "data": {
-        "title": "2. Clean & Validate Data",
+        "title": "2. Predict Next Scores",
         "nodeType": "Processing",
-        "description": "Remove invalid readings (null values, outliers) and filter temperatures outside valid range (-50°C to 50°C)",
+        "description": "JavaScript: ML-style prediction of next round scores",
         "executable": {
-          "language": "python",
-          "code": "import json\n\nprint(\"=\"*60)\nprint(\"🧹 STEP 2: CLEANING & VALIDATING DATA\")\nprint(\"=\"*60)\nprint(\"\")\nprint(\"💝 Pickup Line: Are you data validation? Because you make my heart skip a NaN! 💓\")\nprint(\"\")\n\n# Read input from previous node\nprint(\"📖 Reading data from previous step...\")\nwith open(\"/shared/node_n1_output.json\", \"r\") as f:\n    data = json.load(f)\n\nprint(f\"📥 Loaded {len(data['readings'])} readings from {data['source']}\")\n\n# Clean and validate (filter valid range)\nprint(\"🔍 Validating temperature range (-50°C to 50°C)...\")\ninitial_count = len(data[\"readings\"])\nvalid_readings = [r for r in data[\"readings\"] if -50 <= r <= 50]\ninvalid_count = initial_count - len(valid_readings)\n\nif invalid_count > 0:\n    print(f\"⚠️  Filtered out {invalid_count} invalid reading(s)\")\nelse:\n    print(\"✅ All readings are within valid range!\")\n\ndata[\"readings\"] = valid_readings\ndata[\"cleaned\"] = True\ndata[\"valid_count\"] = len(valid_readings)\n\nprint(f\"📊 Valid readings: {len(valid_readings)}\")\nprint(f\"✔️  Range check: All values between {min(valid_readings):.2f}°C and {max(valid_readings):.2f}°C\")\n\n# Write cleaned data\nwith open(\"/shared/node_n2_output.json\", \"w\") as f:\n    json.dump(data, f, indent=2)\n\nprint(\"💾 Cleaned data saved to /shared/node_n2_output.json\")\nprint(\"✨ Step 2 complete!\\n\")"
+          "language": "javascript",
+          "code": "const fs = require('fs');\n\nconsole.log('='.repeat(50));\nconsole.log('[JAVASCRIPT] Step 2: Predict Next Scores');\nconsole.log('='.repeat(50));\n\nconst data = JSON.parse(fs.readFileSync('/shared/node_n1_output.json', 'utf8'));\n\nconst predictions = {};\nfor (const [player, score] of Object.entries(data.scores)) {\n    const growth = Math.random() * 0.3 + 0.1;\n    predictions[player] = Math.round(score * (1 + growth));\n}\n\ndata.predictions = predictions;\ndata.metadata.round = 2;\ndata.metadata.prediction_model = \"simple_growth_js\";\ndata.metadata.processed_by = [...(data.metadata.processed_by || []), \"javascript\"];\n\nconsole.log('Original scores:', data.scores);\nconsole.log('Predicted scores:', predictions);\n\nfs.writeFileSync('/shared/node_n2_output.json', JSON.stringify(data, null, 2));\nconsole.log('Data saved -> node_n2_output.json');"
         }
-      },
-      "targetPosition": "top",
-      "sourcePosition": "bottom",
-      "measured": {
-        "width": 344,
-        "height": 160
       }
     },
     {
       "id": "n3",
       "type": "task",
-      "position": {
-        "x": 0,
-        "y": 580
-      },
+      "position": { "x": 0, "y": 460 },
       "data": {
         "title": "3. Calculate Statistics",
         "nodeType": "Analysis",
-        "description": "Compute mean, standard deviation, min/max values, and detect anomalies (readings >2 std from mean)",
+        "description": "Go: Compute statistical analysis on scores",
         "executable": {
           "language": "go",
-          "code": "package main\n\nimport (\n\t\"encoding/json\"\n\t\"fmt\"\n\t\"math\"\n\t\"os\"\n)\n\ntype Data struct {\n\tReadings   []float64 `json:\"readings\"`\n\tSource     string    `json:\"source\"`\n\tMean       float64   `json:\"mean\"`\n\tStdDev     float64   `json:\"std_dev\"`\n\tMin        float64   `json:\"min\"`\n\tMax        float64   `json:\"max\"`\n\tAnomalies  []float64 `json:\"anomalies\"`\n}\n\nfunc main() {\n\tfmt.Println(\"==========================================================\")\n\tfmt.Println(\"📈 STEP 3: CALCULATING STATISTICS\")\n\tfmt.Println(\"==========================================================\")\n\tfmt.Println(\"\")\n\tfmt.Println(\"💝 Pickup Line: Are you standard deviation? Because you're making my heart vary from the mean! 📊\")\n\tfmt.Println(\"\")\n\n\t// Read data\n\tfmt.Println(\"📖 Loading cleaned data...\")\n\tfile, _ := os.ReadFile(\"/shared/node_n2_output.json\")\n\tvar data Data\n\tjson.Unmarshal(file, &data)\n\tfmt.Printf(\"📥 Loaded %d readings\\n\", len(data.Readings))\n\n\t// Calculate mean\n\tfmt.Println(\"🧮 Computing mean temperature...\")\n\tsum := 0.0\n\tfor _, r := range data.Readings {\n\t\tsum += r\n\t}\n\tdata.Mean = sum / float64(len(data.Readings))\n\tfmt.Printf(\"   Mean: %.2f°C\\n\", data.Mean)\n\n\t// Calculate std dev, min, max\n\tfmt.Println(\"📐 Computing standard deviation...\")\n\tvariance := 0.0\n\tdata.Min = data.Readings[0]\n\tdata.Max = data.Readings[0]\n\tfor _, r := range data.Readings {\n\t\tvariance += (r - data.Mean) * (r - data.Mean)\n\t\tif r < data.Min {\n\t\t\tdata.Min = r\n\t\t}\n\t\tif r > data.Max {\n\t\t\tdata.Max = r\n\t\t}\n\t}\n\tdata.StdDev = math.Sqrt(variance / float64(len(data.Readings)))\n\tfmt.Printf(\"   Std Dev: %.2f°C\\n\", data.StdDev)\n\tfmt.Printf(\"   Range: %.2f°C - %.2f°C\\n\", data.Min, data.Max)\n\n\t// Detect anomalies (>2 std from mean)\n\tfmt.Println(\"🔍 Detecting anomalies (>2σ from mean)...\")\n\tfor _, r := range data.Readings {\n\t\tif math.Abs(r-data.Mean) > 2*data.StdDev {\n\t\t\tdata.Anomalies = append(data.Anomalies, r)\n\t\t}\n\t}\n\n\tif len(data.Anomalies) > 0 {\n\t\tfmt.Printf(\"⚠️  Found %d anomalie(s): %v\\n\", len(data.Anomalies), data.Anomalies)\n\t} else {\n\t\tfmt.Println(\"✅ No anomalies detected!\")\n\t}\n\n\t// Save results\n\toutput, _ := json.MarshalIndent(data, \"\", \"  \")\n\tos.WriteFile(\"/shared/node_n3_output.json\", output, 0644)\n\n\tfmt.Println(\"💾 Statistical analysis saved to /shared/node_n3_output.json\")\n\tfmt.Println(\"✨ Step 3 complete!\")\n\tfmt.Println(\"\")\n}"
+          "code": "package main\n\nimport (\n\t\"encoding/json\"\n\t\"fmt\"\n\t\"math\"\n\t\"os\"\n\t\"sort\"\n)\n\ntype Data struct {\n\tScores      map[string]float64 `json:\"scores\"`\n\tPredictions map[string]float64 `json:\"predictions\"`\n\tMetadata    map[string]any     `json:\"metadata\"`\n\tStatistics  map[string]any     `json:\"statistics\"`\n}\n\nfunc main() {\n\tfmt.Println(\"==================================================\")\n\tfmt.Println(\"[GO] Step 3: Calculate Statistics\")\n\tfmt.Println(\"==================================================\")\n\n\tfile, _ := os.ReadFile(\"/shared/node_n2_output.json\")\n\tvar data Data\n\tjson.Unmarshal(file, &data)\n\n\tvar values []float64\n\tfor _, v := range data.Scores {\n\t\tvalues = append(values, v)\n\t}\n\tsort.Float64s(values)\n\n\tsum := 0.0\n\tfor _, v := range values {\n\t\tsum += v\n\t}\n\tmean := sum / float64(len(values))\n\n\tvariance := 0.0\n\tfor _, v := range values {\n\t\tvariance += (v - mean) * (v - mean)\n\t}\n\tstddev := math.Sqrt(variance / float64(len(values)))\n\n\tdata.Statistics = map[string]any{\n\t\t\"mean\":      math.Round(mean*100) / 100,\n\t\t\"stddev\":    math.Round(stddev*100) / 100,\n\t\t\"min\":       values[0],\n\t\t\"max\":       values[len(values)-1],\n\t\t\"range\":     values[len(values)-1] - values[0],\n\t\t\"computed_by\": \"go\",\n\t}\n\n\tprocessed := data.Metadata[\"processed_by\"].([]any)\n\tdata.Metadata[\"processed_by\"] = append(processed, \"go\")\n\n\tfmt.Printf(\"Mean: %.2f\\n\", mean)\n\tfmt.Printf(\"Std Dev: %.2f\\n\", stddev)\n\tfmt.Printf(\"Range: %.0f - %.0f\\n\", values[0], values[len(values)-1])\n\n\toutput, _ := json.MarshalIndent(data, \"\", \"  \")\n\tos.WriteFile(\"/shared/node_n3_output.json\", output, 0644)\n\tfmt.Println(\"Data saved -> node_n3_output.json\")\n}"
         }
-      },
-      "targetPosition": "top",
-      "sourcePosition": "bottom",
-      "measured": {
-        "width": 344,
-        "height": 160
       }
     },
     {
       "id": "n4",
       "type": "task",
-      "position": {
-        "x": 0,
-        "y": 820
-      },
+      "position": { "x": 0, "y": 640 },
       "data": {
-        "title": "4. Generate Visualization",
+        "title": "4. Rank Players",
+        "nodeType": "Analysis",
+        "description": "Python: Generate player rankings and insights",
+        "executable": {
+          "language": "python",
+          "code": "import json\n\nprint(\"=\"*50)\nprint(\"[PYTHON] Step 4: Rank Players\")\nprint(\"=\"*50)\n\nwith open(\"/shared/node_n3_output.json\", \"r\") as f:\n    data = json.load(f)\n\nsorted_players = sorted(data[\"scores\"].items(), key=lambda x: x[1], reverse=True)\n\nrankings = []\nfor rank, (player, score) in enumerate(sorted_players, 1):\n    predicted = data[\"predictions\"].get(player, score)\n    improvement = round(((predicted - score) / score) * 100, 1)\n    rankings.append({\n        \"rank\": rank,\n        \"player\": player,\n        \"current_score\": score,\n        \"predicted_score\": predicted,\n        \"expected_improvement\": f\"{improvement}%\"\n    })\n\ndata[\"rankings\"] = rankings\ndata[\"insights\"] = {\n    \"leader\": sorted_players[0][0],\n    \"leader_score\": sorted_players[0][1],\n    \"underdog\": sorted_players[-1][0],\n    \"underdog_score\": sorted_players[-1][1],\n    \"gap\": sorted_players[0][1] - sorted_players[-1][1]\n}\ndata[\"metadata\"][\"processed_by\"].append(\"python\")\n\nprint(f\"Leader: {data['insights']['leader']} ({data['insights']['leader_score']} pts)\")\nprint(f\"Rankings: {[r['player'] for r in rankings]}\")\n\nwith open(\"/shared/node_n4_output.json\", \"w\") as f:\n    json.dump(data, f, indent=2)\n\nprint(\"Data saved -> node_n4_output.json\")"
+        }
+      }
+    },
+    {
+      "id": "n5",
+      "type": "task",
+      "position": { "x": 0, "y": 820 },
+      "data": {
+        "title": "5. Generate Final Report",
         "nodeType": "Output",
-        "description": "Create time series plot and histogram showing temperature distribution with statistical overlays",
+        "description": "JavaScript: Compile final report with all insights",
         "executable": {
           "language": "javascript",
-          "code": "const fs = require('fs');\n\nconsole.log('==========================================================');\nconsole.log('📊 STEP 4: GENERATING VISUALIZATION & REPORT');\nconsole.log('==========================================================');\nconsole.log('');\nconsole.log('💝 Pickup Line: Are you a data visualization? Because you make everything clear and beautiful! 📈✨');\nconsole.log('');\n\n// Read analyzed data\nconsole.log('📖 Reading statistical analysis...');\nconst data = JSON.parse(fs.readFileSync('/shared/node_n3_output.json', 'utf8'));\nconsole.log(`📥 Loaded analysis for ${data.readings.length} readings`);\n\n// Generate report\nconsole.log('📝 Generating comprehensive report...');\nconst report = {\n  title: 'Temperature Analysis Report',\n  generated_at: new Date().toISOString(),\n  summary: {\n    total_readings: data.readings.length,\n    mean_temperature: data.mean.toFixed(2) + '°C',\n    std_deviation: data.std_dev.toFixed(2) + '°C',\n    min_temperature: data.min.toFixed(2) + '°C',\n    max_temperature: data.max.toFixed(2) + '°C',\n    anomalies_detected: data.anomalies?.length || 0\n  },\n  data: data\n};\n\n// Write final report\nfs.writeFileSync('/shared/node_n4_output.json', JSON.stringify(report, null, 2));\nconsole.log('💾 Report saved to /shared/node_n4_output.json');\n\nconsole.log('');\nconsole.log('==========================================================');\nconsole.log('📋 TEMPERATURE ANALYSIS REPORT');\nconsole.log('==========================================================');\nconsole.log(`📅 Generated: ${report.generated_at}`);\nconsole.log(`📊 Readings analyzed: ${report.summary.total_readings}`);\nconsole.log(`🌡️  Mean temperature: ${report.summary.mean_temperature}`);\nconsole.log(`📏 Standard deviation: ${report.summary.std_deviation}`);\nconsole.log(`🔻 Minimum: ${report.summary.min_temperature}`);\nconsole.log(`🔺 Maximum: ${report.summary.max_temperature}`);\nconsole.log(`⚠️  Anomalies detected: ${report.summary.anomalies_detected}`);\nconsole.log('==========================================================');\nconsole.log('✨ Step 4 complete!');\nconsole.log('');\nconsole.log('🎉 PIPELINE EXECUTION COMPLETE! 🎉');\nconsole.log('💝 Final Pickup Line: Our data pipeline just finished... but I hope our conversation is just getting started! 😊');\nconsole.log('');"
+          "code": "const fs = require('fs');\n\nconsole.log('='.repeat(50));\nconsole.log('[JAVASCRIPT] Step 5: Generate Final Report');\nconsole.log('='.repeat(50));\n\nconst data = JSON.parse(fs.readFileSync('/shared/node_n4_output.json', 'utf8'));\n\nconst report = {\n    title: 'Orbitium Game Analysis Report',\n    generated_at: new Date().toISOString(),\n    pipeline_languages: data.metadata.processed_by,\n    summary: {\n        total_players: Object.keys(data.scores).length,\n        average_score: data.statistics.mean,\n        score_spread: data.statistics.stddev,\n        leader: data.insights.leader,\n        prediction_model: data.metadata.prediction_model\n    },\n    leaderboard: data.rankings,\n    raw_data: {\n        scores: data.scores,\n        predictions: data.predictions,\n        statistics: data.statistics\n    }\n};\n\nconsole.log('');\nconsole.log('FINAL REPORT');\nconsole.log('-'.repeat(40));\nconsole.log(`Title: ${report.title}`);\nconsole.log(`Languages used: ${report.pipeline_languages.join(' -> ')}`);\nconsole.log(`Total players: ${report.summary.total_players}`);\nconsole.log(`Average score: ${report.summary.average_score}`);\nconsole.log(`Leader: ${report.summary.leader}`);\nconsole.log('');\nconsole.log('LEADERBOARD:');\nreport.leaderboard.forEach(r => {\n    console.log(`  #${r.rank} ${r.player}: ${r.current_score} pts (${r.expected_improvement} predicted growth)`);\n});\n\nfs.writeFileSync('/shared/node_n5_output.json', JSON.stringify(report, null, 2));\nconsole.log('');\nconsole.log('Final report saved -> node_n5_output.json');"
         }
-      },
-      "targetPosition": "top",
-      "sourcePosition": "bottom",
-      "measured": {
-        "width": 344,
-        "height": 160
       }
     },
     {
       "id": "ne",
       "type": "end",
-      "position": {
-        "x": 132,
-        "y": 1060
-      },
-      "data": {
-        "label": "End Pipeline"
-      },
-      "targetPosition": "top",
-      "sourcePosition": "bottom",
-      "measured": {
-        "width": 80,
-        "height": 30
-      }
+      "position": { "x": 150, "y": 1000 },
+      "data": { "label": "End Pipeline" }
     }
   ],
   "edges": [
-    {
-      "id": "ns-n1",
-      "source": "ns",
-      "target": "n1",
-      "type": "addNodeEdge"
-    },
-    {
-      "id": "n1-n2",
-      "source": "n1",
-      "target": "n2",
-      "type": "addNodeEdge"
-    },
-    {
-      "id": "n2-n3",
-      "source": "n2",
-      "target": "n3",
-      "type": "addNodeEdge"
-    },
-    {
-      "id": "n3-n4",
-      "source": "n3",
-      "target": "n4",
-      "type": "addNodeEdge"
-    },
-    {
-      "id": "n4-ne",
-      "source": "n4",
-      "target": "ne",
-      "type": "addNodeEdge"
-    }
-  ],
-  "ready": true
+    { "id": "ns-n1", "source": "ns", "target": "n1" },
+    { "id": "n1-n2", "source": "n1", "target": "n2" },
+    { "id": "n2-n3", "source": "n2", "target": "n3" },
+    { "id": "n3-n4", "source": "n3", "target": "n4" },
+    { "id": "n4-n5", "source": "n4", "target": "n5" },
+    { "id": "n5-ne", "source": "n5", "target": "ne" }
+  ]
 }
