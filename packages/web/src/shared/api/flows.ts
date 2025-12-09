@@ -54,7 +54,12 @@ class FlowsAPI {
     }
   }
 
-  async executeFlow(id: string): Promise<any> {
+  async executeFlow(id: string): Promise<{
+    success: boolean;
+    output: string;
+    error: string | null;
+    data_flow: string;
+  }> {
     try {
       const { data } = await apiClient.get(`${this.endpoint}/${id}/execute`);
       return data;

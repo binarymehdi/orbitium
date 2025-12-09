@@ -1,6 +1,6 @@
 import type { Edge, Node } from "@xyflow/react";
 
-// workflow I: flow with data
+// workflow I: Game Scores Pipeline (matches engine/flow-example.json)
 const wf1nodes: Node[] = [
   {
     id: "ns",
@@ -13,13 +13,39 @@ const wf1nodes: Node[] = [
     type: "task",
     position: { x: 0, y: 0 },
     data: {
-      title: "1. Load Temperature Data",
+      title: "1. Initialize Game Scores",
       nodeType: "Input",
-      description:
-        "Load CSV file containing temperature sensor readings with timestamps from monitoring stations",
+      description: "Python: Create initial player scores dataset",
       executable: {
         language: "python",
-        code: "future-work",
+        code: `import json
+
+print("="*50)
+print("[PYTHON] Step 1: Initialize Game Scores")
+print("="*50)
+
+data = {
+    "scores": {
+        "mehdi": 20,
+        "fadli": 10,
+        "sara": 8,
+        "ahmed": 12
+    },
+    "metadata": {
+        "game": "Orbitium Challenge",
+        "round": 1,
+        "created_by": "python"
+    }
+}
+
+print(f"Players: {list(data['scores'].keys())}")
+print(f"Scores: {data['scores']}")
+print(f"Total players: {len(data['scores'])}")
+
+with open("/shared/node_n1_output.json", "w") as f:
+    json.dump(data, f, indent=2)
+
+print("Data saved -> node_n1_output.json")`,
       },
     },
   },
@@ -28,13 +54,35 @@ const wf1nodes: Node[] = [
     type: "task",
     position: { x: 0, y: 0 },
     data: {
-      title: "2. Clean & Validate Data",
+      title: "2. Predict Next Scores",
       nodeType: "Processing",
-      description:
-        "Remove invalid readings (null values, outliers) and filter temperatures outside valid range (-50°C to 50°C)",
+      description: "JavaScript: ML-style prediction of next round scores",
       executable: {
-        language: "python",
-        code: "future-work",
+        language: "javascript",
+        code: `const fs = require('fs');
+
+console.log('='.repeat(50));
+console.log('[JAVASCRIPT] Step 2: Predict Next Scores');
+console.log('='.repeat(50));
+
+const data = JSON.parse(fs.readFileSync('/shared/node_n1_output.json', 'utf8'));
+
+const predictions = {};
+for (const [player, score] of Object.entries(data.scores)) {
+    const growth = Math.random() * 0.3 + 0.1;
+    predictions[player] = Math.round(score * (1 + growth));
+}
+
+data.predictions = predictions;
+data.metadata.round = 2;
+data.metadata.prediction_model = "simple_growth_js";
+data.metadata.processed_by = [...(data.metadata.processed_by || []), "javascript"];
+
+console.log('Original scores:', data.scores);
+console.log('Predicted scores:', predictions);
+
+fs.writeFileSync('/shared/node_n2_output.json', JSON.stringify(data, null, 2));
+console.log('Data saved -> node_n2_output.json');`,
       },
     },
   },
@@ -45,11 +93,73 @@ const wf1nodes: Node[] = [
     data: {
       title: "3. Calculate Statistics",
       nodeType: "Analysis",
-      description:
-        "Compute mean, standard deviation, min/max values, and detect anomalies (readings >2 std from mean)",
+      description: "Go: Compute statistical analysis on scores",
       executable: {
         language: "go",
-        code: "future-work",
+        code: `package main
+
+import (
+	"encoding/json"
+	"fmt"
+	"math"
+	"os"
+	"sort"
+)
+
+type Data struct {
+	Scores      map[string]float64 \`json:"scores"\`
+	Predictions map[string]float64 \`json:"predictions"\`
+	Metadata    map[string]any     \`json:"metadata"\`
+	Statistics  map[string]any     \`json:"statistics"\`
+}
+
+func main() {
+	fmt.Println("==================================================")
+	fmt.Println("[GO] Step 3: Calculate Statistics")
+	fmt.Println("==================================================")
+
+	file, _ := os.ReadFile("/shared/node_n2_output.json")
+	var data Data
+	json.Unmarshal(file, &data)
+
+	var values []float64
+	for _, v := range data.Scores {
+		values = append(values, v)
+	}
+	sort.Float64s(values)
+
+	sum := 0.0
+	for _, v := range values {
+		sum += v
+	}
+	mean := sum / float64(len(values))
+
+	variance := 0.0
+	for _, v := range values {
+		variance += (v - mean) * (v - mean)
+	}
+	stddev := math.Sqrt(variance / float64(len(values)))
+
+	data.Statistics = map[string]any{
+		"mean":      math.Round(mean*100) / 100,
+		"stddev":    math.Round(stddev*100) / 100,
+		"min":       values[0],
+		"max":       values[len(values)-1],
+		"range":     values[len(values)-1] - values[0],
+		"computed_by": "go",
+	}
+
+	processed := data.Metadata["processed_by"].([]any)
+	data.Metadata["processed_by"] = append(processed, "go")
+
+	fmt.Printf("Mean: %.2f\\n", mean)
+	fmt.Printf("Std Dev: %.2f\\n", stddev)
+	fmt.Printf("Range: %.0f - %.0f\\n", values[0], values[len(values)-1])
+
+	output, _ := json.MarshalIndent(data, "", "  ")
+	os.WriteFile("/shared/node_n3_output.json", output, 0644)
+	fmt.Println("Data saved -> node_n3_output.json")
+}`,
       },
     },
   },
@@ -58,13 +168,108 @@ const wf1nodes: Node[] = [
     type: "task",
     position: { x: 0, y: 0 },
     data: {
-      title: "4. Generate Visualization",
+      title: "4. Rank Players",
+      nodeType: "Analysis",
+      description: "Python: Generate player rankings and insights",
+      executable: {
+        language: "python",
+        code: `import json
+
+print("="*50)
+print("[PYTHON] Step 4: Rank Players")
+print("="*50)
+
+with open("/shared/node_n3_output.json", "r") as f:
+    data = json.load(f)
+
+sorted_players = sorted(data["scores"].items(), key=lambda x: x[1], reverse=True)
+
+rankings = []
+for rank, (player, score) in enumerate(sorted_players, 1):
+    predicted = data["predictions"].get(player, score)
+    improvement = round(((predicted - score) / score) * 100, 1)
+    rankings.append({
+        "rank": rank,
+        "player": player,
+        "current_score": score,
+        "predicted_score": predicted,
+        "expected_improvement": f"{improvement}%"
+    })
+
+data["rankings"] = rankings
+data["insights"] = {
+    "leader": sorted_players[0][0],
+    "leader_score": sorted_players[0][1],
+    "underdog": sorted_players[-1][0],
+    "underdog_score": sorted_players[-1][1],
+    "gap": sorted_players[0][1] - sorted_players[-1][1]
+}
+data["metadata"]["processed_by"].append("python")
+
+print(f"Leader: {data['insights']['leader']} ({data['insights']['leader_score']} pts)")
+print(f"Rankings: {[r['player'] for r in rankings]}")
+
+with open("/shared/node_n4_output.json", "w") as f:
+    json.dump(data, f, indent=2)
+
+print("Data saved -> node_n4_output.json")`,
+      },
+    },
+  },
+  {
+    id: "n5",
+    type: "task",
+    position: { x: 0, y: 0 },
+    data: {
+      title: "5. Generate Final Report",
       nodeType: "Output",
-      description:
-        "Create time series plot and histogram showing temperature distribution with statistical overlays",
+      description: "JavaScript: Compile final report with all insights",
       executable: {
         language: "javascript",
-        code: "future-work",
+        code: `const fs = require('fs');
+
+console.log('='.repeat(50));
+console.log('[JAVASCRIPT] Step 5: Generate Final Report');
+console.log('='.repeat(50));
+
+const data = JSON.parse(fs.readFileSync('/shared/node_n4_output.json', 'utf8'));
+
+const report = {
+    title: 'Orbitium Game Analysis Report',
+    generated_at: new Date().toISOString(),
+    pipeline_languages: data.metadata.processed_by,
+    summary: {
+        total_players: Object.keys(data.scores).length,
+        average_score: data.statistics.mean,
+        score_spread: data.statistics.stddev,
+        leader: data.insights.leader,
+        prediction_model: data.metadata.prediction_model
+    },
+    leaderboard: data.rankings,
+    raw_data: {
+        scores: data.scores,
+        predictions: data.predictions,
+        statistics: data.statistics
+    }
+};
+
+console.log('');
+console.log('FINAL REPORT');
+console.log('-'.repeat(40));
+console.log(\`Title: \${report.title}\`);
+console.log(\`Languages used: \${report.pipeline_languages.join(' -> ')}\`);
+console.log(\`Total players: \${report.summary.total_players}\`);
+console.log(\`Average score: \${report.summary.average_score}\`);
+console.log(\`Leader: \${report.summary.leader}\`);
+console.log('');
+console.log('LEADERBOARD:');
+report.leaderboard.forEach(r => {
+    console.log(\`  #\${r.rank} \${r.player}: \${r.current_score} pts (\${r.expected_improvement} predicted growth)\`);
+});
+
+fs.writeFileSync('/shared/node_n5_output.json', JSON.stringify(report, null, 2));
+console.log('');
+console.log('Final report saved -> node_n5_output.json');`,
       },
     },
   },
@@ -101,16 +306,22 @@ const wf1edges: Edge[] = [
     type: "addNodeEdge",
   },
   {
-    id: "n4-ne",
+    id: "n4-n5",
     source: "n4",
+    target: "n5",
+    type: "addNodeEdge",
+  },
+  {
+    id: "n5-ne",
+    source: "n5",
     target: "ne",
     type: "addNodeEdge",
   },
 ];
 const workflowI = {
   id: 1,
-  name: "Workflow Example I",
-  description: "Illustrating example usecase for Orbitium, the workflow management system",
+  name: "Game Scores Pipeline",
+  description: "Multi-language pipeline: Python → JavaScript → Go → Python → JavaScript demonstrating data flow across containers",
   initialNodes: wf1nodes,
   initialEdges: wf1edges
 }

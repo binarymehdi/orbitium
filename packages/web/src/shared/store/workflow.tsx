@@ -9,10 +9,16 @@ import {
 import { createNewTaskNode, getInitialNodeCounter, getLayoutedElements } from '../../features/playground/utils'
 import { getNewCodeLanguageTemplate } from '@/features/code-editor/utils'
 
+export type NodeExecutionStatus = 'idle' | 'running' | 'completed' | 'error'
+
 interface WorkflowState {
     nodes: Node[]
     edges: Edge[]
     nodeCounter: number
+    executionState: Record<string, NodeExecutionStatus>
+    isExecuting: boolean
+    executionOutput: string | null
+    executionSuccess: boolean | null
 
     loadFlow: (nodes: Node[], edges: Edge[]) => void
     setNodes: (nodes: Node[]) => void
@@ -27,6 +33,10 @@ interface WorkflowState {
     onConnect: (connection: any) => void
     relayoutNodes: (newNodes: Node[], newEdges: Edge[]) => void
     reset: () => void
+    setNodeExecutionStatus: (nodeId: string, status: NodeExecutionStatus) => void
+    setIsExecuting: (isExecuting: boolean) => void
+    resetExecutionState: () => void
+    setExecutionOutput: (output: string, success: boolean) => void
 }
 
 type NodeMetaData = {
@@ -38,6 +48,10 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
     nodes: [],
     edges: [],
     nodeCounter: 0,
+    executionState: {},
+    isExecuting: false,
+    executionOutput: null,
+    executionSuccess: null,
 
     loadFlow: (nodes: Node[], edges: Edge[]) => {
         const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(nodes, edges)
@@ -199,7 +213,28 @@ export const useWorkflowStore = create<WorkflowState>((set, get) => ({
         set({
             nodes: [],
             edges: [],
-            nodeCounter: 0
+            nodeCounter: 0,
+            executionState: {},
+            isExecuting: false,
+            executionOutput: null,
+            executionSuccess: null
         })
+    },
+
+    setNodeExecutionStatus: (nodeId: string, status: NodeExecutionStatus) => {
+        const { executionState } = get()
+        set({ executionState: { ...executionState, [nodeId]: status } })
+    },
+
+    setIsExecuting: (isExecuting: boolean) => {
+        set({ isExecuting })
+    },
+
+    resetExecutionState: () => {
+        set({ executionState: {}, isExecuting: false, executionOutput: null, executionSuccess: null })
+    },
+
+    setExecutionOutput: (output: string, success: boolean) => {
+        set({ executionOutput: output, executionSuccess: success })
     }
 }))
