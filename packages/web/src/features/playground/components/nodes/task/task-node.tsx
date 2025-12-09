@@ -1,6 +1,8 @@
 import { Handle, Position } from "@xyflow/react";
 import { memo } from "react";
 import NodeSpecsDrawer from "./settings-drawer";
+import { useWorkflowStore, type NodeExecutionStatus } from "@/shared/store/workflow";
+import { Loader2, CheckCircle2, XCircle } from "lucide-react";
 
 type Executable = {
   language: string;
@@ -14,9 +16,51 @@ type NodeData = {
   executable: Executable;
 };
 
+const getExecutionStyles = (status: NodeExecutionStatus) => {
+  switch (status) {
+    case 'running':
+      return 'border-2 border-amber-400 shadow-xl shadow-amber-200/60 scale-105';
+    case 'completed':
+      return 'border-2 border-emerald-500 shadow-xl shadow-emerald-200/60';
+    case 'error':
+      return 'border-2 border-rose-500 shadow-xl shadow-rose-200/60';
+    default:
+      return 'border border-gray-300/50';
+  }
+};
+
+const getStatusIndicator = (status: NodeExecutionStatus) => {
+  switch (status) {
+    case 'running':
+      return (
+        <div className="absolute -top-3 -right-3 flex h-8 w-8 items-center justify-center rounded-full bg-amber-500 shadow-lg animate-pulse">
+          <Loader2 className="h-5 w-5 text-white animate-spin" />
+        </div>
+      );
+    case 'completed':
+      return (
+        <div className="absolute -top-3 -right-3 flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500 shadow-lg animate-in zoom-in-50 duration-300">
+          <CheckCircle2 className="h-5 w-5 text-white" />
+        </div>
+      );
+    case 'error':
+      return (
+        <div className="absolute -top-3 -right-3 flex h-8 w-8 items-center justify-center rounded-full bg-rose-500 shadow-lg animate-in zoom-in-50 duration-300">
+          <XCircle className="h-5 w-5 text-white" />
+        </div>
+      );
+    default:
+      return null;
+  }
+};
+
 const TaskNode = ({ data, id }: { data: NodeData; id: string }) => {
+  const executionState = useWorkflowStore((state) => state.executionState);
+  const status = executionState[id] || 'idle';
+  
   return (
-    <div className="relative h-40 w-86 rounded-2xl border border-gray-300/50 bg-gradient-to-br from-white/90 via-white/80 to-gray-50/70 px-4 py-3 backdrop-blur-md">
+    <div className={`relative h-40 w-86 rounded-2xl bg-gradient-to-br from-white/95 via-white/90 to-gray-50/80 px-4 py-3 backdrop-blur-md transition-all duration-500 ease-out ${getExecutionStyles(status)}`}>
+      {getStatusIndicator(status)}
       <div className="absolute top-2 right-2">
         <NodeSpecsDrawer nodeId={id} />
       </div>

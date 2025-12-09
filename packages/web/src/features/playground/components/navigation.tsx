@@ -1,7 +1,7 @@
 import { Save, Play, Container, ArrowLeft } from 'lucide-react'
 import { useUpdateFlow } from '@/shared/integrations/tanstack-query/flows'
 import { useWorkflowStore } from '@/shared/store/workflow'
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { toast } from 'sonner'
 import { useNavigate } from '@tanstack/react-router'
 
@@ -9,10 +9,13 @@ interface PlaygroundNavigationProps {
   flowId: string
 }
 
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1'
+
 export const PlaygroundNavigation = ({ flowId }: PlaygroundNavigationProps) => {
-  const { nodes, edges } = useWorkflowStore()
+  const { nodes, edges, setNodeExecutionStatus, setIsExecuting, resetExecutionState, setExecutionOutput } = useWorkflowStore()
   const updateFlow = useUpdateFlow()
   const [isSaving, setIsSaving] = useState(false)
+  const [isRunning, setIsRunning] = useState(false)
   const navigate = useNavigate()
 
   const handleSaveFlow = async () => {
@@ -37,10 +40,71 @@ export const PlaygroundNavigation = ({ flowId }: PlaygroundNavigationProps) => {
     }
   }
 
-  const handleRunFlow = () => {
-    // TODO: Implement run flow logic
-    console.log('Run flow clicked')
-  }
+  const handleRunFlow = useCallback(async () => {
+    try {
+      resetExecutionState()
+      setIsRunning(true)
+      setIsExecuting(true)
+      
+      await updateFlow.mutateAsync({
+        id: flowId,
+        data: {
+          data: {
+            nodes,
+            edges,
+            ready: true
+          }
+        }
+      })
+      
+      toast.info('Executing flow...')
+      
+      const eventSource = new EventSource(`${API_BASE}/flows/${flowId}/execute/stream`)
+      
+      eventSource.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data)
+          
+          if (data.status === 'running') {
+            setNodeExecutionStatus(data.nodeId, 'running')
+            toast.info(`Running: ${data.title}`)
+          } else if (data.status === 'completed') {
+            setNodeExecutionStatus(data.nodeId, 'completed')
+          } else if (data.status === 'done') {
+            // Engine says done, but wait for backend's "finished" with data_flow
+            toast.info('Finishing up...')
+          } else if (data.status === 'finished') {
+            eventSource.close()
+            setIsExecuting(false)
+            setIsRunning(false)
+            console.log('Execution finished, data:', data)
+            const output = data.data_flow || 'Pipeline executed successfully (no output captured)'
+            setExecutionOutput(output, data.success !== false)
+            if (data.success !== false) {
+              toast.success('🎉 Pipeline completed successfully!')
+            } else {
+              toast.error('Pipeline failed')
+            }
+          }
+        } catch (e) {
+          console.error('Failed to parse SSE data:', e)
+        }
+      }
+      
+      eventSource.onerror = () => {
+        eventSource.close()
+        setIsExecuting(false)
+        setIsRunning(false)
+        toast.error('Connection to execution stream lost')
+      }
+      
+    } catch (error) {
+      console.error('Failed to execute flow:', error)
+      toast.error('Failed to execute flow')
+      setIsExecuting(false)
+      setIsRunning(false)
+    }
+  }, [flowId, nodes, edges, updateFlow, setNodeExecutionStatus, setIsExecuting, resetExecutionState, setExecutionOutput])
 
   const handleWarmupContainers = () => {
     // TODO: Implement warmup containers logic
@@ -83,11 +147,12 @@ export const PlaygroundNavigation = ({ flowId }: PlaygroundNavigationProps) => {
       </button>
       <button 
         onClick={handleRunFlow}
-        className="flex items-center gap-0 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-full transition-all duration-300 ease-in-out group active:scale-110"
+        disabled={isRunning}
+        className="flex items-center gap-0 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-full transition-all duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed group active:scale-110"
       >
         <Play className="h-4 w-4 flex-shrink-0" />
         <span className="max-w-0 group-hover:max-w-[100px] overflow-hidden transition-all duration-300 ease-in-out whitespace-nowrap group-hover:ml-2 text-sm font-medium">
-          Execute
+          {isRunning ? 'Running...' : 'Execute'}
         </span>
       </button>
     </div>

@@ -1,17 +1,21 @@
 package executor
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"io"
 	"os"
+	"regexp"
 	"strings"
+	"time"
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/image"
 	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/docker/api/types/volume"
 	"github.com/docker/docker/client"
+	"github.com/docker/docker/pkg/stdcopy"
 
 	"pipeline-engine/internal/types"
 )
@@ -21,6 +25,7 @@ type Executor struct {
 	config         types.Config
 	volumeName     string
 	containerCache map[string]string
+	dataFlowFile   *os.File
 }
 
 func New(cfg types.Config) (*Executor, error) {
@@ -29,10 +34,21 @@ func New(cfg types.Config) (*Executor, error) {
 		return nil, fmt.Errorf("failed to create docker client: %w", err)
 	}
 
+	file, err := os.Create("data_flow.txt")
+	if err != nil {
+		return nil, fmt.Errorf("failed to create data_flow.txt: %w", err)
+	}
+
+	header := fmt.Sprintf("ORBITIUM PIPELINE DATA FLOW LOG\nGenerated: %s\n%s\n\n",
+		time.Now().Format("2006-01-02 15:04:05"),
+		strings.Repeat("=", 60))
+	file.WriteString(header)
+
 	return &Executor{
 		client:         docker,
 		config:         cfg,
 		containerCache: make(map[string]string),
+		dataFlowFile:   file,
 	}, nil
 }
 
@@ -45,6 +61,21 @@ func (e *Executor) Setup(ctx context.Context) error {
 	return nil
 }
 
+// FinalizeOutput writes the completion message to data_flow.txt and closes it.
+// This should be called BEFORE emitting the "done" status so the backend can read the file immediately.
+func (e *Executor) FinalizeOutput() {
+	if e.dataFlowFile != nil {
+		e.dataFlowFile.WriteString(fmt.Sprintf("\n%s\nPIPELINE COMPLETED: %s\n",
+			strings.Repeat("=", 60),
+			time.Now().Format("2006-01-02 15:04:05")))
+		e.dataFlowFile.Sync() // Ensure data is flushed to disk
+		e.dataFlowFile.Close()
+		e.dataFlowFile = nil
+	}
+}
+
+// Cleanup stops and removes containers, then cleans up the volume.
+// Can be run in a goroutine for background cleanup after output is finalized.
 func (e *Executor) Cleanup(ctx context.Context) {
 	for lang, containerID := range e.containerCache {
 		fmt.Printf("  Stopping %s container...\n", lang)
@@ -65,6 +96,7 @@ func (e *Executor) Run(ctx context.Context, nodes []types.Node) error {
 	var previousNodeID string
 
 	for _, node := range nodes {
+		e.emitStatus("running", node.ID, node.Data.Title, "")
 		fmt.Printf("Running node %s (%s)...\n", node.ID, node.Data.Title)
 
 		lang := node.Data.Executable.Language
@@ -100,16 +132,35 @@ func (e *Executor) Run(ctx context.Context, nodes []types.Node) error {
 			return fmt.Errorf("node %s failed: %w", node.ID, err)
 		}
 
+		e.logNodeOutput(node, lang, output)
+
 		if output != "" {
 			fmt.Printf("  Output: %s\n", truncate(output, 200))
 		}
 
+		e.emitStatus("completed", node.ID, node.Data.Title, truncate(output, 500))
 		fmt.Printf("✓ Node %s completed\n", node.ID)
 		previousNodeID = node.ID
 		_ = previousNodeID
 	}
 
+	// Finalize output file BEFORE emitting done - this ensures the backend can read it immediately
+	e.FinalizeOutput()
+	e.emitStatus("done", "", "Pipeline completed", "")
 	return nil
+}
+
+var ansiRegex = regexp.MustCompile(`\x1b\[[0-9;]*[a-zA-Z]|\x1b\][^\x07]*\x07|[\x00-\x08\x0b\x0c\x0e-\x1f]`)
+
+func (e *Executor) emitStatus(status, nodeID, title, output string) {
+	statusJSON := fmt.Sprintf(`{"status":"%s","nodeId":"%s","title":"%s","output":"%s"}`,
+		status, nodeID, title, strings.ReplaceAll(output, `"`, `\"`))
+	fmt.Fprintln(os.Stderr, "STATUS:"+statusJSON)
+}
+
+func (e *Executor) logNodeOutput(node types.Node, lang, output string) {
+	clean := ansiRegex.ReplaceAllString(output, "")
+	e.dataFlowFile.WriteString(fmt.Sprintf("Output:\n%s\n\n", clean))
 }
 
 func (e *Executor) pullImage(ctx context.Context, imageName string) error {
@@ -195,7 +246,8 @@ func (e *Executor) executeCode(ctx context.Context, containerID, lang, code stri
 	}
 	defer attachResp.Close()
 
-	output, err := io.ReadAll(attachResp.Reader)
+	var stdout, stderr bytes.Buffer
+	_, err = stdcopy.StdCopy(&stdout, &stderr, attachResp.Reader)
 	if err != nil {
 		return "", fmt.Errorf("failed to read output: %w", err)
 	}
@@ -205,11 +257,16 @@ func (e *Executor) executeCode(ctx context.Context, containerID, lang, code stri
 		return "", fmt.Errorf("failed to inspect exec: %w", err)
 	}
 
-	if inspect.ExitCode != 0 {
-		return "", fmt.Errorf("command failed with exit code %d: %s", inspect.ExitCode, string(output))
+	output := stdout.String()
+	if stderr.Len() > 0 {
+		output += "\n" + stderr.String()
 	}
 
-	return cleanOutput(string(output)), nil
+	if inspect.ExitCode != 0 {
+		return "", fmt.Errorf("command failed with exit code %d: %s", inspect.ExitCode, output)
+	}
+
+	return cleanOutput(output), nil
 }
 
 func cleanOutput(s string) string {

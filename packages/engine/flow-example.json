@@ -16,7 +16,7 @@
         "description": "Python: Create initial player scores dataset",
         "executable": {
           "language": "python",
-          "code": "import json\n\nprint(\"=\"*50)\nprint(\"[PYTHON] Step 1: Initialize Game Scores\")\nprint(\"=\"*50)\n\ndata = {\n    \"scores\": {\n        \"mehdi\": 10,\n        \"fadli\": 5,\n        \"sara\": 8,\n        \"ahmed\": 12\n    },\n    \"metadata\": {\n        \"game\": \"Orbitium Challenge\",\n        \"round\": 1,\n        \"created_by\": \"python\"\n    }\n}\n\nprint(f\"Players: {list(data['scores'].keys())}\")\nprint(f\"Scores: {data['scores']}\")\nprint(f\"Total players: {len(data['scores'])}\")\n\nwith open(\"/shared/node_n1_output.json\", \"w\") as f:\n    json.dump(data, f, indent=2)\n\nprint(\"Data saved -> node_n1_output.json\")"
+          "code": "import json\n\nprint(\"=\"*50)\nprint(\"[PYTHON] Step 1: Initialize Game Scores\")\nprint(\"=\"*50)\n\ndata = {\n    \"scores\": {\n        \"mehdi\": 20,\n        \"fadli\": 10,\n        \"sara\": 8,\n        \"ahmed\": 12\n    },\n    \"metadata\": {\n        \"game\": \"Orbitium Challenge\",\n        \"round\": 1,\n        \"created_by\": \"python\"\n    }\n}\n\nprint(f\"Players: {list(data['scores'].keys())}\")\nprint(f\"Scores: {data['scores']}\")\nprint(f\"Total players: {len(data['scores'])}\")\n\nwith open(\"/shared/node_n1_output.json\", \"w\") as f:\n    json.dump(data, f, indent=2)\n\nprint(\"Data saved -> node_n1_output.json\")"
         }
       }
     },
