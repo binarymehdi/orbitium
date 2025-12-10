@@ -7,8 +7,9 @@ export const deduceFileName = (nodeId: string, nodeLanguage: string): string => 
     go: 'go',
     javascript: 'js',
     ruby: 'rb',
+    r: 'R',
   }
-  const output = `${nodeId}.${extentionMap[nodeLanguage]}`
+  const output = `${nodeId}.${extentionMap[nodeLanguage] || 'txt'}`
   return output
 };
 

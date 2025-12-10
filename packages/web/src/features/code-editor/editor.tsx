@@ -45,6 +45,8 @@ const CodeEditor = ({ nodeId, onCodeChange }: CodeEditorProps) => {
         return "go";
       case "ruby":
         return "ruby";
+      case "r":
+        return "r";
       default:
         return "plaintext";
     }

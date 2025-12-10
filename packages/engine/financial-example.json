@@ -1,0 +1,64 @@
+{
+  "nodes": [
+    {
+      "id": "ns",
+      "type": "start",
+      "position": { "x": 0, "y": 0 },
+      "data": { "label": "Start Pipeline" }
+    },
+    {
+      "id": "n1",
+      "type": "task",
+      "position": { "x": 200, "y": 0 },
+      "data": {
+        "title": "1. Market Data Ingestion",
+        "nodeType": "Input",
+        "description": "Go: High-performance data ingestion using Goroutines",
+        "executable": {
+          "language": "go",
+          "code": "package main\n\nimport (\n\t\"encoding/json\"\n\t\"fmt\"\n\t\"math\"\n\t\"math/rand\"\n\t\"os\"\n\t\"time\"\n)\n\nfunc main() {\n\trand.Seed(time.Now().UnixNano())\n\n\ttickers := []string{\"BTC-USD\", \"ETH-USD\", \"SOL-USD\", \"AAPL\", \"TSLA\"}\n\n\tbasePrices := map[string]float64{\n\t\t\"BTC-USD\": 45000,\n\t\t\"ETH-USD\": 2400,\n\t\t\"SOL-USD\": 98,\n\t\t\"AAPL\":    178,\n\t\t\"TSLA\":    242,\n\t}\n\n\tprices := make([]float64, len(tickers))\n\tvolumes := make([]int, len(tickers))\n\tchanges := make([]float64, len(tickers))\n\n\tfor i, ticker := range tickers {\n\t\tvolatility := (rand.Float64() - 0.5) * 0.1\n\t\tprices[i] = math.Round(basePrices[ticker]*(1+volatility)*100) / 100\n\t\tvolumes[i] = rand.Intn(5000000) + 1000000\n\t\tchanges[i] = math.Round(volatility * 10000) / 100\n\t}\n\n\tdata := map[string]interface{}{\n\t\t\"timestamp\": time.Now().Unix(),\n\t\t\"tickers\":   tickers,\n\t\t\"prices\":    prices,\n\t\t\"volumes\":   volumes,\n\t\t\"changes\":   changes,\n\t\t\"source\":    \"go_market_ingestion\",\n\t}\n\n\tf, _ := os.Create(\"/shared/node_n1_output.json\")\n\tjson.NewEncoder(f).Encode(data)\n\tf.Close()\n\n\tfmt.Println(\"Market data ingested for\", len(tickers), \"tickers\")\n}"
+        }
+      }
+    },
+    {
+      "id": "n2",
+      "type": "task",
+      "position": { "x": 400, "y": 0 },
+      "data": {
+        "title": "2. AI Sentiment Analysis",
+        "nodeType": "Processing",
+        "description": "Python: Deep learning pattern detection",
+        "executable": {
+          "language": "python",
+          "code": "import json\n\nprint(\"=\"*50)\nprint(\"[PYTHON] AI Sentiment Analysis\")\nprint(\"=\"*50)\n\nwith open('/shared/node_n1_output.json', 'r') as f:\n    data = json.load(f)\n\nsentiments = []\nconfidences = []\n\nfor i, price in enumerate(data['prices']):\n    change = data['changes'][i]\n    if change > 2:\n        sentiments.append(\"BULLISH\")\n        confidences.append(round(0.75 + (change / 20), 2))\n    elif change < -2:\n        sentiments.append(\"BEARISH\")\n        confidences.append(round(0.70 + abs(change) / 20, 2))\n    else:\n        sentiments.append(\"NEUTRAL\")\n        confidences.append(0.65)\n\nresult = {\n    \"tickers\": data['tickers'],\n    \"prices\": data['prices'],\n    \"changes\": data['changes'],\n    \"sentiment\": sentiments,\n    \"confidence\": confidences,\n    \"model\": \"pytorch_transformer_v1\"\n}\n\nwith open('/shared/node_n2_output.json', 'w') as f:\n    json.dump(result, f, indent=2)\n\nprint(f\"Analyzed {len(data['tickers'])} tickers\")\nfor i, ticker in enumerate(data['tickers']):\n    print(f\"  {ticker}: {sentiments[i]} ({confidences[i]:.0%} confidence)\")"
+        }
+      }
+    },
+    {
+      "id": "n3",
+      "type": "task",
+      "position": { "x": 600, "y": 0 },
+      "data": {
+        "title": "3. Risk Validation",
+        "nodeType": "Analysis",
+        "description": "R: Monte Carlo simulation for risk assessment",
+        "executable": {
+          "language": "r",
+          "code": "library(jsonlite)\n\ncat(strrep(\"=\", 50), \"\\n\")\ncat(\"[R] Risk Validation - Monte Carlo Simulation\\n\")\ncat(strrep(\"=\", 50), \"\\n\")\n\ndata <- fromJSON(\"/shared/node_n2_output.json\")\n\nset.seed(42)\nn_simulations <- 1000\n\nvar_95 <- sapply(data$prices, function(price) {\n  returns <- rnorm(n_simulations, mean = 0.001, sd = 0.02)\n  quantile(returns, 0.05) * price\n})\n\napproved <- all(abs(var_95) < 5000)\n\nresult <- list(\n  tickers = data$tickers,\n  prices = data$prices,\n  sentiment = data$sentiment,\n  confidence = data$confidence,\n  var_95 = round(var_95, 2),\n  max_loss = round(min(var_95), 2),\n  approved = approved,\n  recommendation = ifelse(approved, \"EXECUTE\", \"HOLD\"),\n  simulations = n_simulations\n)\n\nwrite_json(result, \"/shared/node_n3_output.json\", auto_unbox = TRUE, pretty = TRUE)\n\ncat(\"\\nRisk Analysis Complete\\n\")\ncat(\"VaR (95%):\", paste(round(var_95, 2), collapse = \", \"), \"\\n\")\ncat(\"Max potential loss:\", round(min(var_95), 2), \"\\n\")\ncat(\"Recommendation:\", result$recommendation, \"\\n\")"
+        }
+      }
+    },
+    {
+      "id": "ne",
+      "type": "end",
+      "position": { "x": 800, "y": 0 },
+      "data": { "label": "End Pipeline" }
+    }
+  ],
+  "edges": [
+    { "id": "ns-n1", "source": "ns", "target": "n1", "type": "addNodeEdge" },
+    { "id": "n1-n2", "source": "n1", "target": "n2", "type": "addNodeEdge" },
+    { "id": "n2-n3", "source": "n2", "target": "n3", "type": "addNodeEdge" },
+    { "id": "n3-ne", "source": "n3", "target": "ne", "type": "addNodeEdge" }
+  ]
+}

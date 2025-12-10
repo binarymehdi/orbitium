@@ -36,6 +36,10 @@ const languages = [
     value: "ruby",
     label: "Ruby",
   },
+  {
+    value: "r",
+    label: "R",
+  },
 ];
 
 type LanguageSelectorProps = {

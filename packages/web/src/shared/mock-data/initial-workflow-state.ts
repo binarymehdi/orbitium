@@ -372,5 +372,219 @@ const workflowII = {
 }
 
 
-export const workflows = [workflowI, workflowII]
+// workflow III: Financial Analysis Pipeline (Go → Python → R)
+const wf3nodes: Node[] = [
+  {
+    id: "ns",
+    type: "start",
+    position: { x: 0, y: 0 },
+    data: { label: "Start Pipeline" },
+  },
+  {
+    id: "n1",
+    type: "task",
+    position: { x: 0, y: 0 },
+    data: {
+      title: "1. Market Data Ingestion",
+      nodeType: "Input",
+      description: "Go: High-performance data ingestion using Goroutines",
+      executable: {
+        language: "go",
+        code: `package main
+
+import (
+	"encoding/json"
+	"fmt"
+	"math"
+	"math/rand"
+	"os"
+	"time"
+)
+
+func main() {
+	rand.Seed(time.Now().UnixNano())
+
+	tickers := []string{"BTC-USD", "ETH-USD", "SOL-USD", "AAPL", "TSLA"}
+
+	basePrices := map[string]float64{
+		"BTC-USD": 45000,
+		"ETH-USD": 2400,
+		"SOL-USD": 98,
+		"AAPL":    178,
+		"TSLA":    242,
+	}
+
+	prices := make([]float64, len(tickers))
+	volumes := make([]int, len(tickers))
+	changes := make([]float64, len(tickers))
+
+	for i, ticker := range tickers {
+		volatility := (rand.Float64() - 0.5) * 0.1
+		prices[i] = math.Round(basePrices[ticker]*(1+volatility)*100) / 100
+		volumes[i] = rand.Intn(5000000) + 1000000
+		changes[i] = math.Round(volatility * 10000) / 100
+	}
+
+	data := map[string]interface{}{
+		"timestamp": time.Now().Unix(),
+		"tickers":   tickers,
+		"prices":    prices,
+		"volumes":   volumes,
+		"changes":   changes,
+		"source":    "go_market_ingestion",
+	}
+
+	f, _ := os.Create("/shared/node_n1_output.json")
+	json.NewEncoder(f).Encode(data)
+	f.Close()
+
+	fmt.Println("Market data ingested for", len(tickers), "tickers")
+}`,
+      },
+    },
+  },
+  {
+    id: "n2",
+    type: "task",
+    position: { x: 0, y: 0 },
+    data: {
+      title: "2. AI Sentiment Analysis",
+      nodeType: "Processing",
+      description: "Python: Deep learning pattern detection",
+      executable: {
+        language: "python",
+        code: `import json
+
+print("="*50)
+print("[PYTHON] AI Sentiment Analysis")
+print("="*50)
+
+with open('/shared/node_n1_output.json', 'r') as f:
+    data = json.load(f)
+
+sentiments = []
+confidences = []
+
+for i, price in enumerate(data['prices']):
+    change = data['changes'][i]
+    if change > 2:
+        sentiments.append("BULLISH")
+        confidences.append(round(0.75 + (change / 20), 2))
+    elif change < -2:
+        sentiments.append("BEARISH")
+        confidences.append(round(0.70 + abs(change) / 20, 2))
+    else:
+        sentiments.append("NEUTRAL")
+        confidences.append(0.65)
+
+result = {
+    "tickers": data['tickers'],
+    "prices": data['prices'],
+    "changes": data['changes'],
+    "sentiment": sentiments,
+    "confidence": confidences,
+    "model": "pytorch_transformer_v1"
+}
+
+with open('/shared/node_n2_output.json', 'w') as f:
+    json.dump(result, f, indent=2)
+
+print(f"Analyzed {len(data['tickers'])} tickers")
+for i, ticker in enumerate(data['tickers']):
+    print(f"  {ticker}: {sentiments[i]} ({confidences[i]:.0%} confidence)")`,
+      },
+    },
+  },
+  {
+    id: "n3",
+    type: "task",
+    position: { x: 0, y: 0 },
+    data: {
+      title: "3. Risk Validation",
+      nodeType: "Analysis",
+      description: "R: Monte Carlo simulation for risk assessment",
+      executable: {
+        language: "r",
+        code: `library(jsonlite)
+
+cat(strrep("=", 50), "\\n")
+cat("[R] Risk Validation - Monte Carlo Simulation\\n")
+cat(strrep("=", 50), "\\n")
+
+data <- fromJSON("/shared/node_n2_output.json")
+
+set.seed(42)
+n_simulations <- 1000
+
+var_95 <- sapply(data$prices, function(price) {
+  returns <- rnorm(n_simulations, mean = 0.001, sd = 0.02)
+  quantile(returns, 0.05) * price
+})
+
+approved <- all(abs(var_95) < 5000)
+
+result <- list(
+  tickers = data$tickers,
+  prices = data$prices,
+  sentiment = data$sentiment,
+  confidence = data$confidence,
+  var_95 = round(var_95, 2),
+  max_loss = round(min(var_95), 2),
+  approved = approved,
+  recommendation = ifelse(approved, "EXECUTE", "HOLD"),
+  simulations = n_simulations
+)
+
+write_json(result, "/shared/node_n3_output.json", auto_unbox = TRUE, pretty = TRUE)
+
+cat("\\nRisk Analysis Complete\\n")
+cat("VaR (95%):", paste(round(var_95, 2), collapse = ", "), "\\n")
+cat("Max potential loss:", round(min(var_95), 2), "\\n")
+cat("Recommendation:", result$recommendation, "\\n")`,
+      },
+    },
+  },
+  {
+    id: "ne",
+    type: "end",
+    position: { x: 0, y: 0 },
+    data: { label: "End Pipeline" },
+  },
+];
+const wf3edges: Edge[] = [
+  {
+    id: "ns-n1",
+    source: "ns",
+    target: "n1",
+    type: "addNodeEdge",
+  },
+  {
+    id: "n1-n2",
+    source: "n1",
+    target: "n2",
+    type: "addNodeEdge",
+  },
+  {
+    id: "n2-n3",
+    source: "n2",
+    target: "n3",
+    type: "addNodeEdge",
+  },
+  {
+    id: "n3-ne",
+    source: "n3",
+    target: "ne",
+    type: "addNodeEdge",
+  },
+];
+const workflowIII = {
+  id: 3,
+  name: "Financial Analysis Pipeline",
+  description: "High-frequency trading analysis: Go (data ingestion) → Python (AI sentiment) → R (Monte Carlo risk validation)",
+  initialNodes: wf3nodes,
+  initialEdges: wf3edges
+}
+
+
+export const workflows = [workflowI, workflowII, workflowIII]
 export const { initialNodes, initialEdges } = workflows[0]
