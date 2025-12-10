@@ -6,3 +6,4 @@ languages:
   typescript: node:20-alpine
   rust: rust:1.74-alpine
   ruby: ruby:3.2-alpine
+  r: rocker/tidyverse:4.3.2

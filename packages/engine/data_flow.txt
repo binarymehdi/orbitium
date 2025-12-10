@@ -1,5 +1,5 @@
 ORBITIUM PIPELINE DATA FLOW LOG
-Generated: 2025-12-09 04:38:57
+Generated: 2025-12-10 08:07:45
 ============================================================
 
 Output:
@@ -7,7 +7,7 @@ Output:
 [PYTHON] Step 1: Initialize Game Scores
 ==================================================
 Players: ['mehdi', 'fadli', 'sara', 'ahmed']
-Scores: {'mehdi': 40, 'fadli': 10, 'sara': 12, 'ahmed': 16}
+Scores: {'mehdi': 20, 'fadli': 10, 'sara': 8, 'ahmed': 12}
 Total players: 4
 Data saved -> node_n1_output.json
 
@@ -15,25 +15,25 @@ Output:
 ==================================================
 [JAVASCRIPT] Step 2: Predict Next Scores
 ==================================================
-Original scores: { mehdi: 40, fadli: 10, sara: 12, ahmed: 16 }
-Predicted scores: { mehdi: 56, fadli: 12, sara: 15, ahmed: 21 }
+Original scores: { mehdi: 20, fadli: 10, sara: 8, ahmed: 12 }
+Predicted scores: { mehdi: 26, fadli: 12, sara: 10, ahmed: 15 }
 Data saved -> node_n2_output.json
 
 Output:
 ==================================================
 [GO] Step 3: Calculate Statistics
 ==================================================
-Mean: 19.50
-Std Dev: 12.03
-Range: 10 - 40
+Mean: 12.50
+Std Dev: 4.56
+Range: 8 - 20
 Data saved -> node_n3_output.json
 
 Output:
 ==================================================
 [PYTHON] Step 4: Rank Players
 ==================================================
-Leader: mehdi (40 pts)
-Rankings: ['mehdi', 'ahmed', 'sara', 'fadli']
+Leader: mehdi (20 pts)
+Rankings: ['mehdi', 'ahmed', 'fadli', 'sara']
 Data saved -> node_n4_output.json
 
 Output:
@@ -46,17 +46,17 @@ FINAL REPORT
 Title: Orbitium Game Analysis Report
 Languages used: javascript -> go -> python
 Total players: 4
-Average score: 19.5
+Average score: 12.5
 Leader: mehdi
 
 LEADERBOARD:
-  #1 mehdi: 40 pts (40.0% predicted growth)
-  #2 ahmed: 16 pts (31.2% predicted growth)
-  #3 sara: 12 pts (25.0% predicted growth)
-  #4 fadli: 10 pts (20.0% predicted growth)
+  #1 mehdi: 20 pts (30.0% predicted growth)
+  #2 ahmed: 12 pts (25.0% predicted growth)
+  #3 fadli: 10 pts (20.0% predicted growth)
+  #4 sara: 8 pts (25.0% predicted growth)
 
 Final report saved -> node_n5_output.json
 
 
 ============================================================
-PIPELINE COMPLETED: 2025-12-09 04:39:05
+PIPELINE COMPLETED: 2025-12-10 08:07:53

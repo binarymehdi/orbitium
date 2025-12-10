@@ -226,6 +226,8 @@ func (e *Executor) executeCode(ctx context.Context, containerID, lang, code stri
 		execCmd = []string{"sh", "-c", fmt.Sprintf("cat > /tmp/script.rb << 'ENDOFSCRIPT'\n%s\nENDOFSCRIPT\nruby /tmp/script.rb", code)}
 	case "rust":
 		execCmd = []string{"sh", "-c", fmt.Sprintf("cat > /tmp/main.rs << 'ENDOFSCRIPT'\n%s\nENDOFSCRIPT\nrustc /tmp/main.rs -o /tmp/main && /tmp/main", code)}
+	case "r":
+		execCmd = []string{"sh", "-c", fmt.Sprintf("cat > /tmp/script.R << 'ENDOFSCRIPT'\n%s\nENDOFSCRIPT\nRscript /tmp/script.R", code)}
 	default:
 		return "", fmt.Errorf("unsupported language: %s", lang)
 	}

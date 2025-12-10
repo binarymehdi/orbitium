@@ -35,12 +35,11 @@ const CreateFlowDialogContent = () => {
   const createFlow = useCreateFlow();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [flowType, setFlowType] = useState<"empty" | "template">("empty");
+  const [selectedTemplate, setSelectedTemplate] = useState<string>("2"); // Default to empty workflow (id: 2)
 
   const handleCreateFlow = async () => {
     try {
-      const templateIndex = flowType === "empty" ? 1 : 0;
-      const template = workflows[templateIndex];
+      const template = workflows.find(w => w.id.toString() === selectedTemplate) || workflows[1];
       
       const newFlow = await createFlow.mutateAsync({
         name: title || template.name,
@@ -80,16 +79,24 @@ const CreateFlowDialogContent = () => {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="flow-type">Type</Label>
-        <Select value={flowType} onValueChange={(value) => setFlowType(value as "empty" | "template")}>
+        <Label htmlFor="flow-type">Template</Label>
+        <Select value={selectedTemplate} onValueChange={setSelectedTemplate}>
           <SelectTrigger id="flow-type" className="w-full">
-            <SelectValue placeholder="Select flow type" />
+            <SelectValue placeholder="Select a template" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="empty">Empty Flow</SelectItem>
-            <SelectItem value="template">Template</SelectItem>
+            {workflows.map((workflow) => (
+              <SelectItem key={workflow.id} value={workflow.id.toString()}>
+                {workflow.name}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
+        {selectedTemplate && (
+          <p className="text-sm text-muted-foreground">
+            {workflows.find(w => w.id.toString() === selectedTemplate)?.description}
+          </p>
+        )}
       </div>
 
       <Button

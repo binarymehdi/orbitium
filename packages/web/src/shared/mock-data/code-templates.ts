@@ -78,4 +78,21 @@ end
 input = { data: "example" }
 puts script_to_execute(input)`,
   },
+  {
+    language: "r",
+    code: `library(jsonlite)
+
+# A generic processing function
+script_to_execute <- function(input_data) {
+  output <- list(
+    result = paste("processed:", toJSON(input_data, auto_unbox = TRUE))
+  )
+  return(output)
+}
+
+# Example usage
+input <- list(data = "example")
+result <- script_to_execute(input)
+print(toJSON(result, auto_unbox = TRUE, pretty = TRUE))`,
+  },
 ];
