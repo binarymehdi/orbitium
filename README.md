@@ -1,86 +1,141 @@
 # Orbitium
-A scientific workflow software orchestrator for ease of use and collaboration. Made for scientists to focus on what matters.
 
-Initial Milestone
-we are building a consecutive containarized nodes (no conditional statements for now, just one after the other)
+A visual workflow orchestrator for polyglot scientific pipelines. Draw a pipeline as a graph, write each step in whichever language fits (Python, R, JavaScript, Go, Rust, Ruby), and run it. Every step executes in an isolated Docker container, with a shared volume for passing data between steps.
 
-we are executing simple consecutive steps, each step is containarized node execuring a simple codeblock for now.
+Built as my software engineering capstone at Al Akhawayn University (Fall 2025), supervised by Dr. Naeem Nisar Sheikh. The full write-up is in [`reports/final_report.tex`](reports/final_report.tex).
 
+![Orbitium system architecture](reports/figure-1.png)
 
-# Engine
+## How it works
 
-## Running the Pipeline Execution Engine
+The web app is a React Flow canvas. A pipeline is a chain of **task** nodes between a **start** and an **end** node; each task holds a title, a language, and a code block edited in Monaco. The graph is persisted as JSON in PostgreSQL through the FastAPI backend.
 
-The pipeline engine takes React Flow graph representations and executes them as containerized workflows using Docker.
+Running a pipeline hands that JSON to the Go engine, which:
 
-### Prerequisites
-- Go 1.25+
-- Docker running locally
+1. walks the graph from the start node and builds the execution order, rejecting cycles;
+2. creates one shared Docker volume, mounted at `/shared` in every container;
+3. starts one long-lived container per language (images come from `config.yaml`) and reuses it across tasks;
+4. executes each task's code with `docker exec`, capturing stdout and stderr;
+5. streams per-node status back over stderr, which the API relays to the browser as server-sent events;
+6. tears down containers and the volume when done.
 
-### Quick Start
+Tasks exchange data by reading and writing files under `/shared`.
+
+![From visual graph to engine representation](reports/figure-2.png)
+
+## Repository layout
+
+```
+packages/
+  web/     React 19 + Vite, TanStack Router/Query, Zustand, @xyflow/react, Monaco, Tailwind
+  api/     FastAPI + SQLModel on PostgreSQL 17 (uv-managed, Python 3.13)
+  engine/  Go 1.25 CLI using the Docker SDK
+reports/   Capstone interim and final reports (LaTeX) and figures
+```
+
+## Running locally
+
+Prerequisites: Docker, Node 20+, Python 3.13 with [uv](https://docs.astral.sh/uv/), Go 1.25+.
+
+**1. Database**
+
+```bash
+cp packages/api/base/.env.example packages/api/base/.env
+docker compose up -d db          # PostgreSQL 17 on localhost:5433
+```
+
+**2. Engine**
 
 ```bash
 cd packages/engine
-
-go mod tidy
-
-go run cmd/engine/main.go flow-example.json
+go build -o engine ./cmd/engine  # the API looks for packages/engine/engine
 ```
 
-### Configuration
+The engine also runs on its own, without the API or UI:
 
-Edit `packages/engine/config.yaml` to add language support:
-
-```yaml
-languages:
-  python: python:3.11-slim
-  go: golang:1.21-alpine
-  javascript: node:20-alpine
-  typescript: node:20-alpine
-  ruby: ruby:3.2-alpine
-  rust: rust:1.74-alpine
+```bash
+go run ./cmd/engine flow-example.json
 ```
 
-### Pipeline Format
+**3. API**
 
-Create a pipeline JSON file with React Flow format:
+```bash
+cd packages/api/base
+uv sync
+uv run fastapi dev orbitium/main.py   # http://localhost:8000, docs at /docs
+```
+
+**4. Web**
+
+```bash
+cd packages/web
+npm install
+npm run dev                            # http://localhost:3000
+```
+
+Set `VITE_API_URL` if the API is not on `http://localhost:8000/api/v1`.
+
+## Pipeline format
+
+The engine consumes React Flow's node/edge JSON directly. A minimal pipeline:
 
 ```json
 {
   "nodes": [
-    {
-      "id": "ns",
-      "type": "start",
-      "data": { "label": "Start" }
-    },
+    { "id": "start", "type": "start", "data": { "label": "Start" } },
     {
       "id": "n1",
       "type": "task",
       "data": {
-        "title": "My Task",
+        "title": "Generate",
         "executable": {
           "language": "python",
-          "code": "import json\nprint('Hello')\nwith open('/shared/node_n1_output.json', 'w') as f:\n    json.dump({'result': 42}, f)"
+          "code": "import json\nwith open('/shared/out.json', 'w') as f:\n    json.dump({'result': 42}, f)"
         }
       }
     },
     {
-      "id": "ne",
-      "type": "end",
-      "data": { "label": "End" }
-    }
+      "id": "n2",
+      "type": "task",
+      "data": {
+        "title": "Report",
+        "executable": {
+          "language": "r",
+          "code": "x <- jsonlite::fromJSON('/shared/out.json'); print(x$result)"
+        }
+      }
+    },
+    { "id": "end", "type": "end", "data": { "label": "End" } }
   ],
   "edges": [
-    { "source": "ns", "target": "n1" },
-    { "source": "n1", "target": "ne" }
+    { "source": "start", "target": "n1" },
+    { "source": "n1", "target": "n2" },
+    { "source": "n2", "target": "end" }
   ]
 }
 ```
 
-### How It Works
+Languages map to images in [`packages/engine/config.yaml`](packages/engine/config.yaml); add a line there to support another runtime.
 
-1. **Loads config** - Maps languages to Docker images
-2. **Parses pipeline** - Reads React Flow JSON and builds execution order
-3. **Creates shared volume** - For data passing between nodes
-4. **Executes nodes** - Runs each task in order, reusing containers per language
-5. **Cleans up** - Removes containers and volume
+## API
+
+| Method | Path | |
+|---|---|---|
+| GET | `/api/v1/flows` | list pipelines |
+| POST | `/api/v1/flows/create-flow` | create |
+| GET | `/api/v1/flows/{id}` | fetch one |
+| PUT | `/api/v1/flows/{id}/edit` | save graph changes |
+| DELETE | `/api/v1/flows/{id}` | delete |
+| GET | `/api/v1/flows/{id}/execute/stream` | run, streaming node status as SSE |
+| GET | `/api/v1/flows/{id}/execute` | run, blocking |
+| GET | `/api/v1/health-check` | |
+
+## Current limits
+
+- Pipelines are linear chains. Branching and parallel execution are the next step; the DAG model and cycle detection are already in place for it.
+- The API launches the engine as a subprocess on the same host, so the API host needs Docker.
+- No authentication. This is a single-user development setup.
+
+## License
+
+MIT. See [LICENSE](LICENSE).
